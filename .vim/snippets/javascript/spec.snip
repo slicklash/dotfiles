@@ -1,0 +1,22 @@
+
+snippet des
+options head
+  describe('${1}', () => {
+    ${0}
+  });
+
+snippet con
+options head
+  context('${1}', () => {
+    ${0}
+  });
+
+snippet it
+options head
+  it('${1}', () => {
+    ${0}
+  });
+
+snippet ee
+options head
+  expect(${1}).toEqual(${0});

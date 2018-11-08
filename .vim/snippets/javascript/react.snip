@@ -1,0 +1,74 @@
+snippet rco
+abbr React Component
+options head
+  import React from 'react';
+  import PropTypes from 'prop-types';
+  import { translate } from 'react-i18next';
+  import s from './${1}.scss';
+
+  class $2 extends React.Component {
+    static propTypes = {
+      t: PropTypes.func,
+    };
+
+    render() {
+      const { t } = this.props;
+      return (
+        <div className={s.container}>
+          {t('app.intro')}${0}
+        </div>
+      );
+    }
+  }
+
+  export default translate(null, { wait: true })($2);
+
+snippet av
+abbr Action (value)
+options head
+  export const ${1:NAME} = '${2:app}/$1';
+
+  export const ${3:action} = ${4:payload} => ({
+    type: $1,
+    payload: $4
+  });
+
+snippet ao
+abbr Action (object)
+options head
+  export const ${1:NAME} = '${2:app}/$1';
+
+  export const ${3:action} = (${4:param1}, ${5:param2}${0}) => ({
+    type: $1,
+    payload: {
+      $4,
+      $5
+    }
+  });
+
+
+snippet rd
+abbr Reducer
+options head
+  export default function ${1:name}(state = {}, action) {
+    switch (action.type) {
+      case ${2:ACTION}:
+        return ${0};
+      default:
+        return state;
+    }
+  }
+
+snippet tt
+abbr Translate
+options word
+  {t('${0}')}
+
+snippet mid
+abbr Middleware
+options head
+  const ${1:logMiddleware} = store => next => action => {
+      console.log(action.type);${0}
+      next(action);
+  }
+

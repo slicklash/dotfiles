@@ -1,0 +1,3 @@
+#!/bin/zsh
+tmux -2 new-session \; send-keys 'vim' Enter
+

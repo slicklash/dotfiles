@@ -1,0 +1,45 @@
+
+snippet bg
+abbr background
+alias back
+options indent
+  background: ${1:#:color} url(${2:#:img}) ${3:no-repeat} ${4:top} ${5:left};${0}
+
+snippet m
+abbr margin (all same)
+options indent
+  margin: ${1:0};${0}
+
+snippet mm
+abbr margin (top and bottom, right and left)
+options indent
+  margin: ${1:#:top-bottom} ${2:#:right-left};${0}
+
+snippet mmm
+abbr margin (top, right and left, bottom)
+options indent
+  margin: ${1:#:top} ${2:#:right-left} ${3:#:bottom};${0}
+
+snippet p
+abbr padding (all same)
+options indent
+  padding: ${1:0};${0}
+
+snippet pp
+abbr padding (top and bottom, right and left)
+options indent
+  padding: ${1:#:top-bottom} ${2:#:right-left};${0}
+
+snippet ppp
+abbr padding (top, right and left, bottom)
+options indent
+  padding: ${1:#:top} ${2:#:right-left} ${3:#:bottom};${0}
+
+snippet amp
+  // scss
+  .button {
+    body.page-about & { }
+  }
+
+  // css
+  body.page-about .button {}

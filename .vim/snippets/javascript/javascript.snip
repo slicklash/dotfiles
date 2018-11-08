@@ -1,0 +1,227 @@
+# flow control
+
+snippet if
+options head
+  if (${1}) {
+    ${0:TARGET}
+  }
+
+snippet ife
+abbr if-else
+options head
+  if (${1}) {
+    ${2:TARGET}
+  }
+  else {
+    ${3}
+  }
+
+snippet elif
+abbr else-if
+  else if (${1}) {
+    ${0:TARGET}
+  }
+
+snippet ?:
+options word
+  ${1} ? ${2} : ${0}
+
+# loops
+
+snippet for
+options head
+  for (var ${1:i} = 0; $1 < ${2:#:things}.length; $1++) {
+    ${0:TARGET}
+  }
+
+snippet wh
+abbr while
+options head
+  while (${1:true}) {
+    ${0:TARGET}
+  }
+
+# functions
+
+snippet fu
+abbr function
+options word
+  function ${1:#:name}(${2}) {
+      ${0}
+  }
+
+snippet fi
+abbr function (inline)
+options word
+  function(${1}) { ${0} }
+
+snippet :f
+options head
+  ${1:#:name}: function(${2:}) {
+    ${0:TARGET}
+  }
+
+snippet :f,
+options head
+  ${1:#:name}: function(${2}) {
+    ${0:TARGET}
+  },
+
+snippet iife
+abbr IIFE
+options head
+  (function(${1}) {
+     'use strict';
+      ${0:TARGET}
+  })(${2});
+
+snippet us
+options head
+	'use strict';
+
+# objects
+
+snippet v_
+options head
+    var _this = this;
+
+snippet _t
+options word
+    _this.
+
+snippet :k
+options word
+  ${1:#:key}: ${0:#:value}
+
+snippet :k,
+options word
+  ${1:#:key}: ${0:#:value},
+
+snippet oks
+options word
+  Object.keys(${1:obj})${0}
+
+snippet proto
+abbr prototype
+options head
+  ${1:#:class_name}.prototype = {
+    ${0:TARGET}
+  };
+
+# arrays
+
+snippet afrom
+options word
+  Array.from(${0})
+
+snippet ais
+options word
+  Array.isArray(${0})
+
+snippet .fo
+options word
+  .forEach(${0})
+
+snippet .fi
+options word
+  .find(${0})
+
+snippet .fid
+options word
+  .findIndex(${0})
+
+snippet .inc
+options word
+  .includes(${0})
+
+snippet .ind
+options word
+  .indexOf(${0})
+
+snippet .jo
+options word
+  .join(${0})
+
+snippet .ma
+options word
+  .map(${0})
+
+snippet .red
+options word
+  .reduce(${0})
+
+snippet .sm
+options word
+  .some(${0})
+
+snippet .ev
+options word
+  .every(${0})
+
+# misc
+
+snippet ret
+options word
+    return ${0:result};
+
+snippet retf
+options word
+    return false;
+
+snippet dready
+abbr document.ready
+options head
+  $(document).ready(function () {
+    ${0:TARGET}
+  })
+
+snippet try
+options head
+  try {
+    ${0:TARGET}
+  } catch (${1:e}) {
+    ${2}
+  }
+
+snippet cl
+options word
+  console.log(${0:TARGET});
+
+snippet db
+options head
+  debugger;
+
+
+snippet jsonp
+options word
+  JSON.parse(${0:str})
+
+snippet jsons
+options word
+  JSON.stringify(${0:object})
+
+snippet pi
+options head
+  // prettier-ignore
+
+snippet ngtimeout
+options head
+  require('wix-bootstrap-ng')({ cluster: { workerCount: 1 }, express: { timeout: 30000 } })
+
+snippet delay
+options head
+   .then(x => new Promise(resolve => console.log('## delay') || setTimeout(() => resolve(x), 2000)))
+
+# imports
+
+snippet imdf
+options head
+    import { ${1} } from '${0}';
+
+snippet imf
+options head
+    import ${1} from '${0}';
+
+snippet cr
+options head
+    const ${1} = require('${0}');

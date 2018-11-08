@@ -1,0 +1,147 @@
+# main
+
+snippet     #!
+abbr        #!/usr/bin/env python3
+alias       shebang
+options     head
+    #!/usr/bin/env python3
+    # -*- coding: utf-8 -*-
+    ${0}
+
+snippet     ifmain
+abbr        if __name__ == '__main__': ...
+alias       main
+options     head
+    if __name__ == '__main__':
+        ${0:pass}
+
+# flow control
+
+snippet     if
+options     head
+    if ${1:#:condition}:
+        ${0:pass}
+
+snippet     ife
+options     head
+    if ${1:#:condition}:
+        ${2:pass}
+    else:
+        ${0:pass}
+
+snippet     else
+abbr        else: ...
+options     head
+    else:
+        ${0:pass}
+
+snippet     elif
+options     head
+    elif ${1:#:condition}:
+        ${0:pass}
+
+snippet     ?:
+    ${1:true} if ${2:conditon} else ${3:false}
+
+# loops
+
+snippet     for
+abbr        for ... in ...: ...
+options     head
+    for ${1:#:value} in ${2:#:list}:
+        ${0:pass}
+
+snippet     wh
+abbr        while ...: ...
+options     head
+    while ${1:#:condition}:
+        ${0:pass}
+
+# functions
+
+snippet     fu
+abbr        def function(...): ...
+alias       def
+options     head
+    def ${1:#:name}(${2}):
+        ${0:pass}
+
+# objects
+
+snippet     class
+abbr        class Class(...): ...
+options     head
+    class ${1:#:name}(${2:object}):
+        def __init__(self, ${3}):
+            ${0:pass}
+
+snippet     :f
+alias       defm
+abbr        def method(self, ...): ...
+options     head
+    def ${1:#:name}(self, ${2}):
+        ${0:pass}
+
+# misc
+
+snippet ret
+options word
+    return ${0:result}
+
+snippet     with_open
+alias       fileidiom
+options     head
+    with open(${1:#:file}, '${2:r}') as ${3:f}:
+        ${0:pass}
+
+snippet     tryexcept
+abbr        try: ... except ...: ...
+options     head
+    try:
+        ${1:pass}
+    except ${2:#:ExceptionClass}:
+        ${3:pass}
+
+snippet     tryfinally
+abbr        try: ... finally: ...
+options     head
+    try:
+        ${1:pass}
+    finally:
+        ${2:pass}
+
+snippet     with
+abbr        with {func}({file}) as :
+options     head
+    with ${1:open}(${2:#:filename, mode}) as ${3:f}:
+        ${0:pass}
+
+snippet     filter
+abbr        [x for x in {list} if {condition}]
+    [$1 for ${1:x} in ${2:#:list} if ${3:#:condition}]
+
+snippet     print
+options     word
+    print(${0:#:TARGET})
+
+snippet     getattr
+abbr        getattr(..., ...)
+options     word
+    getattr(${1:#:obj}, ${2:#:attr})
+
+snippet     setattr
+abbr        setattr(..., ...)
+    setattr(${1:#:obj}, ${2:#:attr}, ${3:#:value})
+
+snippet     hasattr
+abbr        hasattr(..., ...)
+options     word
+    hasattr(${1:#:obj}, ${2:#:attr})
+
+snippet     pdb
+abbr        import pdb..
+    import pdb; pdb.set_trace()
+
+snippet     ipdb
+abbr        import ipdb..
+    import ipdb; ipdb.set_trace()

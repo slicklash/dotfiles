@@ -1,0 +1,2 @@
+#!/bin/zsh
+tmux -2 new-session
