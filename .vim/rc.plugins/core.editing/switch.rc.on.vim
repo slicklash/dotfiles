@@ -33,11 +33,13 @@ function! s:init_switch_definitions() abort
           \     'it(' : 'it.only(',
           \     'it.only(' : 'it.skip(',
           \     'it.skip(' : 'it(',
+          \     'new': 'old',
+          \     'old': 'new',
+          \     'enabled': 'disabled',
+          \     'disabled': 'enabled',
           \     l:from_double: l:to_single,
           \     l:from_single: l:to_backtick,
           \     l:from_backtick: l:to_double,
-          \     'new': 'old',
-          \     'old': 'new',
           \     '\\"\(\[[^\\]\+\)\\''\([^\\]\+\)\\''\]\\"': '''\1"\2"]''',
           \   },
           \   g:switch_builtins.javascript_function,
@@ -48,6 +50,8 @@ function! s:init_switch_definitions() abort
     let b:switch_custom_definitions =
           \ [
           \   {
+          \     'enabled': 'disabled',
+          \     'disabled': 'enabled',
           \     l:from_double: l:to_single,
           \     l:from_single: l:to_double,
           \   },

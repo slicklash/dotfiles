@@ -1,13 +1,3 @@
-" no bad habbits
-" noremap <Up> <NOP>
-" noremap <Down> <NOP>
-" noremap <Left> <NOP>
-" noremap <Right> <NOP>
-" noremap h <NOP>
-" noremap j <NOP>
-" noremap k <NOP>
-" noremap l <NOP>
-
 " escape to normal mode
 inoremap jj <ESC>l
 
@@ -94,9 +84,6 @@ nnoremap <silent> <leader>` :call Preserve("%s/\\s\\+$//e")<CR>
 nnoremap <leader>' ciw'<C-r>"'<Esc>
 vnoremap <leader>' c'<C-r>"'<Esc>
 
-" replace single quotes with double
-" vnoremap " :s/\%V'/"/g<cr>
-
 inoremap <expr><C-Space> <C-x><C-o>
 
 if (IsWindows() || has('nvim'))
@@ -107,9 +94,9 @@ endif
 
 noremap <leader>ec :vsplit ~/.vim/colors/aloneinthedark.vim<CR>
 
-" nnoremap <leader>rr :call RunCode()<CR>
-
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+
+" echo and copy file dir
 nnoremap <leader>d :call EchoHi(getcwd())<CR>
 nnoremap <silent> <leader>cD :let @+=getcwd()<CR>:call EchoHi('Copied: ' . @+)<CR>
 
@@ -120,5 +107,3 @@ nnoremap <silent> <leader>cp :let @+=expand('%:p')<CR>:call EchoHi('Copied: ' . 
 " copy filename to clipboard
 nnoremap <silent> <leader>cf :let @+=expand('%')<CR>:call EchoHi('Copied: ' . @+)<CR>
 nnoremap <silent> <leader>ct :let @+=expand('%:t')<CR>:call EchoHi('Copied: ' . @+)<CR>
-
-nnoremap <leader>8 :!D:\Projects\cumulus_bop\Scripts\generate-cfg.cmd %:p<cr>

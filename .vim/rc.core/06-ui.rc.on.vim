@@ -1,4 +1,3 @@
-
 set t_Co=256                                " number of colors
 
 colorscheme aloneinthedark

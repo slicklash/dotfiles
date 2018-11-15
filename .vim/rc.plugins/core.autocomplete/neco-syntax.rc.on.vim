@@ -1,3 +1,4 @@
 if InitStep() == 0
-    call dein#add('Shougo/neco-syntax')
+  call dein#add('Shougo/neco-syntax')
+  finish
 endif

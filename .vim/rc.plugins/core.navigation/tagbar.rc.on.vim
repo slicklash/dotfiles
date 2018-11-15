@@ -1,6 +1,6 @@
 if InitStep() == 0
-    call dein#add('majutsushi/tagbar', { 'on_cmd' : 'TagbarToggle' })
-    finish
+  call dein#add('majutsushi/tagbar', { 'on_cmd' : 'TagbarToggle' })
+  finish
 endif
 
 let g:tagbar_compact = 1

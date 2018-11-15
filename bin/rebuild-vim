@@ -13,19 +13,19 @@ COMPILED_BY="slicklash <slicklash@gmail.com>"
 PYTHON_VERSION="3.6"
 
 FEAT=
+FEAT="$FEAT --enable-fail-if-missing"
 FEAT="$FEAT --with-features=huge"
 FEAT="$FEAT --enable-multibyte"
+FEAT="$FEAT --enable-python3interp"
 FEAT="$FEAT --with-python3-config-dir=/usr/lib/python$PYTHON_VERSION/config-$PYTHON_VERSIONm-$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
 FEAT="$FEAT --enable-luainterp"
 #FEAT="$FEAT --with-lua-prefix=/usr/include/lua5.3"
-FEAT="$FEAT --enable-python3interp"
 FEAT="$FEAT --disable-netbeans"
 FEAT="$FEAT --enable-cscope"
 FEAT="$FEAT --enable-gpm"
 FEAT="$FEAT --with-x"
 FEAT="$FEAT --enable-xim"
 FEAT="$FEAT --enable-gui=gtk2"
-FEAT="$FEAT --enable-fail-if-missing"
 
 CFLAGS="-g -I/usr/include/lua5.3"
 

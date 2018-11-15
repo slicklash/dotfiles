@@ -1,4 +1,3 @@
-
 if exists('$TMUX')
     set clipboard=
 else

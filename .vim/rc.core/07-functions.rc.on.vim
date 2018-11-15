@@ -1,4 +1,3 @@
-
 function! ProfileStart()
     :profile start profile.log
     :profile func *

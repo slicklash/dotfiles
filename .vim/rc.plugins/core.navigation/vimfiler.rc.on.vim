@@ -1,11 +1,12 @@
-if !has('lua') || !dein#tap('unite.vim')
-  finish
-endif
-
 if InitStep() == 0
+  if !has('lua')
+    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+    echo 'Error: missing +lua'
+    cquit
+  endif
   call dein#add('Shougo/vimfiler.vim')
   finish
-elseif !dein#tap('vimfiler.vim')
+elseif !dein#tap('unite.vim')
   finish
 endif
 
@@ -43,8 +44,8 @@ nnoremap <space>v :VimFiler -find<CR>
 nnoremap <space>V :VimFilerBufferDir<CR>
 
 augroup filetype_vimfiler
-    autocmd!
-    autocmd FileType vimfiler call s:init_vimfiler_settings()
+  autocmd!
+  autocmd FileType vimfiler call s:init_vimfiler_settings()
 augroup END
 
 function! s:init_vimfiler_settings()

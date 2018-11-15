@@ -1,4 +1,3 @@
-
 set list                                    " highlight whitespace
 set listchars=tab:│\ ,trail:~,extends:>,precedes:<
 set backspace=indent,eol,start              " allow backspacing listed

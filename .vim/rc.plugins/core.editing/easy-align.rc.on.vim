@@ -1,6 +1,6 @@
 if InitStep() == 0
-    call dein#add('junegunn/vim-easy-align')
-    finish
+  call dein#add('junegunn/vim-easy-align')
+  finish
 endif
 
 " let g:easy_align_ignore_groups = ['Comment', 'String']

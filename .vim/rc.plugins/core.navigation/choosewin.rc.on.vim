@@ -1,6 +1,6 @@
 if InitStep() == 0
-    call dein#add('t9md/vim-choosewin')
-    finish
+  call dein#add('t9md/vim-choosewin')
+  finish
 endif
 
 let g:choosewin_overlay_enable = 1

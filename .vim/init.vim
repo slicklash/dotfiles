@@ -2,6 +2,11 @@ let s:BUNDLE_DIR = $HOME . '/.vim/bundle'
 let s:DEIN_DIR= s:BUNDLE_DIR . '/repos/github.com/Shougo/dein.vim'
 
 if !isdirectory(s:DEIN_DIR)
+    if !executable('git')
+      echoerr 'missing git'
+      cquit
+    endif
+    echomsg 'installing dein'
     echomsg 'cloning https://github.com/Shougo/dein.vim.git into ' . s:DEIN_DIR . '...'
     call system('git clone https://github.com/Shougo/dein.vim.git ' . s:DEIN_DIR)
 endif

@@ -1,8 +1,10 @@
 if InitStep() == 0
-    call dein#add('syngan/vim-vimlint')
-    finish
+  if !executable('vint')
+    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+    echo 'Error: missing python3 pacakge [vim-vint]'
+    cquit
+  endif
+  call dein#add('syngan/vim-vimlint')
+  finish
 endif
 
-if !executable('vint')
-  echoerr 'missing vim-vint pacakge'
-endif

@@ -1,6 +1,6 @@
 if InitStep() == 0
-    " call dein#add('alfredodeza/pytest.vim', { 'on_ft' : ['python'] })
-    finish
+  " call dein#add('alfredodeza/pytest.vim', { 'on_ft' : ['python'] })
+  finish
 endif
 
 let g:test#python#pyunit#file_pattern='\v.*.py'
@@ -9,10 +9,10 @@ let g:test#filename_modifier = ':p'
 
 
 let test#strategy = {
-  \ 'nearest': 'vimproc',
-  \ 'file':    'basic',
-  \ 'suite':   'basic',
-\}
+      \ 'nearest': 'vimproc',
+      \ 'file':    'basic',
+      \ 'suite':   'basic',
+      \}
 
 nnoremap <leader>tr :TestNearest<CR>
 nnoremap <leader>tf :TestFile<CR>

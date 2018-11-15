@@ -1,0 +1,34 @@
+#!/usr/bin/env zsh
+
+DST=~/code/gh-dotfiles
+
+function _sync() {
+  echo "~/$from"
+  local dir="$DST/$from"
+  rm -rf $dir/*
+  for x in $white_list; do
+    echo "[+] $x"
+    rsync -ar ~/$from/$x $dir
+  done
+}
+
+echo "syncing ..."
+
+from=''
+white_list=('README.md' '.tmux.conf' '.zshrc')
+_sync
+
+from='bin/'
+white_list=('rebuild-vim' 'fix-washed-out-colors' 'sync-public' 'xrandr' 'tmux2' 'tvim')
+_sync
+
+from='.vim/'
+white_list=('init.vim' 'colors' 'rc.core' 'rc.plugins' 'snippets')
+_sync
+
+from='.zsh/'
+white_list=('rc.core' 'rc.plugins' 'rc.defer')
+_sync
+
+unfunction _sync
+echo "DONE"

@@ -1,10 +1,22 @@
 if InitStep() == 0
-    call dein#add('Shougo/deoplete.nvim')
-    if !has('nvim')
-        call dein#add('roxma/nvim-yarp')
-        call dein#add('roxma/vim-hug-neovim-rpc')
-    endif
-    finish
+  if !has('python3')
+    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+    echo 'Error: missing +python3'
+    cquit
+  endif
+  try
+    python3 import neovim
+  catch
+    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+    echo 'Error: missing python3 package [neovim]'
+    cquit
+  endtry
+  call dein#add('Shougo/deoplete.nvim')
+  if !has('nvim')
+    call dein#add('roxma/nvim-yarp')
+    call dein#add('roxma/vim-hug-neovim-rpc')
+  endif
+  finish
 endif
 
 let g:deoplete#enable_at_startup = 1
@@ -17,5 +29,5 @@ call deoplete#custom#var('file', 'enable_buffer_path', 1)
 
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort
-    return deoplete#close_popup() . "\<CR>"
+  return deoplete#close_popup() . "\<CR>"
 endfunction

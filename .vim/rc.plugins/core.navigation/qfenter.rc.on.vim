@@ -1,6 +1,6 @@
 if InitStep() == 0
-    call dein#add('yssl/QFEnter')
-    finish
+  call dein#add('yssl/QFEnter')
+  finish
 endif
 
 let g:qfenter_keymap = {}

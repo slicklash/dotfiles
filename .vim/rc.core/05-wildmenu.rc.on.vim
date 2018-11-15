@@ -1,4 +1,3 @@
-
 set wildmenu                                " show autocomplete for command-line
 set wildmode=list:full
 set wildignorecase

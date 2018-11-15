@@ -1,4 +1,3 @@
-
 set noerrorbells novisualbell t_vb=         " disable sounds"
 set shortmess=atI                           " avoid some hit-enter prompts
 
