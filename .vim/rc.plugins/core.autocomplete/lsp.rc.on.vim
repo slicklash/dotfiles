@@ -6,16 +6,25 @@ if InitStep() == 0
   let g:LanguageClient_autoStart = 1
   let g:LanguageClient_changeThrottle = 0.5
   let g:LanguageClient_diagnosticsEnable = 0
+  let g:LanguageClient_fzfContextMenu = 0
   let g:LanguageClient_serverCommands = {
-        \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+        \ 'rust': ['rustup', 'run', 'stable', 'rls'],
         \ 'python': ['pyls'],
         \ 'typescript': ['typescript-language-server', '--stdio'],
         \ 'typescript.tsx': ['typescript-language-server', '--stdio'],
         \ 'javascript': ['typescript-language-server', '--stdio'],
         \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
         \ }
+  let g:LanguageClient_rootMarkers = {
+        \ 'javascript': ['.prettierrc'],
+        \ 'javascript.jsx': ['.prettierrc'],
+        \ }
   finish
 endif
+
+
+" pip3 install python-language-server
+" pip3 install 'python-language-server[rope]'
 
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>:normal! m`<CR>
 nnoremap <silent> <leader>b <C-o>

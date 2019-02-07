@@ -1,0 +1,296 @@
+# main
+
+snippet     #!
+abbr        #!/usr/bin/env python3
+alias       shebang
+options     head
+    #!/usr/bin/env python3
+    # -*- coding: utf-8 -*-
+    ${0}
+
+snippet     ifmain
+abbr        if __name__ == '__main__': ...
+alias       main
+options     head
+    if __name__ == '__main__':
+        ${0:pass}
+
+# imports
+
+snippet     fi
+abbr        from ... import ...
+options     head
+    from ${1:m} import ${0:n}
+
+snippet     fci
+abbr        from collections import ...
+options     head
+    from collections import ${0:n}
+
+snippet     fii
+abbr        from itertools import ...
+options     head
+    from itertools import ${0:n}
+
+snippet     foi
+abbr        from operator import ...
+options     head
+    from operator import ${0:n}
+
+snippet     fsi
+abbr        from string import ...
+options     head
+    from string import ${0:n}
+
+# flow control
+
+snippet     if
+options     head
+    if ${1:#:condition}:
+        ${0:pass}
+
+snippet     ife
+abbr         if else
+options     head
+    if ${1:#:condition}:
+        ${2:pass}
+    else:
+        ${0:pass}
+
+snippet     else
+abbr        else: ...
+options     head
+    else:
+        ${0:pass}
+
+snippet     elif
+options     head
+    elif ${1:#:condition}:
+        ${0:pass}
+
+snippet     ?:
+abbr        ternary
+    ${1:true} if ${2:conditon} else ${3:false}
+
+# loops
+
+snippet     for
+abbr        for ... in ...:
+options     head
+    for ${1:#:value} in ${2:#:list}:
+        ${0:pass}
+
+snippet     fore
+abbr        for ... in enumerate(...):
+options     head
+    for ${1:i}, ${2:x} in enumerate(${3:list}):
+        ${0:pass}
+
+snippet     wh
+abbr        while ...: ...
+options     head
+    while ${1:#:condition}:
+        ${0:pass}
+
+
+# functions
+
+snippet     le
+abbr        len
+    len(${0:list})
+
+snippet     li
+abbr        len
+    list(${0:items})
+
+snippet     z
+abbr        zip
+    zip(${1:list1}, ${0:list2})
+
+snippet     en
+abbr        enumerate
+    enumerate(${0:list})
+
+snippet     so
+abbr        sorted
+    sorted(${0:list})
+
+snippet     rr
+abbr        range
+    range(${0})
+
+snippet     fu
+abbr        def function(...): ...
+alias       def
+options     head
+    def ${1:#:name}(${2}):
+        ${0:pass}
+
+# objects
+
+snippet     class
+abbr        class Class(...): ...
+options     head
+    class ${1:#:name}(${2:object}):
+        def __init__(self, ${3}):
+            ${0:pass}
+
+snippet     :f
+alias       defm
+abbr        def method(self, ...): ...
+options     head
+    def ${1:#:name}(self, ${2}):
+        ${0:pass}
+
+# files
+
+snippet     with_open
+abbr        File: open
+alias       wo fileidiom
+options     head
+    with open('${1:file}', '${2:r}') as ${3:f}:
+        ${0:pass}
+
+snippet     file_read_lines
+abbr        File: read lines
+alias       frl
+options     word
+    ${0}[${1:x.rstrip()} for x in f.readlines()]
+
+snippet     file_read_numbers
+abbr        File: read lines as numbers
+alias       frn
+options     word
+    ${0}[${1:int(x)} for x in f.readlines()]
+
+# regexp
+
+snippet     re_find_digits
+abbr        Regex: all digits
+alias       rfd
+options     word
+    ${0}[int($2) for ${2:x} in re.findall(r'-?\d+', ${1:line})]
+
+# matrix
+
+snippet     matrix_fill
+abbr        Matrix: new
+alias       mf
+options     word
+    ${0}[[${3:'-'} for x in range(${1:width})] for y in range(${2:height})]
+
+# text
+
+snippet     print
+abbr        print
+alias       pp
+options     word
+    print(${0:#:TARGET})
+
+snippet     'f
+abbr        ''.format()
+options     word
+    '${1}'.format(${0:#:TARGET})
+
+snippet     'j
+abbr        ''.join()
+options     word
+    ''.join(${0:#:TARGET})
+
+# misc
+
+snippet N
+abbr    None
+options word
+    None
+
+snippet T
+abbr    True
+options word
+    True
+
+snippet F
+abbr    False
+options word
+    False
+
+snippet C
+abbr    Counter
+options word
+    Counter(${0})
+
+snippet dd
+abbr    defaultdict
+options word
+    defaultdict(${0})
+
+snippet dq
+abbr    deque
+options word
+    deque(${0})
+
+snippet nx
+abbr    next
+options word
+    next(${0})
+
+snippet ret
+abbr    return
+options word
+    return ${0:#:result}
+
+snippet ass
+abbr    assert
+options word
+    assert ${0}
+
+snippet     tryexcept
+abbr        try: ... except ...: ...
+options     head
+    try:
+        ${1:pass}
+    except ${2:#:ExceptionClass}:
+        ${3:pass}
+
+snippet     tryfinally
+abbr        try: ... finally: ...
+options     head
+    try:
+        ${1:pass}
+    finally:
+        ${2:pass}
+
+snippet     with
+abbr        with {func}({file}) as :
+options     head
+    with ${1:open}(${2:#:filename, mode}) as ${3:f}:
+        ${0:pass}
+
+snippet     filter
+abbr        [x for x in {list} if {condition}]
+    [$1 for ${1:x} in ${2:#:list} if ${3:#:condition}]
+
+
+snippet     getattr
+abbr        getattr(..., ...)
+options     word
+    getattr(${1:#:obj}, ${2:#:attr})
+
+snippet     setattr
+abbr        setattr(..., ...)
+    setattr(${1:#:obj}, ${2:#:attr}, ${3:#:value})
+
+snippet     hasattr
+abbr        hasattr(..., ...)
+options     word
+    hasattr(${1:#:obj}, ${2:#:attr})
+
+# debug
+
+snippet     pdb
+abbr        import pdb..
+    import pdb; pdb.set_trace()
+
+snippet     ipdb
+abbr        import ipdb..
+    import ipdb; ipdb.set_trace()

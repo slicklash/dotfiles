@@ -18,6 +18,7 @@ function! s:ft_js_ts() abort
   nnoremap <buffer> <silent><leader>i :call<SID>import()<cr>
 
   setlocal shiftwidth=2
+  let b:keyword_lookup_url='https://developer.mozilla.org/en-US/search?q=%s&topic=js'
 
   if &filetype =~? 'javascript'
     setlocal filetype=javascript.jsx

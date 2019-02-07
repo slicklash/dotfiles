@@ -15,6 +15,8 @@ set scrolloff=1 scrolljump=5                " scroll content when cursor reaches
 set splitbelow                              " put the new window below the current
 set splitright                              " put the new window on the right of the current
 
+set diffopt+=algorithm:patience             " improved diff
+
 augroup filetype_vim
     autocmd!
     autocmd FileType vim setlocal keywordprg=:help sw=2
@@ -22,3 +24,4 @@ augroup filetype_vim
 augroup END
 
 autocmd FileType qf wincmd J                " move quickfix window to bottom
+autocmd FileType fugitive wincmd J          " move quickfix window to bottom

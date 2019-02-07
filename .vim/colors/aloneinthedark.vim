@@ -356,7 +356,9 @@ hi! link cssProp Keyword
 hi! link pythonString String
 hi! link pythonStatement Keyword
 hi! link pythonBuiltin Keyword
+hi! link pythonBuiltinFunc Keyword
 hi! link pythonFunction Function
+hi! link pythonNone Keyword
 
 hi! link phpDefine Keyword
 hi! link phpSpecialChar Function
@@ -386,6 +388,11 @@ hi! link vimfilerMark Special
 hi! link vimfilerNonMark vimfilerLeaf
 hi! link vimfilerMarkedFile Special
 hi! link vimfilerROFile Normal
+
+" defx
+call s:hi('Defx_filename_directory', s:color.BLUE, '', '')
+call s:hi('Defx_mark_directory', s:color.BLUE, '', '')
+" call s:hi('Defx_filename', s:color.BLUE, '', '')
 
 " Syntastic
 

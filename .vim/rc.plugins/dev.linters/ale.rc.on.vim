@@ -10,6 +10,9 @@ if has('unix')
     let g:ale_sign_warning = '∆'
 endif
 
+highlight ALEWarning ctermbg=none
+highlight ALEWarning ctermbg=88
+
 let g:ale_sign_column_always = 1
 let g:ale_lint_delay = 300
 let g:ale_lint_on_text_changed = 'never'
@@ -22,7 +25,7 @@ let g:ale_echo_msg_format = '[%linter%] %s'
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'typescript': ['tslint'],
-\   'python': ['autopep8'],
+\   'python': ['black', 'isort'],
 \}
 
 " pip3 install vim-vint pylint
@@ -42,6 +45,7 @@ let g:ale_linters = {
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name'
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
+let g:ale_python_black_options = '--skip-string-normalization'
 
 function! s:is_local(linter) abort
    let l:path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)

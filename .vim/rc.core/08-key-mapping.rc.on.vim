@@ -107,3 +107,6 @@ nnoremap <silent> <leader>cp :let @+=expand('%:p')<CR>:call EchoHi('Copied: ' . 
 " copy filename to clipboard
 nnoremap <silent> <leader>cf :let @+=expand('%')<CR>:call EchoHi('Copied: ' . @+)<CR>
 nnoremap <silent> <leader>ct :let @+=expand('%:t')<CR>:call EchoHi('Copied: ' . @+)<CR>
+
+" alternate keyword lookup
+nnoremap <silent> <space>k :call LookupKeyword()<CR>

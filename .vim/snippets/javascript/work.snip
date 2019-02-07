@@ -1,0 +1,8 @@
+snippet iex
+options head
+abbr    import { EXPERIMENT } from '@wix/communities-blog-experiments'
+  import { ${0} } from '@wix/communities-blog-experiments';
+
+snippet etimeout
+options head
+  ${0}const appServer = wixBootstrapNg({ cluster: { workerCount: 1 } , express: { timeout: 30000 } });

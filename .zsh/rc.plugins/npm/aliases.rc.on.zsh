@@ -9,6 +9,7 @@ alias npls="np ls --depth=0"
 
 alias ns="n start"
 alias nt="n run test:client"
+alias ntd="nt -- --inspect-brk"
 alias nts="n run test:server"
 alias nte="n run test:e2e"
 alias ntu="n run test:unit"

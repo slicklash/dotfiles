@@ -35,7 +35,7 @@ function! ToggleSyntaxItem()
 endfunction
 
 function! EchoHi(msg, ...) abort
-  let l:hi = a:0 > 1 ? a:2 : 'String'
+  let l:hi = get(a:, 1, 'String')
   if l:hi ==? 'ErrorMsg'
       echohl ErrorMsg
   else
@@ -43,6 +43,20 @@ function! EchoHi(msg, ...) abort
   endif
   echo a:msg
   echohl None
+endfunction
+
+function! OpenUrl(url) abort
+  execute 'silent !xdg-open "' . a:url . '"'
+  redraw!
+endfunction
+
+function! LookupKeyword() abort
+  let l:url = get(b:, 'keyword_lookup_url')
+  if empty(l:url)
+    call EchoHi('b:keyword_lookup_url is not defined', 'ErrorMsg')
+    return
+  endif
+  call OpenUrl(printf(l:url, expand('<cword>')))
 endfunction
 
 function! _get(url, ...)

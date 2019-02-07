@@ -21,7 +21,8 @@ endif
 
 let g:deoplete#enable_at_startup = 1
 
-call deoplete#custom#var('file', 'enable_buffer_path', 1)
+call deoplete#custom#var('file', 'enable_buffer_path', v:true)
+call deoplete#custom#option('auto_refresh_delay', 300)
 
 " let g:deoplete#enable_debug = 1
 " let g:deoplete#enable_profile = 1

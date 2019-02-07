@@ -82,6 +82,8 @@ function! s:action_search_yank.func(candidates) abort
   call SearchIn(l:dir, @0)
 endfunction
 
-call unite#custom#action('directory', 'search', s:action_search)
-call unite#custom#action('directory', 'search_last', s:action_search_last)
-call unite#custom#action('directory', 'search_yank', s:action_search_yank)
+if dein#tap('unite.vim')
+  call unite#custom#action('directory', 'search', s:action_search)
+  call unite#custom#action('directory', 'search_last', s:action_search_last)
+  call unite#custom#action('directory', 'search_yank', s:action_search_yank)
+endif
