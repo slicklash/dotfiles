@@ -54,3 +54,5 @@ alias kill-docker='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q
 
 alias rce-versions="for x in \$(cat package.json | grep \\\"wix-rich | cut -d '\"' -f 2); do npm view \$x; done | grep versions"
 alias react-versions="for x in \$(cat package.json | grep \\\"react\\\" | cut -d '\"' -f 2); do npm view \$x; done | grep versions"
+
+alias rgni='rg --no-ignore'

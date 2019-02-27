@@ -7,8 +7,6 @@ augroup filetype_js_ts
   autocmd FileType * call s:ft_js_ts()
 augroup END
 
-autocmd BufRead,BufNewFile .eslintrc set filetype=json
-
 function! s:ft_js_ts() abort
   if &filetype !~? '\(javascript\|typescript\)'
     return
@@ -26,7 +24,8 @@ function! s:ft_js_ts() abort
   elseif &filetype =~? 'typescript'
     setlocal filetype=typescript.tsx
     setlocal formatexpr=
-    setlocal formatprg=prettier\ --stdin\ --parser\ typescript
+    setlocal formatprg=prettier\ --stdin\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5
+    syntax keyword typescriptSpecMethod describe it context test expect nextgroup=typescriptFuncCallArg
   endif
 
 endfunction

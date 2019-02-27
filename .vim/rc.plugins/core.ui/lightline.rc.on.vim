@@ -114,8 +114,12 @@ function! MyMode()
 endfunction
 
 function! MyLintInfo() abort
-  if !exists('*ale#Lint')
+  if !exists('*ale#Env')
     return ''
+  endif
+
+  if ale#engine#IsCheckingBuffer(bufnr(''))
+    return 'checking...'
   endif
 
   let l:counts = ale#statusline#Count(bufnr(''))

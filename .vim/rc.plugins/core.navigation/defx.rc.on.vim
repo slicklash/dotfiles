@@ -62,7 +62,7 @@ function! MyDefxOpenCommand(cmd, path)
       let winnr = reverse(filter(winnrs, '!s:is_ignore_window(v:val)'))[0]
       " execute printf('%swincmd w', winnr)
       execute printf('wincmd h')
-      execute printf('%s %s', a:cmd, a:path)
+      execute printf('noswapfile %s %s', a:cmd, a:path)
       return
     endif
     let [_, winnr] = choosewin#start(
@@ -70,7 +70,7 @@ function! MyDefxOpenCommand(cmd, path)
           \ { 'auto_choose': 1, 'hook_enable': 0 }
           \ )
     execute printf('%swincmd w', winnr)
-    execute printf('%s %s', a:cmd, a:path)
+    execute printf('noswapfile %s %s', a:cmd, a:path)
     " can't find suitable buffer.
     " execute printf('edit %s', a:path)
   endfunction

@@ -30,7 +30,7 @@ options word
 
 snippet for
 options head
-  for (var ${1:i} = 0; $1 < ${2:#:things}.length; $1++) {
+  for (let ${1:i} = 0; $1 < ${2:#:thing}; $1++) {
     ${0:TARGET}
   }
 
@@ -226,3 +226,14 @@ options head
 snippet cr
 options head
     const ${1} = require('${0}');
+
+snippet req
+    require('${0}');
+
+# benchmarking
+snippet perf
+    import { performance } from 'perf_hooks';
+
+    let t0 = performance.now();
+    console.log((performance.now() - t0) + ' milliseconds.')
+

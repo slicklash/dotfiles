@@ -17,6 +17,9 @@ function! s:tmux_exec() abort
   elseif &filetype =~ 'javascript'
     map <Leader>e :execute 'silent !tmux send-keys -t left node\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
     map <Leader>E :execute 'silent !tmux send-keys -t left node\ --inspect-brk\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
+  elseif &filetype =~ 'typescript'
+    map <Leader>e :execute 'silent !tmux send-keys -t left ts-node\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
+    map <Leader>E :execute 'silent !tmux send-keys -t left ts-node\ --inspect-brk\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
   endif
 endfunction
 

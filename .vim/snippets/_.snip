@@ -136,3 +136,9 @@ alias sqprop
     sonar.projectName=${2}
     sonar.projectVersion=1.0
     sonar.sources=${3:src}${0}
+
+snippet bit_hacks
+    test   : (x & (1 << n)) != 0
+    set    : (x | (1 << n))
+    clear  : (x & ~(1 << n))
+    toggle : x ^ (1 << n))

@@ -342,11 +342,46 @@ hi! link typescriptFuncKeyword Keyword
 hi! link typescriptReserved PreProc
 hi! link typescriptImport PreProc
 hi! link typescriptExport PreProc
+hi! link typescriptArrayMethod Function
+hi! link typescriptArrayStaticMethod Function
+hi! link typescriptArrowFuncArg Arg
+hi! link typescriptBOMHistoryMethod Function
+hi! link typescriptBOMNavigatorMethod Function
+hi! link typescriptBOMNavigatorProp Function
+hi! link typescriptBOMWindowMethod Function
+hi! link typescriptCacheMethod Function
 hi! link typescriptCall Arg
+hi! link typescriptConsoleMethod Function
+hi! link typescriptDOMDocMethod Function
+hi! link typescriptDOMEventMethod Function
+hi! link typescriptDateMethod Function
+hi! link typescriptDateStaticMethod Function
+hi! link typescriptES6MapMethod Function
+hi! link typescriptES6SetMethod Function
 hi! link typescriptFuncTypeArrow Keyword
+hi! link typescriptFunctionMethod Function
+hi! link typescriptGeolocationMethod Function
+hi! link typescriptGlobal Keyword
+hi! link typescriptGlobalMethod Function
+hi! link typescriptHeadersMethod Function
+hi! link typescriptJSONStaticMethod Function
+hi! link typescriptMathStaticMethod Function
+hi! link typescriptNumberMethod Function
+hi! link typescriptNumberStaticMethod Function
+hi! link typescriptObjectMethod Function
+hi! link typescriptObjectStaticMethod Function
+hi! link typescriptPromiseMethod Function
+hi! link typescriptPromiseStaticMethod Function
+hi! link typescriptReflectMethod Function
+hi! link typescriptRegExpMethod Function
+hi! link typescriptSpecMethod Function
+hi! link typescriptStringMethod Function
+hi! link typescriptStringStaticMethod Function
 hi! link typescriptTypeReference Function
 call s:hi('typescriptPropertySignature', s:color.DARKPURPLE, '', '')
 call s:hi('typescriptPredefinedType', s:color.GREY, '', '')
+call s:hi('typescriptObjectLabel', s:color.DARKPURPLE, '', '')
+call s:hi('typescriptComputedPropertyName', s:color.VIOLET, '', '')
 
 
 hi! link cssClassName Normal

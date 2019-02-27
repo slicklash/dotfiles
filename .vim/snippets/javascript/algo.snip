@@ -1,0 +1,97 @@
+snippet n8
+abbr neighbours
+options head
+  const point = (x, y) => ({ x, y, key: `${x},${y}` });
+  // prettier-ignore
+  const deltas = [ [-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1] ];
+  // const deltas = [ [0, -1], [-1, 0], [1, 0], [0, 1] ];
+  const neighbours = map => ({ x, y }) =>
+    deltas.reduce(
+      (acc, [dx, dy]) => {
+        const pos = point(x + dx, y + dy);
+        map.has(pos.key) && acc.push(pos);
+        return acc;
+      },
+      [] as any
+    );
+
+snippet heapq
+options head
+  function heapPush(heap, item, compare = (a, b) => a[0] < b[0]) {
+    heap.push(item);
+    shiftParents(heap, compare, heap.length - 1);
+  }
+
+  function heapPop(heap, compare = (a, b) => a[0] < b[0]) {
+    const last = heap.pop();
+    if (!heap.length) {
+      return last;
+    }
+    const item = heap[0];
+    heap[0] = last;
+    shiftChildren(heap, compare, 0);
+    return item;
+  }
+
+  function shiftParents(heap, compare, pos) {
+    const newItem = heap[pos];
+    while (pos > 0) {
+      const parentPos = (pos - 1) >> 1;
+      const parentItem = heap[parentPos];
+      if (compare(newItem, parentItem)) {
+        heap[pos] = parentItem;
+        pos = parentPos;
+        continue;
+      }
+      break;
+    }
+    heap[pos] = newItem;
+  }
+
+  function shiftChildren(heap, compare, pos) {
+    const newItem = heap[pos];
+    let childPos = 2 * pos + 1;
+    while (childPos < heap.length) {
+      const rightPos = childPos + 1;
+      if (rightPos < heap.length && !compare(heap[childPos], heap[rightPos])) {
+        childPos = rightPos;
+      }
+      heap[pos] = heap[childPos];
+      pos = childPos;
+      childPos = 2 * pos + 1;
+    }
+    heap[pos] = newItem;
+    shiftParents(heap, compare, pos);
+  }
+
+snippet A*
+options head
+  export const astar = (map, start, finish) => {
+    const distanceToFinish = distanceTo(finish);
+    const getNeighbours = neighbours(map);
+    const getCost = ({ key }): number => COSTS[map.get(key)];
+    const costFromStart = { [start.key]: 0 };
+    const previous = {};
+    const getPath = pos =>
+      pos.key === start.key ? [] : [...getPath(previous[pos.key]), pos];
+    const queue = [[0, start]];
+    while (queue.length) {
+      const [_, pos] = heapPop(queue);
+      if (pos.key === finish.key) {
+        return { cost: costFromStart[pos.key], path: getPath(pos) };
+      }
+      for (const newPos of getNeighbours(pos)) {
+        const cost = costFromStart[pos.key] + getCost(newPos);
+        if (cost < (costFromStart[newPos.key] || Infinity)) {
+          heapPush(queue, [cost + distanceToFinish(newPos), newPos]);
+          costFromStart[newPos.key] = cost;
+          previous[newPos.key] = pos;
+        }
+      }
+    }
+    return { cost: Infinity, path: [] };
+  };
+
+  function distanceTo({ x, y }) {
+    return pos => Math.abs(pos.x - x) + Math.abs(pos.y - y);
+  }
