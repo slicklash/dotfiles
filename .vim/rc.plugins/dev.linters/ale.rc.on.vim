@@ -17,6 +17,7 @@ let g:ale_sign_column_always = 1
 let g:ale_lint_delay = 300
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
+let g:ale_ignore_2_4_warnings = 1
 
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
@@ -42,7 +43,7 @@ let g:ale_linters = {
 \   'python': ['pylint'],
 \}
 
-let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name'
+let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --extension-pkg-whitelist=cv2'
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'

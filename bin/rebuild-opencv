@@ -1,0 +1,38 @@
+#!/bin/sh
+set -e
+
+echo "[+] Rebuilding opencv..."
+# TODO apt packages
+
+_cwd="$PWD"
+
+SRC=~/code/opencv
+SRC_CONTRIB=~/code/opencv_contrib
+
+FEAT=
+FEAT="$FEAT -D CMAKE_BUILD_TYPE=RELEASE"
+FEAT="$FEAT -D WITH_TBB=ON"
+FEAT="$FEAT -D WITH_V4L=ON"
+FEAT="$FEAT -D WITH_QT=ON"
+FEAT="$FEAT -D WITH_OPENGL=ON"
+# FEAT="$FEAT -D OPENCV_EXTRA_MODULES_PATH=$SRC_CONTRIB"
+
+test -d $SRC || {
+    echo "No sources found. cloning ..." 1>&2
+    git clone https://github.com/opencv/opencv $SRC 1>&2
+    git clone https://github.com/opencv/opencv_contrib $SRC_CONTRIB 1>&2
+}
+
+cd $SRC
+git pull
+cd $SRC_CONTRIB
+git pull
+
+[ -d $SRC/build ] && rm -rf $SRC/build
+mkdir $SRC/build
+cd $SRC/build
+cmake $FEAT ..
+make -j4
+sudo make install
+
+cd $_cwd

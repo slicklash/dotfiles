@@ -1,25 +1,31 @@
 snippet     mdis
 abbr        Manhattan distance
 options     head
-    def distance(p1, p2):
-        return sum(abs(a - b) for a, b in zip(p1, p2))
+	def distance(p1, p2):
+		return sum(abs(a - b) for a, b in zip(p1, p2))
+
+snippet     edis
+abbr        Euclidean distance
+options     head
+	def distance(p1, p2):
+		return sum((a - b) ** 2 for a, b in zip(p1, p2)) ** 0.5
 
 snippet     ccg
 abbr        Graph: Connected Components
-    def connected_component_subgraphs(graph):
-        visited = set()
-    ${0}#     def subgraph(node, visited):
-    #         visited.add(node)
-    #         connected = [node]
-    #         for neighbour in graph[node]:
-    #             if not neighbour in visited:
-    #                 connected.extend(subgraph(neighbour, visited))
-    #         return connected
-    #     return [subgraph(n, visited) for n in graph if not n in visited]
+	def connected_component_subgraphs(graph):
+		visited = set()
+		def subgraph(node, visited):
+			visited.add(node)
+			connected = [node]
+			for neighbour in graph[node]:
+				if not neighbour in visited:
+					connected.extend(subgraph(neighbour, visited))
+			return connected
+		return [subgraph(n, visited) for n in graph if not n in visited]
 
 snippet     mmb
 abbr        Grid: Bounds
-    #b = (inf, inf, -inf, -inf)
-    #for x, y in grid:
-    #    b = (min(y, b[0]), min(x, b[1]), max(y, b[2]), max(x, b[3]))
-    #return grid, Bounds(*b)
+	b = (inf, inf, -inf, -inf)
+	for x, y in grid:
+	    b = (min(y, b[0]), min(x, b[1]), max(y, b[2]), max(x, b[3]))
+	return grid, Bounds(*b)

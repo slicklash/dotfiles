@@ -38,12 +38,12 @@ function! s:get_rg_options(ignore)
   return l:rg_options
 endfunction
 
-call denite#custom#alias('source', 'file_rec/config', 'file_rec')
-call denite#custom#alias('source', 'file_rec/zsh', 'file_rec')
-call denite#custom#alias('source', 'file_rec/all', 'file_rec')
+call denite#custom#alias('source', 'file_rec/config', 'file/rec')
+call denite#custom#alias('source', 'file_rec/zsh', 'file/rec')
+call denite#custom#alias('source', 'file_rec/all', 'file/rec')
 
 if executable('rg')
-  call denite#custom#var('file_rec', 'command', s:get_rg_options(['.git', 'node_modules', 'target', 'dist']))
+  call denite#custom#var('file/rec', 'command', s:get_rg_options(['.git', '__pycache__', 'node_modules', 'target', 'dist']))
   call denite#custom#var('file_rec/config', 'command', s:get_rg_options(['.denite', '.cache', 'cache', 'repos', '.dein']))
 
   call denite#custom#var('grep', 'command', ['rg'])
@@ -60,14 +60,14 @@ nnoremap <Space>B :Denite -buffer-name=buffer buffer -matchers=matcher_substring
 nnoremap <Space>b :Denite -buffer-name=buffer buffer<CR>
 nnoremap <Space>R :Denite -buffer-name=mru -statusline=false file_mru -matchers=matcher_substring<CR>
 nnoremap <Space>r :Denite -buffer-name=mru -statusline=false file_mru<CR>
-nnoremap <Space>F :Denite -buffer-name=files file_rec -matchers=matcher_substring<CR>
-nnoremap <Space>f :Denite -buffer-name=files file_rec<CR>
+nnoremap <Space>F :Denite -buffer-name=files file/rec -matchers=matcher_substring<CR>
+nnoremap <Space>f :Denite -buffer-name=files file/rec<CR>
 nnoremap <Space>/ :Denite -buffer-name=grep -no-quit -direction=botright grep<CR>
-nnoremap <Space>D :DeniteBufferDir -buffer-name=dir file_rec -matchers=matcher_substring<CR>
-nnoremap <Space>d :DeniteBufferDir -buffer-name=dir file_rec<CR>
+nnoremap <Space>D :DeniteBufferDir -buffer-name=dir file/rec -matchers=matcher_substring<CR>
+nnoremap <Space>d :DeniteBufferDir -buffer-name=dir file/rec<CR>
 nnoremap <Space>h :Denite -buffer-name=help help<CR>
 
-nnoremap <Space>a :Denite -buffer-name=communities file_rec:~/code/app-market/communities<CR>
+nnoremap <Space>a :Denite -buffer-name=communities file/rec:~/code/app-market/communities<CR>
 nnoremap <Space>A :Denite -buffer-name=communities -direction=botright grep:~/code/app-market/communities<CR>
 
 nnoremap <Leader>fd :Denite -buffer-name=grepl -direction=botright grep:::`expand('<cword>')`<CR>

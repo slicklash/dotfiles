@@ -2,11 +2,26 @@
 
 snippet     #!
 abbr        #!/usr/bin/env python3
-alias       shebang
+alias       Shebang: Header only
 options     head
     #!/usr/bin/env python3
     # -*- coding: utf-8 -*-
     ${0}
+
+snippet #!!
+alias       Shebang: Full
+alias       NN
+options     head
+	#!/usr/bin/env python3
+	# -*- coding: utf-8 -*-
+
+
+	def main():
+		${0:pass}
+
+
+	if __name__ == '__main__':
+		main()
 
 snippet     ifmain
 abbr        if __name__ == '__main__': ...
@@ -141,6 +156,12 @@ abbr        def method(self, ...): ...
 options     head
     def ${1:#:name}(self, ${2}):
         ${0:pass}
+
+# lists
+
+snippet    flat
+abbr       List: Flatten
+    list(chain(*${1:list2d}))${0}
 
 # files
 

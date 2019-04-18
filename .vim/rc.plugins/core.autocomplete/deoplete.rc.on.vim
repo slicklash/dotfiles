@@ -5,12 +5,13 @@ if InitStep() == 0
     cquit
   endif
   try
-    python3 import neovim
+    python3 import pynvim
   catch
     echo 'Error while processing ' . resolve(expand('<sfile>:p'))
-    echo 'Error: missing python3 package [neovim]'
+    echo 'Error: missing python3 package [pynvim]'
     cquit
   endtry
+  " call dein#add('Shougo/deoplete.nvim', { 'rev': '04ea0412e28926491f4f5d74acaae094901d3c4a' })
   call dein#add('Shougo/deoplete.nvim')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')

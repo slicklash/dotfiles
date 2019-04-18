@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+if [ -z "$2" ]; then
+    echo "Usage: $(basename $0) <window name> <keys>"
+    echo '  e.g. "Mozilla Firefox" "CTRL+R"'
+    return 1
+fi
+
+browser_windows="$(xdotool search --sync --all --onlyvisible --name $1)"
+
+for bw in $browser_windows; do
+    xdotool key --window "$bw" "$2"
+done

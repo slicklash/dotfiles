@@ -24,6 +24,7 @@ autoload -U zmv
 alias mmv='noglob zmv -W'
 
 alias vi='vim'
+alias vx='vim -c Vinarise'
 
 alias tmux='tmux -2'
 
@@ -56,3 +57,5 @@ alias rce-versions="for x in \$(cat package.json | grep \\\"wix-rich | cut -d '\
 alias react-versions="for x in \$(cat package.json | grep \\\"react\\\" | cut -d '\"' -f 2); do npm view \$x; done | grep versions"
 
 alias rgni='rg --no-ignore'
+alias klr='killall redis-server'
+alias kln='killall node'

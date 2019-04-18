@@ -1,0 +1,27 @@
+snippet httpg
+alias   HG
+abbr    HTTP: GET
+	import http.client
+
+	def get():
+		URL = 'www.google.com'
+		PATH = '/pathname?query=1'
+		HEADERS = {'Cookie': ''}
+		conn = http.client.HTTPConnection(URL)
+		conn.request('GET', PATH, '', HEADERS)
+		return conn.getresponse().read().decode('utf-8')
+
+snippet httpp
+alias   HP
+abbr    HTTP: POST
+	import http.client
+	import urllib
+
+	def post():
+		URL = 'www.google.com'
+		PATH = '/pathname?query=1'
+		HEADERS = {'Cookie': '', 'Content-type': 'application/x-www-form-urlencoded'}
+		conn = http.client.HTTPConnection(URL)
+		data = urllib.parse.urlencode({'submit': '1'})
+		conn.request('POST', PATH, data, HEADERS)
+		return conn.getresponse().read().decode('utf-8')
