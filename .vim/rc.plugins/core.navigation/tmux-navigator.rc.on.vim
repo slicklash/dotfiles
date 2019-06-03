@@ -23,3 +23,6 @@ function! s:tmux_exec() abort
   endif
 endfunction
 
+function! MapMocha() abort
+  nnoremap <Leader>e :execute 'silent !tmux send-keys -t left npx\ nyc\ -r\ html\ mocha\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
+endfunction

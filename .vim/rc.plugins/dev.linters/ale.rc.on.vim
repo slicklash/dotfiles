@@ -140,3 +140,5 @@ endfunction
 
 nnoremap <silent> <Leader>x :ALEFix<CR>
 nnoremap <silent> <Leader>l :call LintProject()<CR>
+nnoremap <silent> ]w :ALENextWrap<CR>
+nnoremap <silent> [w :ALEPreviousWrap<CR>

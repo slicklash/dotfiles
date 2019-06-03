@@ -425,16 +425,16 @@ hi! link vimfilerMarkedFile Special
 hi! link vimfilerROFile Normal
 
 " defx
-call s:hi('Defx_filename_directory', s:color.BLUE, '', '')
-call s:hi('Defx_filename_directory_icon', s:color.BLUE, '', '')
-call s:hi('Defx_mark_directory', s:color.BLUE, '', '')
-call s:hi('Defx_filename_1_directory', s:color.BLUE, '', '')
-call s:hi('Defx_filename_1_directory_icon', s:color.BLUE, '', '')
-call s:hi('Defx_mark_1_directory', s:color.BLUE, '', '')
+" call s:hi('Defx_filename_directory', s:color.BLUE, '', '')
+" call s:hi('Defx_filename_directory_icon', s:color.BLUE, '', '')
+" call s:hi('Defx_mark_directory', s:color.BLUE, '', '')
+" call s:hi('Defx_filename_1_directory', s:color.BLUE, '', '')
+" call s:hi('Defx_filename_1_directory_icon', s:color.BLUE, '', '')
+" call s:hi('Defx_mark_1_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename_3_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename_3_directory_icon', s:color.BLUE, '', '')
 call s:hi('Defx_mark_3_directory', s:color.BLUE, '', '')
-" call s:hi('Defx_filename', s:color.BLUE, '', '')
+call s:hi('Defx_filename', s:color.BLUE, '', '')
 
 " Syntastic
 

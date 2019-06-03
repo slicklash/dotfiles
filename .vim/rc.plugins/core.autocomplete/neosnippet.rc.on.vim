@@ -47,3 +47,8 @@ else
 endif
 
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+augroup filetype_snipp
+  autocmd!
+  autocmd FileType neosnippet setlocal noexpandtab
+augroup END

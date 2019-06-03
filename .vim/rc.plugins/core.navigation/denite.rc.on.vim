@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('Shougo/denite.nvim')
+  call dein#add('Shougo/denite.nvim', { 'rev': 'eaf26778d5e54eb847349ce978c1a59d4cdec12f' })
   let g:denite_source_menu_menus = {}
   finish
 endif
