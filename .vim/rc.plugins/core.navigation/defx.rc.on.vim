@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 if InitStep() == 0
   if !has('python3')
     echo 'Error while processing ' . resolve(expand('<sfile>:p'))
@@ -11,7 +13,8 @@ if InitStep() == 0
     echo 'Error: missing python3 package [pynvim]'
     cquit
   endtry
-  call dein#add('Shougo/defx.nvim')
+  " call dein#add('Shougo/defx.nvim')
+  call dein#add('Shougo/defx.nvim', { 'rev': '8e53802a2691f8629ae08aca970595b6522aca46' })
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
@@ -19,19 +22,17 @@ if InitStep() == 0
   finish
 endif
 
-call defx#custom#column('filename', {
+call defx#custom#column('icon', {
       \ 'directory_icon': '▸',
       \ 'opened_icon': '▾',
       \ 'root_icon': ' ',
       \ })
-" set noautochdir
-scriptencoding utf-8
-" let g:loaded_netrwPlugin = 1
+
 call defx#custom#column('mark', {
-      \ 'directory_icon': '▸',
       \ 'readonly_icon': '✗',
       \ 'selected_icon': '✓',
       \ })
+
 " let g:vimfiler_ignore_pattern =
       " \ '^\%(\.git\|\.idea\|\.DS_Store\|\.vagrant\|.stversions\|.ropeproject\|.*\.js.map'
       " \ .'\|node_modules\|.*\.pyc\|.*\.egg-info\|__pycache__\)$'

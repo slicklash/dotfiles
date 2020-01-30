@@ -30,7 +30,6 @@ FEAT="$FEAT --enable-gui=gtk2"
 
 CFLAGS="-g -I/usr/include/lua5.3"
 
-
 test -d $SRC || {
     echo "No Vim sources found. Cloning ..." 1>&2
     git clone https://github.com/vim/vim/ $SRC 1>&2

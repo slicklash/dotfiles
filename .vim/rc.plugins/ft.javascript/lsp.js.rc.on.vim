@@ -20,12 +20,20 @@ function! s:ft_js_ts() abort
 
   if &filetype =~? 'javascript'
     setlocal filetype=javascript.jsx
-    setlocal formatprg=prettier\ --stdin\ --parser\ babylon
+    setlocal formatprg=prettier\ --stdin\ --parser\ babel
   elseif &filetype =~? 'typescript'
     setlocal filetype=typescript.tsx
     setlocal formatexpr=
     setlocal formatprg=prettier\ --stdin\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5
+    " syntax clear typescriptParamImpl
+    " syntax match  javaScriptTemplateDelim    "\${\|}" contained
+    " syntax region javaScriptTemplateVar      start=+${+ end=+}+                        contains=javaScriptTemplateDelim keepend
+    " syntax region javaScriptTemplateString   start=+`+  skip=+\\\(`\|$\)+  end=+`+     contains=javaScriptTemplateVar,javaScriptSpecial keepend
+    " syn clear typescriptObjectLabel
+    " syn clear typescriptObjectLiteral
     syntax keyword typescriptSpecMethod describe it context test expect nextgroup=typescriptFuncCallArg
+    " syntax cluster props add=typescriptSpecMethod
+     " HiLink typescriptDOMDocMethod Keyword
   endif
 
 endfunction

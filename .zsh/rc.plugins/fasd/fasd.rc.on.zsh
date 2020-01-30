@@ -10,7 +10,6 @@ if [ $commands[fasd] ]; then
   unset fasd_cache
 
   alias v="f -e $EDITOR"
-  alias o='a -e open_command'
 
   z() {
     [ $# -gt 0 ] && fasd_cd -d "$*" && return

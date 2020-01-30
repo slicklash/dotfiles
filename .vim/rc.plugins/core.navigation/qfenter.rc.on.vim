@@ -54,6 +54,19 @@ function! QFSort()
   call setqflist(sort(getqflist(), 's:cmp'))
 endfunction
 
+function! QFSave() abort
+  let l:qf = getqflist({'all': 1})
+  for i in range(len(l:qf.items))
+    let d = l:qf.items[i]
+    if bufexists(d.bufnr)
+      let d.filename = fnamemodify(bufname(d.bufnr), ':p')
+    endif
+    silent! call remove(d, 'bufnr')
+    let l:qf.items[i] = d
+  endfor
+  return l:qf
+endfunction
+
 augroup my_qf
   autocmd! my_qf
   autocmd FileType qf nnoremap <silent> <buffer> dd :call RemoveQFItem()<cr>

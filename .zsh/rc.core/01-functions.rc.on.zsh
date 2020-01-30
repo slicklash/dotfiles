@@ -10,6 +10,11 @@ function cbdir {
 
 function gi() { curl https://www.gitignore.io/api/$@ ; }
 
+function xsb() {
+  [[ "$#" != 1  ]] && return 1
+  x-seen-by $1 | sed 's/,/\n/g'
+}
+
 _gitignireio_get_command_list() {
   curl -s https://www.gitignore.io/api/list | tr "," "\n"
 }

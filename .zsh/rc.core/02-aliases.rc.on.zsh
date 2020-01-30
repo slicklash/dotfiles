@@ -59,3 +59,5 @@ alias react-versions="for x in \$(cat package.json | grep \\\"react\\\" | cut -d
 alias rgni='rg --no-ignore'
 alias klr='killall redis-server'
 alias kln='killall node'
+
+alias o='xdg-open'

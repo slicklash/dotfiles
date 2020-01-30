@@ -72,3 +72,15 @@ options head
       next(action);
   }
 
+
+snippet chpp
+abbr Changed props
+  componentWillReceiveProps(nextProps) {
+    Object.keys(nextProps)
+      .filter(key => {
+        return nextProps[key] !== this.props[key];
+      })
+      .map(key => {
+        console.log('changed property:', key, 'from', this.props[key], 'to', nextProps[key]);
+      });
+  }

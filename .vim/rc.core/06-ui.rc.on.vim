@@ -9,6 +9,7 @@ set showmatch matchtime=2                   " show matching parentheses/brackets
 set laststatus=2                            " always show statusline
 
 set cursorline
+set cursorlineopt=screenline
 augroup win_switch
     autocmd!
     autocmd WinLeave * if &ft!='vimfiler' | setlocal nocursorline | endif
