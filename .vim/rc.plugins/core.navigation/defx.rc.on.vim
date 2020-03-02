@@ -63,8 +63,7 @@ function! s:is_ignore_special_windows(winnr) abort
 endfunction
 
 function! MyDefxOpenCommand(cmd, path) abort
-    let winnr = v:false
-    let wincmd = '%swincmd w'
+    let wincmd = ''
     let winnrs = range(1, tabpagewinnr(tabpagenr(), '$'))
     let winnrs = filter(winnrs, '!s:is_ignore_special_windows(v:val)')
 
@@ -73,11 +72,12 @@ function! MyDefxOpenCommand(cmd, path) abort
         let wincmd = 'wincmd h'
       else
         let [_, winnr] = choosewin#start(winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
+        let wincmd = printf('%swincmd w', winnr)
       endif
     endif
 
-    if winnr != v:false
-      execute wincmd =~# '%' ? printf(wincmd, winnr) : wincmd
+    if !empty(wincmd)
+      execute wincmd
     endif
     execute printf('noswapfile %s %s', a:cmd, a:path)
 
