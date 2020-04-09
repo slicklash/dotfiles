@@ -98,5 +98,7 @@ nnoremap <Space>\ :Denite -buffer-name=grep -direction=botright grep:~/code/app-
 
 nnoremap <Space>h :Denite -buffer-name=help help<CR>
 
+nnoremap <Space>a :Denite -buffer-name=communities file/rec:~/code/app-market/communities<CR>
+nnoremap <Space>A :Denite -buffer-name=communities -direction=botright grep:~/code/app-market/communities<CR>
+
 nnoremap <Leader>fd :Denite -buffer-name=grepl -direction=botright grep:::`expand('<cword>')`<CR>
-nnoremap <Leader>fa :Denite -buffer-name=grepl -direction=botright grep:~/code/app-market/communities::`expand('<cword>')`<CR>
