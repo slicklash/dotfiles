@@ -15,6 +15,11 @@ function xsb() {
   x-seen-by $1 | sed 's/,/\n/g'
 }
 
+function rc() {
+  [[ "$#" != 2  ]] && return 1
+  for x in {$1..$2}; echo $x && xfce4-screenshooter -r -s "/home/slicklash/code/pwa2/public/img/q_sign_$x.png"
+}
+
 _gitignireio_get_command_list() {
   curl -s https://www.gitignore.io/api/list | tr "," "\n"
 }

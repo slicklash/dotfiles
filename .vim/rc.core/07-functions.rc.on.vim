@@ -186,3 +186,24 @@ function! ExpandSnippet(file, snip, params) abort
     return split(l:snip, '\n')
 
 endfunction
+
+
+function! WhyBundled() abort
+    let i = 1
+    let last = line("$")
+    let lines = []
+    while i < last
+      let line = getline(i)
+      let isModule = line =~# 'MODULE'
+      if isModule || line =~# 'FILE'
+        let size = getline(i + (isModule ? 3 : 2))
+        let size = substitute(size, '^.* size: \(\d\+\).*$', '\1', '')
+        let line = printf('%04d KiB%s', size, substitute(line, 'FILE', 'FILE  ', ''))
+        call add(lines, line)
+      endif
+      let i += 1
+    endwhile
+    normal ggVGd
+    call setbufline(bufnr('%'), 1, lines)
+    sort!
+endfunction

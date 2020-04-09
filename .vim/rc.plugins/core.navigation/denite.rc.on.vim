@@ -85,14 +85,18 @@ nnoremap <Space>B :Denite -buffer-name=buffer buffer -matchers=matcher_substring
 nnoremap <Space>b :Denite -buffer-name=buffer buffer<CR>
 nnoremap <Space>R :Denite -buffer-name=mru -statusline=false file_mru -matchers=matcher_substring<CR>
 nnoremap <Space>r :Denite -buffer-name=mru -statusline=false file_mru<CR>
-nnoremap <Space>F :Denite -buffer-name=files file/rec -matchers=matcher_substring<CR>
+
 nnoremap <Space>f :Denite -buffer-name=files file/rec<CR>
-nnoremap <Space>/ :Denite -buffer-name=grep -direction=botright grep<CR>
-nnoremap <Space>D :DeniteBufferDir -buffer-name=dir file/rec -matchers=matcher_substring<CR>
+nnoremap <Space>F :Denite -buffer-name=files file/rec -matchers=matcher_substring<CR>
 nnoremap <Space>d :DeniteBufferDir -buffer-name=dir file/rec<CR>
+nnoremap <Space>D :DeniteBufferDir -buffer-name=dir file/rec -matchers=matcher_substring<CR>
+
+nnoremap <Space>a :Denite -buffer-name=files file/rec:~/code/app-market/communities<CR>
+
+nnoremap <Space>/ :Denite -buffer-name=grep -direction=botright grep<CR>
+nnoremap <Space>\ :Denite -buffer-name=grep -direction=botright grep:~/code/app-market/communities<CR>
+
 nnoremap <Space>h :Denite -buffer-name=help help<CR>
 
-nnoremap <Space>a :Denite -buffer-name=communities file/rec:~/code/app-market/communities<CR>
-nnoremap <Space>A :Denite -buffer-name=communities -direction=botright grep:~/code/app-market/communities<CR>
-
 nnoremap <Leader>fd :Denite -buffer-name=grepl -direction=botright grep:::`expand('<cword>')`<CR>
+nnoremap <Leader>fa :Denite -buffer-name=grepl -direction=botright grep:~/code/app-market/communities::`expand('<cword>')`<CR>

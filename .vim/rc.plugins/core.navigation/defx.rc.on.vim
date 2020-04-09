@@ -57,26 +57,30 @@ function! SearchLast(context) abort
   call SearchIn(l:dir, l:pattern)
 endfunction
 
-function! s:is_ignore_window(winnr) abort
+function! s:is_ignore_special_windows(winnr) abort
   let l:ignore_filtype = ['unite', 'defx', 'denite']
   return index(l:ignore_filtype, getbufvar(winbufnr(a:winnr), '&filetype')) != -1
 endfunction
 
 function! MyDefxOpenCommand(cmd, path) abort
+    let wincmd = ''
     let winnrs = range(1, tabpagewinnr(tabpagenr(), '$'))
-    if a:cmd == 'vsplit'
-      let winnr = reverse(filter(winnrs, '!s:is_ignore_window(v:val)'))[0]
-      " execute printf('%swincmd w', winnr)
-      execute printf('wincmd h')
-      execute printf('noswapfile %s %s', a:cmd, a:path)
-      return
+    let winnrs = filter(winnrs, '!s:is_ignore_special_windows(v:val)')
+
+    if len(winnrs) > 0
+      if a:cmd ==# 'vsplit'
+        let wincmd = 'wincmd h'
+      else
+        let [_, winnr] = choosewin#start(winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
+        let wincmd = printf('%swincmd w', winnr)
+      endif
     endif
-    let [_, winnr] = choosewin#start(
-          \ filter(winnrs, '!s:is_ignore_window(v:val)'),
-          \ { 'auto_choose': 1, 'hook_enable': 0 }
-          \ )
-    execute printf('%swincmd w', winnr)
+
+    if !empty(wincmd)
+      execute wincmd
+    endif
     execute printf('noswapfile %s %s', a:cmd, a:path)
+
   endfunction
 
 command! -nargs=* -range  MyDefxOpen call MyDefxOpenCommand('edit', <q-args>)
