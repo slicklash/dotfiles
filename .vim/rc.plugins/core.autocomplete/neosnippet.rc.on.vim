@@ -4,7 +4,7 @@ if InitStep() == 0
 endif
 
 let g:neosnippet#data_directory='~/.vim/cache/snippets'
-let g:neosnippet#snippets_directory='~/.vim/snippets,~/.vim/snippets/javascript,~/.vim/snippets/python'
+let g:neosnippet#snippets_directory='~/.vim/snippets,~/.vim/snippets/javascript,~/.vim/snippets/python,~/.vim/snippets/vim,~/.vim/snippets/nim'
 let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
 
 function! s:check_back_space()

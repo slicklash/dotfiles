@@ -14,6 +14,7 @@ if InitStep() == 0
         \ 'typescript.tsx': ['typescript-language-server', '--stdio'],
         \ 'javascript': ['typescript-language-server', '--stdio'],
         \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
+        \ 'nim': ['nimlsp'],
         \ }
   let g:LanguageClient_rootMarkers = {
         \ 'javascript': ['.prettierrc'],

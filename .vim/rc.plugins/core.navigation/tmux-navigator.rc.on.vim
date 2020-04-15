@@ -10,16 +10,26 @@ augroup tmux_exec
   autocmd FileType * call s:tmux_exec()
 augroup END
 
+function! _tmux_send(cmd) abort
+    let cmd = substitute(a:cmd, '%:p', expand('%:p'), '')
+    execute 'silent !tmux send-keys -t left "'.escape(cmd, '"').'" Enter'
+endfunction
+
 function! s:tmux_exec() abort
   if &filetype =~ 'python'
-    map <Leader>e :execute 'silent !tmux send-keys -t left ./'.expand('%:t').' Enter'<Bar>redraw!<C-M>
-    map <Leader>E :execute 'silent !tmux send-keys -t left pypy3\ ./'.expand('%:t').' Enter'<Bar>redraw!<C-M>
+    map <Leader>e :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
+    map <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'javascript'
-    map <Leader>e :execute 'silent !tmux send-keys -t left node\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
-    map <Leader>E :execute 'silent !tmux send-keys -t left node\ --inspect-brk\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
+    map <Leader>e :call _tmux_send('node %:p')<Bar>redraw!<C-M>
+    map <Leader>E :call _tmux_send('node --inspect-brk %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'typescript'
-    map <Leader>e :execute 'silent !tmux send-keys -t left ts-node\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
-    map <Leader>E :execute 'silent !tmux send-keys -t left ts-node\ --inspect-brk\ '.expand('%:p').' Enter'<Bar>redraw!<C-M>
+    map <Leader>e :call _tmux_send('ts-node %:p')<Bar>redraw!<C-M>
+    map <Leader>E :call _tmux_send('ts-node --inspect-brk %:p')<Bar>redraw!<C-M>
+  elseif &filetype =~ 'vim'
+    map <Leader>e :call _tmux_send('vim -N -u NONE -i NONE --cmd "source %:p" --cmd ":q"')<Bar>redraw!<C-M>
+    map <Leader>E :call _tmux_send('vim --cmd "source %:p" --cmd ":q"')<Bar>redraw!<C-M>
+  elseif &filetype =~ 'nim'
+    map <Leader>e :call _tmux_send('nim c -r --hints:off %:p')<Bar>redraw!<C-M>
   endif
 endfunction
 

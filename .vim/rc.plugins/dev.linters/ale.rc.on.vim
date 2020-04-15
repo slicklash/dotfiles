@@ -41,6 +41,7 @@ let g:ale_linters = {
 \   'json': ['jsonlint'],
 \   'vim': ['vint'],
 \   'python': ['pylint'],
+\   'nim': ['nimlsp', 'nimcheck'],
 \}
 
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --extension-pkg-whitelist=cv2'
