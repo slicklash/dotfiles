@@ -25,7 +25,7 @@ let g:ale_echo_msg_format = '[%linter%] %s'
 
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
-\   'typescript': ['tslint'],
+\   'typescript': ['eslint'],
 \   'python': ['black', 'isort'],
 \}
 
@@ -33,7 +33,7 @@ let g:ale_fixers = {
 " npm i -g eslint jsonlint htmlhint stylelint typescript
 let g:ale_linters = {
 \   'javascript': ['eslint'],
-\   'typescript': ['tsserver'],
+\   'typescript': ['eslint', 'tsserver'],
 \   'html': ['htmlhint'],
 \   'css': ['stylelint'],
 \   'scss': ['stylelint'],

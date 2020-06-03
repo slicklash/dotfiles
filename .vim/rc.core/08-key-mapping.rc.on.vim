@@ -109,4 +109,6 @@ nnoremap <silent> <leader>cf :let @+=expand('%')<CR>:call EchoHi('Copied: ' . @+
 nnoremap <silent> <leader>ct :let @+=expand('%:t')<CR>:call EchoHi('Copied: ' . @+)<CR>
 
 " alternate keyword lookup
-nnoremap <silent> <space>k :call LookupKeyword()<CR>
+nnoremap <silent> <space>k :call LookupKeyword()<CR>:redraw!<CR>
+
+nnoremap <silent> <space>o :call OpenUrlAtCursor()<CR>:redraw!<CR>

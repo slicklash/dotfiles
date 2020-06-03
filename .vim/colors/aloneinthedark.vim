@@ -401,6 +401,8 @@ hi! link phpSpecialChar Function
 hi! link vimFunction Function
 hi! link vimUserFunc Function
 
+syn keyword nimPreProc result import from
+hi! link nimPreProc PreProc
 hi! link nimBuiltin Keyword
 
 syn keyword csharpSystemValueType Uri RegexOptions Regex ArgIterator Boolean Byte Char Currency DateTime Decimal Double Guid Int16 Int32 Int64 ParamArray RuntimeArgumentHandle RuntimeFieldHandle RuntimeMethodHandle RuntimeTypeHandle SByte Single TimeSpan TypedReference UInt16 UInt32 UInt64 Void
@@ -408,9 +410,6 @@ hi! link csharpSystemValueType Type
 
 hi! link sqlKeyword Keyword
 hi! link sqlSpecial Function
-
-syn keyword nimPreProc result import from
-hi! link nimPreProc PreProc
 
 " NERDTree
 

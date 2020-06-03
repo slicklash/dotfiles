@@ -5,4 +5,4 @@ elseif !dein#tap('unite.vim')
   finish
 endif
 
-nnoremap <silent> <Space>o :Unite outline<CR>
+nnoremap <silent> <Leader>o :Unite outline<CR>

@@ -28,7 +28,13 @@ FEAT="$FEAT --with-x"
 FEAT="$FEAT --enable-xim"
 FEAT="$FEAT --enable-gui=gtk2"
 
-CFLAGS="-g -I/usr/include/lua5.3"
+CFLAGS="-I/usr/include/lua5.3"
+
+if [ $# -eq 1 ] && [ $1 = "debug" ]; then
+    CFLAGS="$CFLAGS -g -DDEBUG"
+else
+    CFLAGS="$CFLAGS -O2"
+fi
 
 test -d $SRC || {
     echo "No Vim sources found. Cloning ..." 1>&2
