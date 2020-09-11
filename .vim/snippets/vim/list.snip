@@ -1,0 +1,78 @@
+snippet reduce
+abbr    List: Reduce
+options head
+	function! s:reduce(list, fn, acc) abort
+		let acc = a:acc
+		for x in a:list
+			let acc = a:fn(acc, x)
+		endfor
+		return acc
+	endfunction
+
+snippet perm
+abbr    List: Permutation
+options head
+	function! s:permutations(xs) abort
+		let l:len = len(a:xs)
+		if l:len == 1
+			return [a:xs]
+		endif
+		let result = []
+		for i in range(l:len)
+			let rest = i == 0 ? a:xs[1:] : a:xs[:i - 1] + a:xs[i + 1:]
+			for p in s:permutations(rest)
+				call add(result, [a:xs[i]] + p)
+			endfor
+		endfor
+		return result
+	endfunction
+	${0}
+
+snippet prod
+abbr    List: Product
+options head
+	function! s:product(...) abort
+		let result = [[]]
+		for xs in a:000
+			let tmp = []
+			for r in result
+				let tmp += map(copy(xs), {_, x -> r + [x]})
+			endfor
+			let result = tmp
+		endfor
+		return result
+	endfunction
+	${0}
+
+snippet zip
+abbr    List: Zip
+options head
+	function! s:zip(...) abort
+		return map(range(min(map(copy(a:000), 'len(v:val)'))), "map(copy(a:000), 'v:val['.v:val.']')")
+	endfunction
+	${0}
+
+snippet chunks
+abbr    List: Chunks
+options head
+	function! s:chunks(xs, size) abort
+		let result = []
+			let xs = type(a:xs) == v:t_string ? split(a:xs, '\zs') : a:xs
+			for i in range(len(xs) / a:size)
+				call add(result, xs[i * a:size:(i + 1) * a:size - 1])
+			endfor
+		return result
+	endfunction
+	${0}
+
+snippet counter
+abbr    List: Counter
+options head
+	function! s:counter(xs) abort
+		let result = {}
+		for x in type(a:xs) == v:t_string ? split(a:xs, '\zs') : a:xs
+			let result[x] = get(result, x, 0) + 1
+		endfor
+		return result
+	endfunction
+	${0}

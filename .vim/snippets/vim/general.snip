@@ -1,0 +1,68 @@
+snippet     main
+alias       NN
+options     head
+	function! s:main() abort
+		${0}
+	endfunction
+
+	call s:main()
+
+snippet     fu
+abbr        function
+options     head
+	function! s:${1:main}(${2}) abort
+		${0}
+	endfunction
+
+snippet     if
+abbr        if endif
+options     head
+    if ${1:#:condition}
+      ${0}
+	endif
+
+snippet     fo
+abbr        for in endfor
+options     head
+	for ${1:#:var} in ${2:#:list}
+	  ${0}
+	endfor
+
+snippet     wh
+abbr        while endwhile
+options     head
+	while ${1:#:condition}
+	  ${0}
+	endwhile
+
+snippet     co
+abbr        copy
+options     word
+	copy(${0:list})
+
+snippet     le
+abbr        len
+	len(${0:list})
+
+snippet     rr
+abbr        range
+	range(${0})
+
+snippet     aeq
+abbr        assert_equal
+	assert_equal(${1}, ${0})
+
+snippet T
+abbr    True
+options word
+	v:true
+
+snippet F
+abbr    False
+options word
+	v:false
+
+snippet Profile
+options     head
+	profile start profile.txt
+	profile func *

@@ -19,5 +19,8 @@ alias nyoshi="npx yoshi"
 alias njest="npx jest"
 alias nmocha="npx mocha"
 alias cmocha="npx nyc -r html mocha"
+alias ct="MATCH_ENV=spec npx yoshi test"
+alias ctw="ct --watch"
+alias st="export COMMUNITIES_TEST_ENV=test-server && DEBUG='wix:*,wnp:*' npx mocha --file ./env/test/setup/tests.js --reporter mocha-env-reporter --exit --bail"
 alias neslint="npx eslint"
 alias find-pkg-locks='find . -name "package-lock.json" -not -path "*/node_modules/*"'

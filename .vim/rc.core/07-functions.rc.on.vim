@@ -57,7 +57,7 @@ function! EchoHi(msg, ...) abort
 endfunction
 
 function! OpenUrl(url) abort
-  execute 'silent !chromium-browser "' . a:url . '" > /dev/null 2>&1 &'
+  execute 'silent !firefox "' . a:url . '" > /dev/null 2>&1 &'
   redraw!
 endfunction
 
@@ -176,22 +176,44 @@ function! ExpandSnippet(file, snip, params) abort
   return split(l:snip, '\n')
 endfunction
 
-function! WhyBundled() abort
+
+function _cmp(a, b)
+  if a:a < a:b
+    return -1
+  elseif a:a == a:b
+    return 0
+  endif
+  return 1
+endfunction
+
+function! WhyBundled(...) abort
+  let sortByIndex = a:0 > 0 ? a:1 : 0
+  echo sortByIndex
   let i = 1
   let last = line("$")
-  let lines = []
+  let items = []
   while i < last
     let line = getline(i)
     let isModule = line =~# 'MODULE'
     if isModule || line =~# 'FILE'
       let size = getline(i + (isModule ? 3 : 2))
       let size = substitute(size, '^.* size: \(\d\+\).*$', '\1', '')
-      let line = printf('%04d KiB%s', size, substitute(line, 'FILE', 'FILE  ', ''))
-      call add(lines, line)
+      let name = substitute(line, ' FILE', ' FILE  ', '')
+      call add(items, [str2nr(size), name])
     endif
     let i += 1
   endwhile
+  let items = sort(items, {a, b -> _cmp(b[sortByIndex], a[sortByIndex])})
+  let items = map(items,  {_, val -> printf('%04d KiB%s', val[0], val[1])})
   normal ggVGd
-  call setbufline(bufnr('%'), 1, lines)
-  sort!
+  call setbufline(bufnr('%'), 1, items)
+endfunction
+
+function! Turbo() abort
+  setlocal synmaxcol=120
+  call deoplete#disable()
+  DisableWhitespace
+  LanguageClientStop
+  ALEDisableBuffer
+  NoMatchParen
 endfunction

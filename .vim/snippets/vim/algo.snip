@@ -1,0 +1,45 @@
+snippet lreduce
+abbr list:reduce
+options head
+	function! s:reduce(list, fn, acc) abort
+		let l:acc = a:acc
+		for l:x in a:list
+			let l:acc = a:fn(l:acc, l:x)
+		endfor
+		return l:acc
+	endfunction
+
+snippet mdist
+abbr Manhattan distance
+options head
+	function! s:distance(p1, p2) abort
+		let l:sum = 0
+		for l:i in range(len(a:p1))
+			let l:sum += abs(a:p1[l:i] - a:p2[l:i])
+		endfor
+		return l:sum
+	endfunction
+
+snippet fpath
+abbr Graph: Find path
+options head
+	function! s:find_path(graph, start, end) abort
+		let queue = [[a:start, [a:start]]]
+		let visited = {}
+		while !empty(queue)
+			let [current, path] = remove(queue, 0)
+			let visited[current] = v:true
+			for adjacent in get(a:graph, current, [])
+				if has_key(visited, adjacent)
+					continue
+				endif
+				let new_path = path + [adjacent]
+				if adjacent == a:end
+					return new_path
+				endif
+				let visited[adjacent] = v:true
+				call add(queue, [adjacent, new_path])
+			endfor
+		endwhile
+		return []
+	endfunction

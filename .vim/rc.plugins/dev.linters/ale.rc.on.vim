@@ -68,8 +68,8 @@ endif
 call ale#linter#Define('javascript', {
       \   'name': 'eslint-src',
       \   'output_stream': 'both',
-      \   'executable_callback': 'ale#handlers#eslint#GetExecutable',
-      \   'command_callback': 'GetCommand',
+      \   'executable': 'ale#handlers#eslint#GetExecutable',
+      \   'command': 'GetCommand',
       \   'callback': 'HandleErrors',
       \})
 

@@ -57,6 +57,11 @@ function! SearchLast(context) abort
   call SearchIn(l:dir, l:pattern)
 endfunction
 
+function! SearchFiles(context) abort
+  let l:dir = a:context.targets[0] . '/'
+  call denite#start([{ 'name': 'file_rec/slow','args': [l:dir]}])
+endfunction
+
 function! s:is_ignore_special_windows(winnr) abort
   let l:ignore_filtype = ['unite', 'defx', 'denite']
   return index(l:ignore_filtype, getbufvar(winbufnr(a:winnr), '&filetype')) != -1
@@ -96,8 +101,7 @@ function! s:defx_my_settings() abort
   else
     nnoremap <silent><buffer><expr> <C-_> defx#do_action('call', 'SearchLast')
   endif
-  nnoremap <silent><buffer><expr> s defx#do_action('call', 'SearchPattern')
-  nnoremap <silent><buffer><expr> s defx#do_action('call', 'SearchPattern')
+  nnoremap <silent><buffer><expr> f defx#do_action('call', 'SearchFiles')
   nnoremap <silent><buffer><expr> <CR> defx#do_action('open', 'MyDefxOpen')
   nnoremap <silent><buffer><expr> c defx#do_action('copy')
   nnoremap <silent><buffer><expr> m defx#do_action('move')

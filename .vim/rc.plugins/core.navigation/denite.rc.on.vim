@@ -66,10 +66,12 @@ endfunction
 call denite#custom#alias('source', 'file_rec/config', 'file/rec')
 call denite#custom#alias('source', 'file_rec/zsh', 'file/rec')
 call denite#custom#alias('source', 'file_rec/all', 'file/rec')
+call denite#custom#alias('source', 'file_rec/slow', 'file/rec')
 
 if executable('rg')
   call denite#custom#var('file/rec', 'command', s:get_rg_options(['.git', '__pycache__', 'node_modules', 'target', 'dist']))
   call denite#custom#var('file_rec/config', 'command', s:get_rg_options(['.denite', '.cache', 'cache', 'repos', '.dein']))
+  call denite#custom#var('file_rec/slow', 'command', s:get_rg_options(['.denite', '.cache', '.dein']))
 
   call denite#custom#var('grep', 'command', ['rg'])
   call denite#custom#var('grep', 'default_opts', ['--vimgrep', '--no-heading'])

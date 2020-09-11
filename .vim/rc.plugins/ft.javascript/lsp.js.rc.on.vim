@@ -17,14 +17,15 @@ function! s:ft_js_ts() abort
 
   setlocal shiftwidth=2
   let b:keyword_lookup_url='https://developer.mozilla.org/en-US/search?q=%s&topic=js'
+  let b:project_dir='/home/slicklash/code/app-market/communities'
 
   if &filetype =~? 'javascript'
     setlocal filetype=javascript.jsx
-    setlocal formatprg=prettier\ --stdin\ --parser\ babel
+    setlocal formatprg=prettier\ --parser\ babel\ --single-quote\ --trailing-comma\ es5
   elseif &filetype =~? 'typescript'
     setlocal filetype=typescript.tsx
     setlocal formatexpr=
-    setlocal formatprg=prettier\ --stdin\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5
+    setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5
     " syntax clear typescriptParamImpl
     " syntax match  javaScriptTemplateDelim    "\${\|}" contained
     " syntax region javaScriptTemplateVar      start=+${+ end=+}+                        contains=javaScriptTemplateDelim keepend

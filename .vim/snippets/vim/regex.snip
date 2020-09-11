@@ -1,0 +1,31 @@
+snippet     re_all
+abbr        Regex: all matchstrpos
+alias       rall
+options     word
+	function! s:match_all(str, regex) abort
+		let [result, m] = [[], ['', 0, 0]]
+		while m[1] != -1
+			let m = matchstrpos(a:str, a:regex, m[2])
+			if m[1] != -1
+				call add(result, m)
+			endif
+		endwhile
+		return result
+	endfunction
+	${0}
+
+snippet     re_nr
+abbr        Regex: all integers
+alias       rnr
+options     word
+	function! s:match_all_ints(str) abort
+		let [result, e] = [[], 0]
+		while e != -1
+			let [m, _, e] = matchstrpos(a:str, '\v-?\d+', e)
+            if e != -1
+                call add(result, str2nr(m))
+            endif
+        endwhile
+        return result
+    endfunction
+    ${0}

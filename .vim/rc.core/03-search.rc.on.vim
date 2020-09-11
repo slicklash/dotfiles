@@ -35,13 +35,27 @@ endif
 packadd cfilter
 
 " search to quickfix
-function! Grep(cword) abort
+function! Grep(cword, ...) abort
+  let l:dir = a:0 > 0 ? '"' . a:1 . '"' : ''
   let @/ = a:cword
-  execute 'silent! grep! "' . @/ . '" | copen | redraw! '
+  execute 'silent! grep! "' . @/ . '" ' . l:dir . ' | copen | redraw! '
 endfunction
+
+function! GrepInProject(...) abort
+  let l:dir = get(b:, 'project_dir')
+  if empty(l:dir)
+    call EchoHi('b:project_dir is not defined', 'ErrorMsg')
+    return
+  endif
+  call Grep(a:0 > 0 ? a:1 : '', l:dir)
+endfunction
+
 nnoremap <silent> <leader>fw :call Grep(expand('<cword>'))<cr>
 vnoremap <C-f> "hy:call Grep(@h)<cr>
-command! -nargs=+ G call Grep(<q-args>)
+nnoremap <silent> <leader>fp :call GrepInProject(expand('<cword>'))<cr>
+vnoremap <silent> <leader>fp "hy:call GrepInProject(@h)<cr>
+command! -nargs=+ GR call Grep(<q-args>)
+command! -nargs=+ GP call GrepInProject(<q-args>)
 
 " replace in quickfix files
 function! Rep(search, target) abort

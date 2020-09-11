@@ -18,6 +18,7 @@ endif
 set timeoutlen=500 ttimeoutlen=30           " mapping and key code timeout
 set ttyfast                                 " assume fast terminal connection
 set lazyredraw                              " don't update screen while executing macros
+set synmaxcol=200                           " faster syntax highlight
 
 let g:vim_dir = '~/.vim'
 

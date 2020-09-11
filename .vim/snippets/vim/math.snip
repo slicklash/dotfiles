@@ -1,0 +1,20 @@
+snippet PI
+options head
+abbr    Math: PI
+	let s:PI = acos(-1.0)
+
+snippet gcd
+abbr    Math: gcd
+options head
+	function! s:gcd(a, b) abort
+		let [a, b] = [a:a, a:b]
+		while b > 0
+			let [a, b] = [b, a % b]
+		endwhile
+		return a
+	endfunction
+
+snippet lcm
+abbr    Math: lcm
+options head
+	let s:lcm = {a, b -> a * b / s:gcd(a, b)}
