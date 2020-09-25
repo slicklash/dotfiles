@@ -217,3 +217,9 @@ function! Turbo() abort
   ALEDisableBuffer
   NoMatchParen
 endfunction
+
+function! Eslint() abort
+  setlocal makeprg=npx\ eslint\ -f\ unix\ src
+  make
+  copen
+endfunction

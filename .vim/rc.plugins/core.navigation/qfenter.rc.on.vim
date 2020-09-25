@@ -50,8 +50,21 @@ function! s:cmp(x, y)
   return bufname(a:x.bufnr) < bufname(a:y.bufnr) ? -1 : 1
 endfunction
 
-function! QFSort()
-  call setqflist(sort(getqflist(), 's:cmp'))
+function! s:cmp_text(x, y)
+  let x = split(a:x.text, '/')[-1]
+  let y = split(a:y.text, '/')[-1]
+  let x = trim(x, "';")
+  let y = trim(y, "';")
+  return x < y ? -1 : 1
+endfunction
+
+function! QFSort(...)
+  let sortBy = get(a:, 1, 'file')
+  if sortBy == 'text'
+    call setqflist(sort(getqflist(), 's:cmp_text'))
+  else
+    call setqflist(sort(getqflist(), 's:cmp'))
+  endif
 endfunction
 
 function! QFSave() abort
@@ -72,5 +85,5 @@ augroup my_qf
   autocmd FileType qf nnoremap <silent> <buffer> dd :call RemoveQFItem()<cr>
   autocmd FileType qf vnoremap <silent> <buffer> dd :call RemoveQFItems()<cr>
   autocmd FileType qf nnoremap <silent> <buffer> ,U :call QFUnique()<cr>
-  autocmd! QuickfixCmdPost * call s:QFSort()
+  autocmd! QuickfixCmdPost * call QFSort()
 augroup end
