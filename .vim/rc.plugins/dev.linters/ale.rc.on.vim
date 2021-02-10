@@ -27,13 +27,14 @@ let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'typescript': ['eslint'],
 \   'python': ['black', 'isort'],
+\   'nim':  ['nimpretty'],
 \}
 
 " pip3 install vim-vint pylint
 " npm i -g eslint jsonlint htmlhint stylelint typescript
 let g:ale_linters = {
 \   'javascript': ['eslint'],
-\   'typescript': ['eslint', 'tsserver'],
+\   'typescript': ['eslint'],
 \   'html': ['htmlhint'],
 \   'css': ['stylelint'],
 \   'scss': ['stylelint'],

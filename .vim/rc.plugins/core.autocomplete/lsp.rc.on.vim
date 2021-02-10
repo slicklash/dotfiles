@@ -9,7 +9,7 @@ if InitStep() == 0
   let g:LanguageClient_fzfContextMenu = 0
   let g:LanguageClient_serverCommands = {
         \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-        \ 'python': ['pyls'],
+        \ 'python': ['/home/slicklash/.local/bin/pyls'],
         \ 'typescript': ['typescript-language-server', '--stdio'],
         \ 'typescript.tsx': ['typescript-language-server', '--stdio'],
         \ 'javascript': ['typescript-language-server', '--stdio'],

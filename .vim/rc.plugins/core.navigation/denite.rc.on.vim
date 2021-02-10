@@ -1,5 +1,6 @@
 if InitStep() == 0
-  call dein#add('Shougo/denite.nvim')
+  " TODO: fix quickfix workflow
+  call dein#add('Shougo/denite.nvim', { 'rev': 'dde7d8099b898b7928928a963d6dcc11ce1f6b1d' })
   let g:denite_source_menu_menus = {}
   finish
 endif

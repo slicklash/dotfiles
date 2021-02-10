@@ -61,3 +61,4 @@ alias klr='killall redis-server'
 alias kln='killall node'
 
 alias o='xdg-open'
+alias open='xdg-open'

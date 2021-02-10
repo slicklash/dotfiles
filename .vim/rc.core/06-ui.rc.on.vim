@@ -9,7 +9,9 @@ set showmatch matchtime=2                   " show matching parentheses/brackets
 set laststatus=2                            " always show statusline
 
 set cursorline
-set cursorlineopt=screenline
+if !has('nvim')
+  set cursorlineopt=screenline
+endif
 augroup win_switch
     autocmd!
     autocmd WinLeave * if &ft!='vimfiler' | setlocal nocursorline | endif
@@ -18,7 +20,7 @@ augroup END
 
 if has("gui_running")
     if has("unix")
-        set guifont=DejaVu\ Sans\ Mono\ 9
+        set guifont=JetBrains\ Mono\ Semi-Light\ 12
     elseif IsWindows()
         set guifont=Consolas:h10
     endif

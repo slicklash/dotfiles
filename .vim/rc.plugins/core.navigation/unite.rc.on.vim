@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('Shougo/unite.vim')
+  call dein#add('Shougo/unite.vim', { 'rev': '5addeca429f64130d74d2f7cb8255afdb9e309d2' })
   let g:unite_source_menu_menus = {}
   finish
 endif

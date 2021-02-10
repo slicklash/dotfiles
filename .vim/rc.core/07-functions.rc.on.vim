@@ -80,12 +80,12 @@ function! OpenUrlAtCursor()
 endfunction
 
 function! LookupKeyword() abort
-  let l:url = get(b:, 'keyword_lookup_url')
-  if empty(l:url)
+  let url = get(b:, 'keyword_lookup_url')
+  if empty(url)
     call EchoHi('b:keyword_lookup_url is not defined', 'ErrorMsg')
     return
   endif
-  call OpenUrl(printf(l:url, expand('<cword>')))
+  call OpenUrl(printf(url, expand('<cword>')))
 endfunction
 
 function! _get(url, ...)
@@ -222,4 +222,92 @@ function! Eslint() abort
   setlocal makeprg=npx\ eslint\ -f\ unix\ src
   make
   copen
+endfunction
+
+function! DeleteFile() abort
+  let curline = getline('.')
+  let choice = confirm('delete ' . curline . '?', "&Yes\n&No\n&Cancel")
+  if choice != 1
+    return
+  endif
+  call delete(curline)
+  normal dd
+endfunction
+
+function! DeleteFiles() abort range
+  let start = line("'<")
+  let end = line("'>")
+  let lines = getbufline(bufnr('%'), start, end)
+  let choice = confirm('delete ' . len(lines) . ' files?', "&Yes\n&No\n&Cancel")
+  if choice != 1
+    return
+  endif
+  for fl in lines
+    call delete(fl)
+  endfor
+  normal gvd
+endfunction
+
+function! s:reduce(list, fn, acc) abort
+  let acc = a:acc
+  for x in a:list
+    let acc = a:fn(acc, x)
+  endfor
+  return acc
+endfunction
+
+function! Hist(...) abort
+  let [i, last] = [1, line('$')]
+  let [lines, items] = [[], []]
+  let hints = [
+        \'Failed to get metaSite GrpcStatusError',
+        \'SSR failed for instanceId',
+        \'method=GET',
+        \'method=HEAD' ,
+        \]
+  let max_len = s:reduce(hints, {acc, x -> max([acc, len(x)])}, 0)
+  let counter = {}
+  while i < last
+    let [line, i] = [getline(i), i + 1]
+    let skip = line !~# '2020 @'
+    if skip
+      continue
+    endif
+    let line = trim(strcharpart(line, 30))
+    if empty(line)
+      continue
+    endif
+    call add(lines, line)
+    for key in hints
+      let name = key . repeat(' ', max_len - len(key))
+      if line =~# key
+        let m = matchstrpos(line, 'status=\d\+')
+        let name .= m[1] != -1 ? ' ' . m[0] : repeat(' ', 11)
+        let m = matchstrpos(line, 'url=/[^/? ]*')
+        if m[1] != -1
+          let ssr = line =~# 'ssr=true' ? 'ssr=true ' : 'ssr=false'
+          let name .= printf(' %s %s', ssr, m[0])
+        else
+          let name .= repeat(' ', 10)
+        endif
+        let counter[name] = get(counter, name, 0) + 1
+      endif
+    endfor
+  endwhile
+  for key in keys(counter)
+    let n = counter[key]
+    call add(items, [key, n])
+  endfor
+  let items = sort(items, {a, b -> _cmp(b[1], a[1])})
+  let items = map(items, {_, val -> printf('%4d %s', val[1], trim(val[0]))})
+  call add(items, '')
+  vnew
+  call setbufline(bufnr('%'), 1, extend(items, sort(lines)))
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowarn
+endfunction
+
+function! PMarkdown()
+  execute 'silent !pandoc ' . expand('%:p') . ' -o /tmp/_pmd.html'
+  execute 'silent !firefox /tmp/_pmd.html > /dev/null 2>&1 &'
+  redraw!
 endfunction

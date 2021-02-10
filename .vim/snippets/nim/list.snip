@@ -1,0 +1,43 @@
+snippet perm
+abbrs   List: Permutation
+options     head
+	proc permutations*[T](xs: openArray[T]): seq[seq[T]] =
+	if xs.len() > 1:
+		let head = xs[0]
+		let tail = xs[1..^1]
+		for sub in permutations(tail):
+		for i in 0..xs.high():
+			var p = @sub
+			p.insert(@[head], i)
+			result.add(p)
+	else:
+		result.add(@xs)
+	${0}
+
+snippet permr
+abbrs   List: Permutation with repetition
+options     head
+	proc permutations*[T](xs: openArray[T], k: int, prefix: seq[T] = @[]): seq[seq[T]] =
+		if k == 1:
+			for x in xs:
+				result.add(prefix & @[x])
+			return result
+		for x in xs:
+			for p in permutations(xs, k - 1, prefix & @[x]):
+				result.add(p)
+	${0}
+
+snippet comb
+abbrs   List: Combinations
+options     head
+	proc combinations*[T](xs: openArray[T], k: int): seq[seq[T]] =
+	if k == 0:
+		return @[newSeq[T]()]
+	if xs.len() == k:
+		return @[@xs]
+	let head = xs[0]
+	let tail = xs[1..^1]
+	for c in combinations(tail, k - 1):
+		result.add(@[head] & c)
+	result = result & combinations(tail, k)
+	${0}

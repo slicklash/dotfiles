@@ -1,0 +1,91 @@
+snippet NN
+abbrs       New
+options     head
+	proc main() =
+	  ${0:echo}
+
+	when isMainModule:
+		main()
+
+snippet     ee
+abbr        echo
+alias       pp
+	echo ${0}
+
+snippet     ss
+abbr        seq[string]
+	seq[string]${0}
+
+snippet     si
+abbr        seq[int]
+	seq[int]${0}
+
+snippet ret
+abbr    return
+options word
+	return ${0}
+
+snippet res
+abbr    result
+options word
+	result${0}
+
+snippet T
+abbr    frue
+options word
+	true
+
+snippet F
+abbr    false
+options word
+	false
+
+# flow control
+
+snippet     if
+options     head
+	if ${1:#:condition}:
+		${0}
+
+snippet     ife
+abbr         if else
+options     head
+	if ${1:#:condition}:
+		${2}
+	else:
+		${0}
+
+snippet     ?:
+abbr        ternary
+	if ${1:conditon}: ${2:true} else: ${3:false}
+
+# loops
+
+snippet     for
+abbr        for ... in ...:
+options     head
+	for ${1:#:value} in ${2:#:list}:
+		${0}
+
+snippet     wh
+abbr        while ...: ...
+options     head
+    while ${1:#:condition}:
+        ${0}
+
+# procedures
+
+snippet     proc
+abbr        proc function(...): ...
+alias       fu
+options     head
+	proc ${1:#:name}(${2}): ${3:int} =
+		${0}
+
+# files
+
+snippet     file_read_lines
+abbr        File: read lines
+alias       fl
+options     word
+	lines(${0})

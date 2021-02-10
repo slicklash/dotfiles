@@ -1,0 +1,48 @@
+snippet gp
+abbr Grid: parse
+	type
+		Point = (int, int)
+		Grid = Table[Point, char]
+		GridInfo = tuple[grid: Grid, width: int, height: int]
+
+	proc parse(lines: seq[string]): (Grid, int, int) =
+		var grid: Grid
+		for x in 0..lines[0].high:
+			for y in 0..lines.high:
+				grid[(x,y)] = lines[y][x]
+		result = (grid, lines[0].high, lines.high)
+	${0}
+
+snippet gs
+abbr Grid: show
+	proc show(grid: Grid, width: int, height: int) =
+		for y in 0..height:
+			var line = newStringOfCap(width)
+			for x in 0..width:
+				line.add(grid[(x,y)])
+			echo line
+	${0}
+
+snippet d4
+abbr deltas 8
+options head
+	const Deltas = @[(-1,0), (1,0), (0,1), (0,1)]
+	${0}
+
+snippet d8
+abbr deltas 8
+options head
+	const Deltas = @[(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
+	${0}
+
+snippet n8
+abbr neighbours
+options head
+	const Deltas = @[(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
+
+	iterator neighbours[T](grid: Table[(int, int), T], x: int, y: int): T =
+		for (dx, dy) in Deltas:
+			let key = (x + dx, y + dy)
+			if grid.hasKey(key):
+				yield grid[key]
+	${0}

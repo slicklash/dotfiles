@@ -5,6 +5,21 @@ endif
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
+function! FugitiveOpenFile() abort
+  let path = expand('<cfile>')
+  if empty(path)
+    return
+  endif
+  let cwd = split(getcwd(), '/')[-1]
+  let n = stridx(path, cwd)
+  let path = strpart(path, n + len(cwd) + 1)
+  wincmd k
+  execute printf('noswapfile vsplit %s', path)
+endfunction
+
+
+autocmd FileType fugitive map E :call FugitiveOpenFile()<cr>
+
 if !dein#tap('unite.vim')
   finish
 endif

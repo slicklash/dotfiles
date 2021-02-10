@@ -15,7 +15,7 @@ if InitStep() == 0
   endtry
   " call dein#add('Shougo/defx.nvim')
   call dein#add('Shougo/defx.nvim', { 'rev': '8e53802a2691f8629ae08aca970595b6522aca46' })
-  if !has('nvim')
+  if !has('nvim') && !dein#tap('nvim-yarp')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
   endif

@@ -46,6 +46,16 @@ function! s:init_switch_definitions() abort
           \   g:switch_builtins.javascript_arrow_function,
           \   g:switch_builtins.javascript_es6_declarations,
           \ ]
+  elseif &ft == 'nim'
+    let b:switch_custom_definitions =
+          \ [
+          \   {
+          \     '\C\<var\>': 'let',
+          \     '\C\<let\>': 'var',
+          \     l:from_double: l:to_single,
+          \     l:from_single: l:to_double,
+          \   },
+          \ ]
   else
     let b:switch_custom_definitions =
           \ [

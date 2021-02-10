@@ -112,3 +112,6 @@ nnoremap <silent> <leader>ct :let @+=expand('%:t')<CR>:call EchoHi('Copied: ' . 
 nnoremap <silent> <space>k :call LookupKeyword()<CR>:redraw!<CR>
 
 nnoremap <silent> <space>o :call OpenUrlAtCursor()<CR>:redraw!<CR>
+
+nnoremap <silent> XX :call DeleteFile()<cr>
+vnoremap <silent> XX :call DeleteFiles()<cr>
