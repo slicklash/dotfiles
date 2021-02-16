@@ -10,28 +10,15 @@ function! ProfileStop()
 endfunction
 
 function! Preserve(command)
-  let l:last_view = winsaveview()
-  let l:last_search = getreg('/')
+  let last_view = winsaveview()
+  let last_search = getreg('/')
   execute 'keepjumps ' . a:command
-  call winrestview(l:last_view)
-  call setreg('/', l:last_search)
+  call winrestview(last_view)
+  call setreg('/', last_search)
 endfunction
-
-let g:show_syntax_item_in_statusline = 0
 
 function! SyntaxItem()
-  " if g:show_syntax_item_in_statusline == 1
-  return synIDattr(synID(line('.'),col('.'),1),'name') . ' |'
-  " endif
-  " return ''
-endfunction
-
-function! ToggleSyntaxItem()
-  if g:show_syntax_item_in_statusline == 0
-    let g:show_syntax_item_in_statusline=1
-  else
-    let g:show_syntax_item_in_statusline=0
-  endif
+  echo synIDattr(synID(line('.'),col('.'),1),'name')
 endfunction
 
 function! s:matchstrpos_all(str, regex) abort
@@ -46,8 +33,8 @@ function! s:matchstrpos_all(str, regex) abort
 endfunction
 
 function! EchoHi(msg, ...) abort
-  let l:hi = get(a:, 1, 'String')
-  if l:hi ==? 'ErrorMsg'
+  let hi = get(a:, 1, 'String')
+  if hi ==? 'ErrorMsg'
     echohl ErrorMsg
   else
     echohl String
@@ -88,94 +75,58 @@ function! LookupKeyword() abort
   call OpenUrl(printf(url, expand('<cword>')))
 endfunction
 
-function! _get(url, ...)
-  let l:headers = a:0 > 0 ? { 'Authorization': 'Basic ' . webapi#base64#b64encode(a:1 . ':' . a:2) } : {}
-  redraw | echon 'GET' . a:url . '...'
-  return webapi#http#get(a:url, '', l:headers)
-endfunction
-
-function! _show(obj, ft)
-  top new
-  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowarn
-  if a:ft == 'http/json'
-    if len(a:obj.status) && a:obj.status[0] == '2' && len(a:obj.content)
-      call setline(1, a:obj.content)
-    else
-      call setline(1, string(a:obj))
-      silent %s/\v'([^']*)'/"\1"/g
-    endif
-    setlocal ft=json
-  else
-    call setline(1, string(a:obj))
-  endif
-  call JsBeautify()
-  setlocal nomodifiable
-endfunction
-
-function! _search_to_local_list(term)
-  let l:temp = expand('%')
-  if !filereadable(l:temp)
-    let l:temp = tempname()
-    exec 'w ' . l:temp
-  endif
-  let l:search = 'lvimgrep ' . a:term . ' ' . l:temp
-  exec l:search
-  exec 'lopen'
-endfunction
-
 function! ExpandSnippet(file, snip, params) abort
-  let l:file = $HOME . '/.vim/snippets/' . a:file
+  let file = $HOME . '/.vim/snippets/' . a:file
 
-  if !filereadable(l:file)
-    echoerr l:file . ' not found'
+  if !filereadable(file)
+    echoerr file . ' not found'
     return v:none
   endif
 
-  let l:lines = readfile(l:file)
-  let l:snip = []
-  let l:collect = v:false
+  let lines = readfile(file)
+  let snip = []
+  let collect = v:false
 
-  for line in l:lines
+  for line in lines
 
     if line =~ 'snippet ' . a:snip . '$'
-      let l:collect = v:true
+      let collect = v:true
       continue
-    elseif l:collect && line =~ 'snippet'
+    elseif collect && line =~ 'snippet'
       break
     endif
 
-    if l:collect
+    if collect
       if line =~ '\v^(abbr|options)' | continue | endif
       let line = strpart(line, 2)
-      let l:snip = add(l:snip, line)
+      let snip = add(snip, line)
     endif
 
   endfor
 
-  if !len(l:snip)
+  if !len(snip)
     echoerr 'Snippet "' . a:snip . '" not found'
     return v:none
   endif
 
-  let l:snip = join(l:snip, "\n")
+  let snip = join(snip, "\n")
 
-  let l:pp = insert(a:params, '')
-  let l:i = 0
+  let pp = insert(a:params, '')
+  let i = 0
 
-  while l:i < len(l:pp)
-    let l:snip = substitute(l:snip, '\v(\$\{'.l:i.'(:\h+)?\}|\$'.l:i.')', l:pp[l:i], 'g')
-    let l:i += 1
+  while i < len(pp)
+    let snip = substitute(snip, '\v(\$\{'.i.'(:\h+)?\}|\$'.i.')', pp[i], 'g')
+    let i += 1
   endwhile
 
-  let l:missing = matchstr(l:snip, '\v\$\{\d(:\h+)?\}')
-  if l:missing != ''
-    echoerr 'Missing required parameter: ' . l:missing
+  let missing = matchstr(snip, '\v\$\{\d(:\h+)?\}')
+  if missing != ''
+    echoerr 'Missing required parameter: ' . missing
     return v:none
   endif
 
-  return split(l:snip, '\n')
+  return split(snip, '\n')
 endfunction
-
 
 function _cmp(a, b)
   if a:a < a:b
@@ -304,10 +255,4 @@ function! Hist(...) abort
   vnew
   call setbufline(bufnr('%'), 1, extend(items, sort(lines)))
   setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowarn
-endfunction
-
-function! PMarkdown()
-  execute 'silent !pandoc ' . expand('%:p') . ' -o /tmp/_pmd.html'
-  execute 'silent !firefox /tmp/_pmd.html > /dev/null 2>&1 &'
-  redraw!
 endfunction

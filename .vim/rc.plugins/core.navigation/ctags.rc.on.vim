@@ -13,15 +13,15 @@ let g:gutentags_init_user_func = 'GutenTagsInit'
 
 function! GutenTagsProjectRootFinder(path) abort
   if &filetype =~ 'script'
-    let l:file = ale#path#FindNearestFile(bufnr('%'), 'package.json')
-    if !empty(l:file)
-      return fnamemodify(l:file, ':p:h')
+    let file = ale#path#FindNearestFile(bufnr('%'), 'package.json')
+    if !empty(file)
+      return fnamemodify(file, ':p:h')
     endif
   endif
   let g:gutentags_project_root_finder = ''
-  let l:path = gutentags#get_project_root(a:path)
+  let path = gutentags#get_project_root(a:path)
   let g:gutentags_project_root_finder = 'GutenTagsProjectRootFinder'
-  return l:path
+  return path
 endfunction
 
 function! GutenTagsInit(path) abort

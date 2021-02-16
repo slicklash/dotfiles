@@ -1,0 +1,28 @@
+snippet modinv
+abbr Math: Mod Inverse
+	proc modInv*(a0, m: int): int =
+		var (a, b, x0) = (a0, m, 0)
+		result = 1
+		if b == 1: return
+		while b > 0:
+			let q = a div b
+			a = a mod b
+			swap a, b
+			result = result - q * x0
+			swap x0, result
+		if a != 1:
+			raise newException(ArithmeticDefect, "inverse does not exist")
+		if result < 0: result += m
+	${0}
+
+snippet ctr
+abbr Math: Chinese Remainder Theorem
+	proc crt*(a, n: openArray[int]): int =
+		var prod = 1
+		var sum = 0
+		for x in n: prod *= x
+		for i in 0 .. n.high:
+			let p = prod div n[i]
+			sum += a[i] * modInv(p, n[i]) * p
+		result = sum mod prod
+	${0}

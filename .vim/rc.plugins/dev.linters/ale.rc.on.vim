@@ -49,10 +49,11 @@ let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ex
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'
+let g:ale_nim_nimpretty_options = '--indent:2'
 
 function! s:is_local(linter) abort
-   let l:path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)
-   return !empty(l:path)
+   let path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)
+   return !empty(path)
 endfunction
 
 if !has('gui_running')
@@ -66,81 +67,6 @@ if !has('gui_running')
   endif
 endif
 
-call ale#linter#Define('javascript', {
-      \   'name': 'eslint-src',
-      \   'output_stream': 'both',
-      \   'executable': 'ale#handlers#eslint#GetExecutable',
-      \   'command': 'GetCommand',
-      \   'callback': 'HandleErrors',
-      \})
-
-function! GetCommand(buffer) abort
-  let l:cmd=ale#handlers#eslint#GetCommand(a:buffer)
-  let l:p=match(l:cmd, '--stdin')
-  let l:cmd=strpart(l:cmd, 0, l:p)
-  return l:cmd
-endfunction
-
-let s:col_end_patterns = [
-      \   '\vParsing error: Unexpected token (.+) ?',
-      \   '\v''(.+)'' is not defined.',
-      \   '\v%(Unexpected|Redundant use of) [''`](.+)[''`]',
-      \   '\vUnexpected (console) statement',
-      \]
-
-function! HandleErrors(buffer, lines) abort
-  let l:pattern = '^\(.*\):\(\d\+\):\(\d\+\): \(.\+\) \[\(.\+\)\]$'
-  let l:parsing_pattern = '^\(.*\):\(\d\+\):\(\d\+\): \(.\+\)$'
-  let l:errors = []
-
-  for l:match in ale#util#GetMatches(a:lines, [l:pattern, l:parsing_pattern])
-    let l:text = l:match[4]
-
-    let l:obj = {
-          \   'filename': l:match[1],
-          \   'lnum': l:match[2] + 0,
-          \   'col': l:match[3] + 0,
-          \   'text': l:text,
-          \   'type': 'E',
-          \}
-
-    let l:split_code = split(l:match[5], '/')
-
-    if get(l:split_code, 0, '') is# 'Warning'
-      let l:obj.type = 'W'
-    endif
-    if !empty(get(l:split_code, 1))
-      let l:obj.code = join(l:split_code[1:], '/')
-    endif
-    for l:col_match in ale#util#GetMatches(l:text, s:col_end_patterns)
-      let l:obj.end_col = l:obj.col + len(l:col_match[1]) - 1
-    endfor
-    call add(l:errors, l:obj)
-  endfor
-
-  if !empty(l:errors)
-    lopen
-  endif
-
-  return l:errors
-endfunction
-
-function! LintProject() abort
-  try
-    let l:src = ale#path#FindNearestDirectory(bufnr('%'), 'src')
-    if empty(l:src)
-      return
-    endif
-    let b:ale_javascript_eslint_options=l:src
-    let b:ale_linters = {'javascript': ['eslint-src']}
-    ALELint
-  finally
-    unlet! b:ale_javascript_eslint_options
-    unlet! b:ale_linters
-  endtry
-endfunction
-
 nnoremap <silent> <Leader>x :ALEFix<CR>
-nnoremap <silent> <Leader>l :call LintProject()<CR>
 nnoremap <silent> ]w :ALENextWrap<CR>
 nnoremap <silent> [w :ALEPreviousWrap<CR>

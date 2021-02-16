@@ -8,23 +8,21 @@ let g:neosnippet#snippets_directory='~/.vim/snippets,~/.vim/snippets/javascript,
 let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
 
 function! s:check_back_space()
-  let l:col = col('.') - 1
-  if l:col == 0
+  let col = col('.') - 1
+  if col == 0
     return 1
-  elseif !l:col
+  elseif !col
     return 0
   endif
-  let l:char = getline('.')[l:col - 1]
-  return l:char =~ '\s' || l:char =~ '\H'
+  let char = getline('.')[col - 1]
+  return char =~# '\s' || char =~# '\H'
 endfunction
 
 function! s:is_emmet_expandable()
-  return exists('g:loaded_emmet_vim') && &ft=~'html' && emmet#isExpandable()
+  return exists('g:loaded_emmet_vim') && &filetype=~? 'html' && emmet#isExpandable()
 endfunction
 
-
 if dein#tap('neocomplete.vim')
-
   imap <expr><TAB> neosnippet#expandable_or_jumpable()
         \ ? "\<Plug>(neosnippet_expand_or_jump)"
         \ : pumvisible()

@@ -72,7 +72,7 @@ vnoremap > >gv
 " toggle problematic whitespace
 nnoremap <silent> <leader>tl :call Toggle_list()<CR>
 function! Toggle_list()
-    set list! list?
+  set list! list?
 endfunction
 
 " remove trailing whitespaces
@@ -86,10 +86,10 @@ vnoremap <leader>' c'<C-r>"'<Esc>
 
 inoremap <expr><C-Space> <C-x><C-o>
 
-if (IsWindows() || has('nvim'))
-    nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+if (has('win32') || has('nvim'))
+  nnoremap <leader>ev :vsplit $MYVIMRC<CR>
 else
-    nnoremap <leader>ev :vsplit `=resolve(expand($MYVIMRC))`<CR>
+  nnoremap <leader>ev :vsplit `=resolve(expand($MYVIMRC))`<CR>
 endif
 
 noremap <leader>ec :vsplit ~/.vim/colors/aloneinthedark.vim<CR>

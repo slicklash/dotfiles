@@ -13,13 +13,13 @@ function! s:init_switch_definitions() abort
     return
   endif
 
-  let l:from_double = '"\([^"]\+\)"'
-  let l:from_single = '''\([^'']\+\)'''
-  let l:from_backtick = '`\([^`]\+\)`'
+  let from_double = '"\([^"]\+\)"'
+  let from_single = '''\([^'']\+\)'''
+  let from_backtick = '`\([^`]\+\)`'
 
-  let l:to_single = '''\1'''
-  let l:to_double = '"\1"'
-  let l:to_backtick = '`\1`'
+  let to_single = '''\1'''
+  let to_double = '"\1"'
+  let to_backtick = '`\1`'
 
   if &ft =~ 'script'
     let b:switch_custom_definitions =
@@ -37,9 +37,9 @@ function! s:init_switch_definitions() abort
           \     'old': 'new',
           \     'enabled': 'disabled',
           \     'disabled': 'enabled',
-          \     l:from_double: l:to_single,
-          \     l:from_single: l:to_backtick,
-          \     l:from_backtick: l:to_double,
+          \     from_double: to_single,
+          \     from_single: to_backtick,
+          \     from_backtick: to_double,
           \     '\\"\(\[[^\\]\+\)\\''\([^\\]\+\)\\''\]\\"': '''\1"\2"]''',
           \   },
           \   g:switch_builtins.javascript_function,
@@ -52,8 +52,8 @@ function! s:init_switch_definitions() abort
           \   {
           \     '\C\<var\>': 'let',
           \     '\C\<let\>': 'var',
-          \     l:from_double: l:to_single,
-          \     l:from_single: l:to_double,
+          \     from_double: to_single,
+          \     from_single: to_double,
           \   },
           \ ]
   else
@@ -62,8 +62,8 @@ function! s:init_switch_definitions() abort
           \   {
           \     'enabled': 'disabled',
           \     'disabled': 'enabled',
-          \     l:from_double: l:to_single,
-          \     l:from_single: l:to_double,
+          \     from_double: to_single,
+          \     from_single: to_double,
           \   },
           \ ]
   endif

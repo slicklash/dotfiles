@@ -10,5 +10,5 @@ augroup END
 
 function! s:ft_nim() abort
   let b:keyword_lookup_url='https://nim-lang.org/docs/theindex.html\#%s'
-  setlocal formatprg=nimpretty
+  " setlocal formatprg=nimpretty\ --indent:2
 endfunction

@@ -1,6 +1,7 @@
 compdef dotfiles=git
 
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.git-dotfiles/ --work-tree=$HOME'
+alias dvim='GIT_DIR=$HOME/.git-dotfiles GIT_WORK_TREE=$HOME vim'
 
 alias ds='dotfiles status'
 alias dss='dotfiles status -s'

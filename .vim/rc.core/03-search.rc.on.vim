@@ -36,18 +36,17 @@ packadd cfilter
 
 " search to quickfix
 function! Grep(cword, ...) abort
-  let l:dir = a:0 > 0 ? '"' . a:1 . '"' : ''
+  let dir = a:0 > 0 ? '"' . a:1 . '"' : ''
   let @/ = a:cword
-  execute 'silent! grep! "' . @/ . '" ' . l:dir . ' | copen | redraw! '
+  execute 'silent! grep! "' . @/ . '" ' . dir . ' | copen | redraw! '
 endfunction
 
 function! GrepInProject(...) abort
-  let l:dir = get(b:, 'project_dir')
-  if empty(l:dir)
-    call EchoHi('b:project_dir is not defined', 'ErrorMsg')
-    return
+  let dir = get(b:, 'project_dir')
+  if empty(dir)
+    return EchoHi('b:project_dir is not defined', 'ErrorMsg')
   endif
-  call Grep(a:0 > 0 ? a:1 : '', l:dir)
+  call Grep(a:0 > 0 ? a:1 : '', dir)
 endfunction
 
 nnoremap <silent> <leader>fw :call Grep(expand('<cword>'))<cr>
@@ -64,40 +63,10 @@ endfunction
 vnoremap <C-h> "hy:cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
 nnoremap <leader>rf :cfdo %s#<C-r>/##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
 
-command! UpdateQF call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
-
 function! SearchIn(dir, ...) abort
-  let l:pattern = a:0 > 0 ? a:1 : ''
-  call denite#start([{ 'name': 'grep','args': [a:dir, '', l:pattern]}], {
-        \ 'buffer_name': 'grep',
-        \ 'direction': 'botright',
-        \ })
+  let pattern = a:0 > 0 ? a:1 : input('Pattern: ')
+  if empty(pattern)
+    return
+  endif
+  call _fzf({'grep': pattern, 'dir': a:dir})
 endfunction
-
-" vimfiler actions
-
-let s:action_search = { 'is_selectable' : 0 }
-function! s:action_search.func(candidates) abort
-  let l:dir = a:candidates.action__path . '/'
-  call SearchIn(l:dir)
-endfunction
-
-let s:action_search_last = { 'is_selectable' : 0 }
-function! s:action_search_last.func(candidates) abort
-  let l:dir = a:candidates.action__path . '/'
-  let l:pattern = substitute(@/, '^\\v', '', '')
-  let l:pattern = substitute(l:pattern, '^\\<\(.\+\)\\>$', '\1', '')
-  call SearchIn(l:dir, l:pattern)
-endfunction
-
-let s:action_search_yank = { 'is_selectable' : 0 }
-function! s:action_search_yank.func(candidates) abort
-  let l:dir = a:candidates.action__path . '/'
-  call SearchIn(l:dir, @0)
-endfunction
-
-if dein#tap('unite.vim')
-  call unite#custom#action('directory', 'search', s:action_search)
-  call unite#custom#action('directory', 'search_last', s:action_search_last)
-  call unite#custom#action('directory', 'search_yank', s:action_search_yank)
-endif

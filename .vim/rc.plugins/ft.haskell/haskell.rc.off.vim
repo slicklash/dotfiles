@@ -9,8 +9,12 @@ endif
 " hoogle
 " hdevtools
 " hlint
+" syntastic
+" tagbar
+" vim-slime
 " pointfree
 " textobj-indent
+" vim-surround
 " lushtags
 " repl.vim
 " haskell.vim
@@ -21,3 +25,8 @@ endif
 " bitc/vim-hdevtools
 " eagletmt/neco-ghc
 " Twinside/vim-hoogle
+"
+" NLKNguyen/papercolor-theme
+" morhetz/gruvbox
+"
+" PaperColor or Apprentice , both very nice themes

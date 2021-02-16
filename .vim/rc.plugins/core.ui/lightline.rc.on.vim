@@ -67,17 +67,17 @@ endfunction
 
 function! MyFugitive()
   if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#statusline")
-    let l:g = fugitive#statusline()
-    if !strlen(l:g)
+    let g = fugitive#statusline()
+    if !strlen(g)
       return ''
     endif
-    let l:g = substitute(tolower(l:g), '\v(git|[\[\]\)])', '', 'g')
-    let l:n = stridx(l:g, '(')
-    if l:n > 0
-      let l:r = strpart(l:g, 0, l:n)
-      return 'git:' . strpart(l:g, l:n + 1) . l:r
+    let g = substitute(tolower(g), '\v(git|[\[\]\)])', '', 'g')
+    let n = stridx(g, '(')
+    if n > 0
+      let r = strpart(g, 0, n)
+      return 'git:' . strpart(g, n + 1) . r
     else
-      return 'git:' . strpart(l:g, l:n + 1)
+      return 'git:' . strpart(g, n + 1)
     endif
   endif
   return ''
@@ -122,14 +122,14 @@ function! MyLintInfo() abort
     return 'checking...'
   endif
 
-  let l:counts = ale#statusline#Count(bufnr(''))
+  let counts = ale#statusline#Count(bufnr(''))
 
-  if l:counts.total == 0
+  if counts.total == 0
     return ''
   endif
 
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
+  let all_errors = counts.error + counts.style_error
+  let all_non_errors = counts.total - all_errors
 
   return printf(
         \   '✗ %d ∆ %d',

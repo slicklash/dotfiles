@@ -8,38 +8,38 @@ let s:react_comp = {
 
 function! s:react_comp.func(candidates) abort
 
-  let l:dir = a:candidates.action__path . '/'
+  let dir = a:candidates.action__path . '/'
 
   call inputsave()
-  let l:name = input('Name: ')
+  let name = input('Name: ')
   call inputrestore()
   normal :<ESC>
 
-  let l:dir .= l:name . '/'
+  let dir .= name . '/'
 
-  if isdirectory(l:dir)
+  if isdirectory(dir)
     echohl ErrorMsg | echo 'Directory already exists' | echohl None
     return
   endif
 
-  call mkdir(l:dir)
+  call mkdir(dir)
 
-  let l:ToCamelCase = {text -> join(map(split(text, '-'), {_, val -> substitute(val,'\(.*\)', '\u\1', 'g') }), '')}
+  let ToCamelCase = {text -> join(map(split(text, '-'), {_, val -> substitute(val,'\(.*\)', '\u\1', 'g') }), '')}
 
-  let l:F = { n, p -> ExpandSnippet('javascript/react.snip', n, p) }
+  let F = { n, p -> ExpandSnippet('javascript/react.snip', n, p) }
 
-  let l:component_name = l:ToCamelCase(l:name)
-  let l:files = [
-        \   ['index.js', [printf("export { default } from './%s';", l:name)]],
-        \   [l:name . '.js', l:F('rco', [l:name, l:component_name])],
-        \   [l:name . '.scss', ['.container {', '}']],
+  let component_name = ToCamelCase(name)
+  let files = [
+        \   ['index.js', [printf("export { default } from './%s';", name)]],
+        \   [name . '.js', F('rco', [name, component_name])],
+        \   [name . '.scss', ['.container {', '}']],
         \ ]
 
-  for [l:fileName, l:lines] in l:files
-    call writefile(l:lines, l:dir . l:fileName)
+  for [fileName, lines] in files
+    call writefile(lines, dir . fileName)
   endfor
 
   call vimfiler#view#_redraw_screen()
 endfunction
 
-call unite#custom#action('directory', 'new react component', s:react_comp)
+" call unite#custom#action('directory', 'new react component', s:react_comp)

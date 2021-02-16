@@ -18,9 +18,9 @@ set splitright                              " put the new window on the right of
 set diffopt+=algorithm:patience             " improved diff
 
 augroup filetype_vim
-    autocmd!
-    autocmd FileType vim setlocal keywordprg=:help sw=2
-    autocmd FileType vim if @% =~ 'vimrc' | setlocal foldmethod=marker foldlevel=0 | else | setlocal foldmethod=indent | endif
+  autocmd!
+  autocmd FileType vim setlocal keywordprg=:help sw=2
+  autocmd FileType vim if @% =~ 'vimrc' | setlocal foldmethod=marker foldlevel=0 | else | setlocal foldmethod=indent | endif
 augroup END
 
 autocmd FileType qf wincmd J                " move quickfix window to bottom

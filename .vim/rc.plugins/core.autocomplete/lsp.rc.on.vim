@@ -23,7 +23,6 @@ if InitStep() == 0
   finish
 endif
 
-
 " pip3 install python-language-server
 " pip3 install 'python-language-server[rope]'
 

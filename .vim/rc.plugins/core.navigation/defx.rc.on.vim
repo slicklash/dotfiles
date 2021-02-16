@@ -41,30 +41,30 @@ nnoremap <space>V :Defx -split=vertical -winwidth=50<CR>
 nnoremap <space>v :Defx `expand('%:p:h')` -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
 
 function! SearchPattern(context) abort
-  let l:dir = a:context.targets[0] . '/'
-  call SearchIn(l:dir)
+  let dir = a:context.targets[0] . '/'
+  call SearchIn(dir)
 endfunction
 
 function! SearchYank(context) abort
-  let l:dir = a:context.targets[0] . '/'
-  call SearchIn(l:dir, @0)
+  let dir = a:context.targets[0] . '/'
+  call SearchIn(dir, @0)
 endfunction
 
 function! SearchLast(context) abort
-  let l:dir = a:context.targets[0] . '/'
-  let l:pattern = substitute(@/, '^\\v', '', '')
-  let l:pattern = substitute(l:pattern, '^\\<\(.\+\)\\>$', '\1', '')
-  call SearchIn(l:dir, l:pattern)
+  let dir = a:context.targets[0] . '/'
+  let pattern = substitute(@/, '^\\v', '', '')
+  let pattern = substitute(pattern, '^\\<\(.\+\)\\>$', '\1', '')
+  call SearchIn(dir, pattern)
 endfunction
 
 function! SearchFiles(context) abort
-  let l:dir = a:context.targets[0] . '/'
-  call denite#start([{ 'name': 'file_rec/slow','args': [l:dir]}])
+  let dir = a:context.targets[0] . '/'
+  call _fzf({'dir': dir})
 endfunction
 
 function! s:is_ignore_special_windows(winnr) abort
-  let l:ignore_filtype = ['unite', 'defx', 'denite']
-  return index(l:ignore_filtype, getbufvar(winbufnr(a:winnr), '&filetype')) != -1
+  let ignore_filtype = ['unite', 'defx', 'denite']
+  return index(ignore_filtype, getbufvar(winbufnr(a:winnr), '&filetype')) != -1
 endfunction
 
 function! MyDefxOpenCommand(cmd, path) abort

@@ -46,32 +46,32 @@ let s:know_imports = {
 
 function! s:import() abort
 
-  let l:cw = expand('<cword>')
-  let l:known = get(s:know_imports, l:cw, v:none)
+  let cw = expand('<cword>')
+  let known = get(s:know_imports, cw, v:none)
 
-  if type(l:known) == v:t_none
+  if type(known) == v:t_none
     JsFileImport
     return
   endif
 
-  let l:last_view = winsaveview()
-  let l:last_search = getreg('/')
-  let l:l = line('.')
-  let l:c = col('.')
+  let last_view = winsaveview()
+  let last_search = getreg('/')
+  let l = line('.')
+  let c = col('.')
 
   normal gg}
 
-  if type(l:known) == v:t_string
-    let l:import = printf("import %s from '%s';", l:cw, l:known)
+  if type(known) == v:t_string
+    let import = printf("import %s from '%s';", cw, known)
   else
-    let l:import = printf("import %s from '%s';'", l:known[0], l:known[1])
+    let import = printf("import %s from '%s';'", known[0], known[1])
   endif
 
-  call setline('.', l:import)
+  call setline('.', import)
   normal o
 
-  call winrestview(l:last_view)
-  call cursor(l:l + 1, l:c)
-  call setreg('/', l:last_search)
+  call winrestview(last_view)
+  call cursor(l + 1, c)
+  call setreg('/', last_search)
 
 endfunction

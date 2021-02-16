@@ -10,37 +10,37 @@ let g:qfenter_keymap.hopen = ['<C-CR>', '<C-s>']
 let g:qfenter_keymap.topen = ['<C-t>']
 
 function! RemoveQFItems() range
-  let l:start = line("'<") - 1
-  let l:end = line("'>") - 1
-  let l:qfall = getqflist()
-  let l:pos = getpos('.')
-  call remove(l:qfall, l:start, l:end)
-  call setqflist(l:qfall, 'r')
-  call setpos('.', l:pos)
+  let start = line("'<") - 1
+  let end = line("'>") - 1
+  let qfall = getqflist()
+  let pos = getpos('.')
+  call remove(qfall, start, end)
+  call setqflist(qfall, 'r')
+  call setpos('.', pos)
 endfunction
 
 function! RemoveQFItem()
-  let l:start = line('.') - 1
-  let l:qfall = getqflist()
-  let l:pos = getpos('.')
-  call remove(l:qfall, l:start)
-  call setqflist(l:qfall, 'r')
-  call setpos('.', l:pos)
+  let start = line('.') - 1
+  let qfall = getqflist()
+  let pos = getpos('.')
+  call remove(qfall, start)
+  call setqflist(qfall, 'r')
+  call setpos('.', pos)
 endfunction
 
 function! QFUnique()
-  let l:seen = {}
-  let [l:n, l:last] = [1, line('$')]
-  while l:n <= l:last
-    let l:file = split(getline(l:n), '|')[0]
-    if !has_key(l:seen, l:file)
-      let l:seen[l:file] = l:n - 1
+  let seen = {}
+  let [n, last] = [1, line('$')]
+  while n <= last
+    let file = split(getline(n), '|')[0]
+    if !has_key(seen, file)
+      let seen[file] = n - 1
     endif
-    let l:n += 1
+    let n += 1
   endwhile
-  let l:take = sort(values(l:seen))
-  let l:qfall = filter(getqflist(), {i -> index(l:take, i) > -1})
-  call setqflist(l:qfall, 'r')
+  let take = sort(values(seen))
+  let qfall = filter(getqflist(), {i -> index(take, i) > -1})
+  call setqflist(qfall, 'r')
 endfunction
 
 function! s:cmp(x, y)
@@ -68,16 +68,16 @@ function! QFSort(...)
 endfunction
 
 function! QFSave() abort
-  let l:qf = getqflist({'all': 1})
-  for i in range(len(l:qf.items))
-    let d = l:qf.items[i]
+  let qf = getqflist({'all': 1})
+  for i in range(len(qf.items))
+    let d = qf.items[i]
     if bufexists(d.bufnr)
       let d.filename = fnamemodify(bufname(d.bufnr), ':p')
     endif
     silent! call remove(d, 'bufnr')
-    let l:qf.items[i] = d
+    let qf.items[i] = d
   endfor
-  return l:qf
+  return qf
 endfunction
 
 augroup my_qf

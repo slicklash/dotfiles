@@ -11,10 +11,8 @@ if !isdirectory(s:DEIN_DIR)
     call system('git clone https://github.com/Shougo/dein.vim.git ' . s:DEIN_DIR)
 endif
 
-let s:is_windows = has('win32') || has('win64')
-
-function! IsWindows()
-    return s:is_windows
+function! Missing(...) abort
+  return join(filter(copy(a:000), {_, val -> !executable(val)}), ' ')
 endfunction
 
 filetype off
