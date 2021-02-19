@@ -15,9 +15,11 @@ nnoremap <silent> <leader>, :silent noh<CR>
 
 " replace selection
 vnoremap <C-r> "hy:%s#<C-r>h##gc<left><left><left>
+
 " replace last yanked
 nnoremap <C-y> :%s#<C-r>0##gc<left><left><left>
 vnoremap <C-y> :s#<C-r>0##gc<left><left><left>
+
 " replace last searched
 if has('win32')
   nnoremap <C-/> :%s#<C-r>/##gc<left><left><left>
@@ -27,14 +29,13 @@ else
   vnoremap <C-_> :s#<C-r>/##gc<left><left><left>
 endif
 
+" use rg
 if executable('rg')
   set grepprg=rg\ --no-heading\ --vimgrep
   set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
-packadd cfilter
-
-" search to quickfix
+" grep to quickfix
 function! Grep(cword, ...) abort
   let dir = a:0 > 0 ? '"' . a:1 . '"' : ''
   let @/ = a:cword
@@ -62,11 +63,3 @@ function! Rep(search, target) abort
 endfunction
 vnoremap <C-h> "hy:cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
 nnoremap <leader>rf :cfdo %s#<C-r>/##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
-
-function! SearchIn(dir, ...) abort
-  let pattern = a:0 > 0 ? a:1 : input('Pattern: ')
-  if empty(pattern)
-    return
-  endif
-  call _fzf({'grep': pattern, 'dir': a:dir})
-endfunction

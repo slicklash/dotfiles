@@ -3,8 +3,6 @@ if InitStep() == 0
   finish
 endif
 
-autocmd BufReadPost fugitive://* set bufhidden=delete
-
 function! FugitiveOpenFile() abort
   let path = expand('<cfile>')
   if empty(path)
@@ -17,49 +15,10 @@ function! FugitiveOpenFile() abort
   execute printf('noswapfile vsplit %s', path)
 endfunction
 
-
 autocmd FileType fugitive map E :call FugitiveOpenFile()<cr>
+autocmd BufReadPost fugitive://* set bufhidden=delete
 
-if !dein#tap('unite.vim')
-  finish
-endif
-
-let g:unite_source_menu_menus.git = {
-      \ 'description' : 'Fugitive interface',
-      \}
-
-let g:unite_source_menu_menus.git.command_candidates = [
-      \[' git status', 'Gstatus'],
-      \[' git diff', 'Gvdiff'],
-      \[' git commit', 'Gcommit'],
-      \[' git stage/add', 'Gwrite'],
-      \[' git checkout', 'Gread'],
-      \[' git rm', 'Gremove'],
-      \[' git cd', 'Gcd'],
-      \[' git push', 'exe "!git push"'],
-      \[' git push branch', 'exe "Git! push -u origin " input("branch: ")'],
-      \[' git pull', 'exe "!git pull --rebase"'],
-      \[' git pull branch', 'exe "Git! pull " input("branch: ")'],
-      \[' git fetch', 'Gfetch'],
-      \[' git merge', 'Gmerge'],
-      \[' git browse', 'Gbrowse'],
-      \[' git head', 'Gedit HEAD^'],
-      \[' git parent', 'edit %:h'],
-      \[' git log commit buffers', 'Glog --'],
-      \[' git log current file', 'Glog -- %'],
-      \[' git log last n commits', 'exe "Glog -" input("num: ")'],
-      \[' git log first n commits', 'exe "Glog --reverse -" input("num: ")'],
-      \[' git log until date', 'exe "Glog --until=" input("day: ")'],
-      \[' git log grep commits',  'exe "Glog --grep= " input("string: ")'],
-      \[' git log pickaxe',  'exe "Glog -S" input("string: ")'],
-      \[' git index', 'exe "Gedit " input("branchname\:filename: ")'],
-      \[' git mv', 'exe "Gmove " input("destination: ")'],
-      \[' git grep',  'exe "Ggrep " input("string: ")'],
-      \[' git prompt', 'exe "Git! " input("command: ")'],
-      \]
-nnoremap <silent> <Space>g :Unite -vertical -silent -buffer-name=git menu:git<CR>
-
-nnoremap <silent> <leader>gg :Gstatus<cr>
+nnoremap <silent> <leader>gg :Git<cr>
 nnoremap <silent> <leader>gb :Gblame<CR>
 " nnoremap <silent> <leader>gk :Git push<cr>
 " nnoremap <silent> <leader>gj :Git pull<cr>

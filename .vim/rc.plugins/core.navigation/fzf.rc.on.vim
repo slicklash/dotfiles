@@ -39,6 +39,13 @@ function! _fzf(...) abort
   let ignore = get(params, 'ignore', ['.git', '__pycache__', 'node_modules', 'target', 'dist'])
   let grep = get(params, 'grep', '')
   let source = get(params, 'source', empty(grep) ? _rg(ignore, '--files') : _rg(ignore))
+  let t = get(params, 'ft')
+  if !empty(t)
+    if t == '?'
+      let t = input('Type: ')
+    endif
+    let source .= ' -t '. t
+  endif
   let options = fzf#vim#with_preview({'source': source, 'options': g:fzf_options})
   if !empty(dir)
     let options.dir = dir
@@ -51,11 +58,23 @@ function! _fzf(...) abort
   endif
 endfunction
 
+function! SearchIn(dir, ...) abort
+  let pattern = a:0 > 0 && a:1 != v:none ? a:1 : input('Pattern: ')
+  let options = get(a:000, 1, {})
+  if empty(pattern)
+    return
+  endif
+  call _fzf(extend({'grep': pattern, 'dir': a:dir}, options))
+endfunction
+
 nnoremap <Space>f :call _fzf()<CR>
+nnoremap <Space>F :call _fzf({'ft': '?'})<CR>
 nnoremap <Space>a :call _fzf({'dir': '~/code/app-market/communities/'})<CR>
+nnoremap <Space>A :call _fzf({'dir': '~/code/app-market/communities/', 'ft': '?'})<CR>
 
 nnoremap <Space>c :call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
 nnoremap <Space>z :call _fzf({'dir': '~/.zsh/'})<CR>
+nnoremap <Space>` :call _fzf({'dir': '~/'})<CR>
 
 nnoremap <Space>b :call fzf#vim#buffers('', fzf#vim#with_preview({'placeholder': "{1}", 'options': g:fzf_options}))<CR>
 
@@ -66,7 +85,8 @@ nnoremap <Space>r :call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_o
 nnoremap <Leader>fd :call _fzf({'grep': expand('<cword>')})<CR>
 nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': '~/code/app-market/communities'})<CR>
 
-nnoremap <Space>/ :Rg 
-nnoremap <Space>\ :Rgp 
 
-command! -nargs=* Rgp call _fzf({'grep': shellescape(<q-args>), 'dir': '~/code/app-market/communities'})
+nnoremap <Space>/ :call SearchIn('')<CR>
+nnoremap <Space>? :call SearchIn('', v:none, {'ft': '?'})<CR>
+nnoremap <Space>\ :call SearchIn('~/code/app-market/communities')<CR>
+nnoremap <Space>\| :call SearchIn('~/code/app-market/communities', v:none, {'ft': '?'})<CR>

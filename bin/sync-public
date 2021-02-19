@@ -8,7 +8,7 @@ function _sync() {
   rm -rf $dir/*
   for x in $white_list; do
     echo "[+] $x"
-    rsync -ar ~/$from/$x $dir
+    rsync -ar --exclude '*private*' ~/$from/$x $dir
   done
 }
 
@@ -19,7 +19,7 @@ white_list=('README.md' '.tmux.conf' '.zshrc')
 _sync
 
 from='bin/'
-white_list=('rebuild-edb' 'rebuild-opencv' 'rebuild-vim' 'fix-washed-out-colors' 'sync-public' 'xrandr' 'tmux2' 'tvim' 'xsend-keys')
+white_list=('dotfiles' 'rebuild-edb' 'rebuild-opencv' 'rebuild-vim' 'fix-washed-out-colors' 'sync-public' 'xrandr' 'tmux2' 'tvim' 'xsend-keys')
 _sync
 
 from='.vim/'

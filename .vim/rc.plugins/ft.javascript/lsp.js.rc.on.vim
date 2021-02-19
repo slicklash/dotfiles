@@ -23,6 +23,7 @@ function! s:ft_js_ts() abort
     setlocal filetype=javascript.jsx
     setlocal formatprg=prettier\ --parser\ babel\ --single-quote\ --trailing-comma\ es5
   elseif &filetype =~? 'typescript'
+    setlocal suffixesadd=.ts,.tsx,.js,.jsx
     setlocal filetype=typescript.tsx
     setlocal formatexpr=
     setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5

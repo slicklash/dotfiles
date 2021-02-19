@@ -1,4 +1,5 @@
 if InitStep() == 0
+  packadd cfilter
   call dein#add('yssl/QFEnter')
   finish
 endif

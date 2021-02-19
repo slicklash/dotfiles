@@ -1,5 +1,6 @@
 export PATH=$HOME/bin:$PATH
 # export PATH=$PATH:$HOME/.yarn/bin
+export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.nimble/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/bin/scripts
@@ -10,5 +11,8 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # export TSS_LOG="-level verbose -file $HOME/tmp/tsserver.log"
+export BAT_THEME="aloneinthedark"
 
 source $HOME/.zsh/init.zsh
+
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

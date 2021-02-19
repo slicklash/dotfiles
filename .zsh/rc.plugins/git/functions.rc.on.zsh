@@ -1,3 +1,27 @@
+function gco(){
+  if [ -z "$1" ]; then
+    git checkout "$(git branch | fzf | tr -d '[:space:]')"
+  else
+    git checkout $@
+  fi
+}
+
+function ga(){
+  if [ -z "$1" ]; then
+    git ls-files -m -o --exclude-standard | fzf -m --reverse --print0 | xargs -0 -o -t git add
+  else
+    git add $@
+  fi
+}
+
+function da(){
+  if [ -z "$1" ]; then
+    dotfiles diff --name-only --diff-filter=M | sed s#^#$HOME/# | fzf -m --reverse --print0 | xargs -0 -o -t dotfiles add
+  else
+    dotfiles add $@
+  fi
+}
+
 function git_info() {
   local br
   br=$(git_branch_name)

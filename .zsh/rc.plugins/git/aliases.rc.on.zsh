@@ -20,11 +20,8 @@ alias gpl='git pull'
 alias gp='git push'
 alias gpu='gp -u origin "$(git rev-parse --abbrev-ref HEAD)"'
 
-alias ga='git add'
-alias gad='git add'
 alias gau='git add -u'
 
-alias gco='git checkout'
 alias gco_ma='git checkout master'
 alias greset='git reset HEAD'
 alias greset_last='git reset HEAD~'
