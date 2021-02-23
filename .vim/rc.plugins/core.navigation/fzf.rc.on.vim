@@ -36,15 +36,25 @@ endfunction
 function! _fzf(...) abort
   let params = get(a:000, 0, {})
   let dir = get(params, 'dir')
-  let ignore = get(params, 'ignore', ['.git', '__pycache__', 'node_modules', 'target', 'dist'])
+  let source = get(params, 'source', '')
   let grep = get(params, 'grep', '')
-  let source = get(params, 'source', empty(grep) ? _rg(ignore, '--files') : _rg(ignore))
-  let t = get(params, 'ft')
-  if !empty(t)
-    if t == '?'
-      let t = input('Type: ')
+  let ft = get(params, 'ft')
+  if empty(ft)
+    let tmp = matchstr(grep, '--ft=.*')
+    if !empty(tmp)
+      let ft = substitute(tmp, '--ft=', '', '')
+      let grep = substitute(grep, tmp, '', '')
     endif
-    let source .= ' -t '. t
+  endif
+  if empty(source)
+    let ignore = get(params, 'ignore', ['.git', '__pycache__', 'node_modules', 'target', 'dist'])
+    let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
+    if !empty(ft)
+      if ft == '?'
+        let ft = input('Type: ')
+      endif
+      let source .= ' -t '. ft
+    endif
   endif
   let options = fzf#vim#with_preview({'source': source, 'options': g:fzf_options})
   if !empty(dir)
@@ -84,7 +94,6 @@ nnoremap <Space>r :call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_o
 
 nnoremap <Leader>fd :call _fzf({'grep': expand('<cword>')})<CR>
 nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': '~/code/app-market/communities'})<CR>
-
 
 nnoremap <Space>/ :call SearchIn('')<CR>
 nnoremap <Space>? :call SearchIn('', v:none, {'ft': '?'})<CR>

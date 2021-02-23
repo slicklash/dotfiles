@@ -22,6 +22,22 @@ function da(){
   fi
 }
 
+function gr(){
+  if [ -z "$1" ]; then
+    git ls-files -m | fzf -m --reverse --print0 | xargs -0 -o -t git restore
+  else
+    git restore $@
+  fi
+}
+
+function dr(){
+  if [ -z "$1" ]; then
+    dotfiles ls-files -m | fzf -m --reverse --print0 | xargs -0 -o -t dotfiles restore
+  else
+    dotfiles restore $@
+  fi
+}
+
 function git_info() {
   local br
   br=$(git_branch_name)

@@ -43,8 +43,6 @@ alias grba='git rebase --abort'
 
 alias gbl='git blame -b -w'
 
-alias gr='git remote'
-
 format1='%C(yellow)%h %C(bold blue)%>(12,trunc)%cr%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
 format2='%C(yellow)%h %C(bold blue)%cd%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
 
