@@ -17,6 +17,53 @@ function! Preserve(command)
   call setreg('/', last_search)
 endfunction
 
+function! s:is_ignore_special_windows(winnr) abort
+  return index(['unite', 'defx', 'denite'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
+endfunction
+
+function! s:find_preview(winnrs) abort
+  for n in a:winnrs
+    if getbufvar(winbufnr(n), 'preview') == 1
+      return n
+    endif
+  endfor
+  return -1
+endfunction
+
+function! OpenPath(cmd, path) abort
+  let cmd = a:cmd
+  let wincmd = ''
+  let winnrs = range(1, tabpagewinnr(tabpagenr(), '$'))
+  let winnrs = filter(winnrs, '!s:is_ignore_special_windows(v:val)')
+  if cmd ==# 'psplit'
+    let winnr = s:find_preview(winnrs)
+    echo winnr
+    execute 'wincmd h'
+    if winnr == -1
+      execute printf('noswapfile vsplit %s', a:path)
+    else
+      execute printf('%swincmd w', winnr)
+      execute printf('noswapfile edit %s', a:path)
+    endif
+    let b:preview = 1
+    execute 'wincmd l'
+    return
+  else
+    if len(winnrs) > 0
+      if cmd =~# 'split'
+        let wincmd = 'wincmd h'
+      else
+        let [_, winnr] = choosewin#start(winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
+        let wincmd = printf('%swincmd w', winnr)
+      endif
+    endif
+  endif
+  if !empty(wincmd)
+    execute wincmd
+  endif
+  execute printf('noswapfile %s %s', cmd, a:path)
+endfunction
+
 function! SyntaxItem()
   echo synIDattr(synID(line('.'),col('.'),1),'name')
 endfunction

@@ -19,7 +19,8 @@ function! _tmux_js(cmd, ...) abort
   let path = expand('%:p')
   if path =~ 'app-market' && path =~ '.spec.js'
     let type = get(a:, 0, 'test')
-    let cmd = type == 'test' ? 'nyoshi test ' . path : 'npx nyc -r html yoshi test --coverage ' . path
+    let yoshi = path =~ 'client-common' ? 'npx yoshi-library test ' : 'npx yoshi test '
+    let cmd = type == 'test' ? yoshi . path : 'npx nyc -r html ' . yoshi . ' --coverage ' . path
   else
     let cmd = substitute(a:cmd, '%:p', expand('%:p'), '')
   endif
@@ -43,6 +44,7 @@ function! s:tmux_exec() abort
   elseif &filetype =~ 'nim'
     map <buffer> <Leader>e :call _tmux_send('nim c -r --hints:off %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('nim c -r -d:release --hints:off %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>D :call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
   endif
   map <buffer> <Leader>r :execute 'silent !tmux send-keys -t left Up Enter'<Bar>redraw!<C-M>
 endfunction

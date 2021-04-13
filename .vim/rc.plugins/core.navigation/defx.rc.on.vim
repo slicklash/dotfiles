@@ -62,34 +62,9 @@ function! SearchFiles(context) abort
   call _fzf({'dir': dir})
 endfunction
 
-function! s:is_ignore_special_windows(winnr) abort
-  let ignore_filtype = ['unite', 'defx', 'denite']
-  return index(ignore_filtype, getbufvar(winbufnr(a:winnr), '&filetype')) != -1
-endfunction
-
-function! MyDefxOpenCommand(cmd, path) abort
-    let wincmd = ''
-    let winnrs = range(1, tabpagewinnr(tabpagenr(), '$'))
-    let winnrs = filter(winnrs, '!s:is_ignore_special_windows(v:val)')
-
-    if len(winnrs) > 0
-      if a:cmd ==# 'vsplit'
-        let wincmd = 'wincmd h'
-      else
-        let [_, winnr] = choosewin#start(winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
-        let wincmd = printf('%swincmd w', winnr)
-      endif
-    endif
-
-    if !empty(wincmd)
-      execute wincmd
-    endif
-    execute printf('noswapfile %s %s', a:cmd, a:path)
-
-  endfunction
-
-command! -nargs=* -range  MyDefxOpen call MyDefxOpenCommand('edit', <q-args>)
-command! -nargs=* -range  MyDefxVsplit call MyDefxOpenCommand('vsplit', <q-args>)
+command! -nargs=* -range MyDefxOpen call OpenPath('edit', <q-args>)
+command! -nargs=* -range MyDefxVsplit call OpenPath('vsplit', <q-args>)
+command! -nargs=* -range MyDefxPsplit call OpenPath('psplit', <q-args>)
 
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
@@ -109,7 +84,7 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
   nnoremap <silent><buffer><expr> l defx#do_action('open_tree')
   nnoremap <silent><buffer><expr> E defx#do_action('open', 'MyDefxVsplit')
-  nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
+  nnoremap <silent><buffer><expr> P defx#do_action('open', 'MyDefxPsplit')
   nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
   nnoremap <silent><buffer><expr> N defx#do_action('new_file')
   nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')

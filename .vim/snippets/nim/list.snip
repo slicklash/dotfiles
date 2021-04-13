@@ -1,5 +1,5 @@
 snippet perm
-abbrs   List: Permutation
+abbr    List: Permutation
 options     head
 	proc permutations*[T](xs: openArray[T]): seq[seq[T]] =
 	if xs.len() > 1:
@@ -15,7 +15,7 @@ options     head
 	${0}
 
 snippet permr
-abbrs   List: Permutation with repetition
+abbr    List: Permutation with repetition
 options     head
 	proc permutations*[T](xs: openArray[T], k: int, prefix: seq[T] = @[]): seq[seq[T]] =
 		if k == 1:
@@ -28,7 +28,7 @@ options     head
 	${0}
 
 snippet comb
-abbrs   List: Combinations
+abbr    List: Combinations
 options     head
 	proc combinations*[T](xs: openArray[T], k: int): seq[seq[T]] =
 	if k == 0:
