@@ -17,10 +17,14 @@ endfunction
 
 function! _tmux_js(cmd, ...) abort
   let path = expand('%:p')
-  if path =~ 'app-market' && path =~ '.spec.js'
+  if path =~ '.spec.js'
     let type = get(a:, 0, 'test')
-    let yoshi = path =~ 'client-common' ? 'npx yoshi-library test ' : 'npx yoshi test '
-    let cmd = type == 'test' ? yoshi . path : 'npx nyc -r html ' . yoshi . ' --coverage ' . path
+    if path =~ 'app-market'
+      let test_cmd = path =~ 'client-common' ? 'npx yoshi-library test ' : 'npx yoshi test '
+    else
+      let test_cmd = 'npm test '
+    endif
+    let cmd = type == 'test' ? test_cmd . path : 'npx nyc -r html ' . test_cmd . ' --coverage ' . path
   else
     let cmd = substitute(a:cmd, '%:p', expand('%:p'), '')
   endif

@@ -45,7 +45,7 @@ cd $SRC
 git pull
 rm -f src/auto/config.cache
 CFLAGS="$CFLAGS" ./configure $FEAT --with-compiledby="$COMPILED_BY" \
-&& make VIMRUNTIMEDIR=/usr/local/share/vim/vim81 -j4 && uname -m > .arch || {
+&& make VIMRUNTIMEDIR=/usr/local/share/vim/vim82 -j4 && uname -m > .arch || {
     echo "Consider" 1>&2
     echo "  sudo apt-get build-dep vim-gnome" 1>&2
     exit 1

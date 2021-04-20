@@ -2,17 +2,17 @@ snippet perm
 abbr    List: Permutation
 options     head
 	proc permutations*[T](xs: openArray[T]): seq[seq[T]] =
-	if xs.len() > 1:
-		let head = xs[0]
-		let tail = xs[1..^1]
-		for sub in permutations(tail):
-		for i in 0..xs.high():
-			var p = @sub
-			p.insert(@[head], i)
-			result.add(p)
-	else:
-		result.add(@xs)
-	${0}
+		if xs.len() > 1:
+			let head = xs[0]
+			let tail = xs[1..^1]
+			for sub in permutations(tail):
+				for i in 0..xs.high():
+					var p = @sub
+					p.insert(@[head], i)
+					result.add(p)
+		else:
+			result.add(@xs)
+		${0}
 
 snippet permr
 abbr    List: Permutation with repetition
