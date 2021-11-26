@@ -157,3 +157,9 @@ fdp() {
   local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux --tac)
   cd "$DIR"
 }
+
+fz() {
+  fasdlist=$( fasd -d -l -r $1 | \
+    fzf --query="$1 " --select-1 --exit-0 --height=25% --reverse --tac --no-sort --cycle) &&
+    cd "$fasdlist"
+}

@@ -145,7 +145,7 @@ call s:hi('Question', '#53723C 255', '', '')
 call s:hi('DiffAdd', '#efefef 252', '#437019 22', '')
 call s:hi('DiffDelete', '#bababa 8', '#700009 52', '')
 call s:hi('DiffChange', '#efefef 252', '#2B5B77 24', '')
-call s:hi('DiffText', '#000000 232', 'orange 214', 'none')
+call s:hi('DiffText', '#000000 232', '#e09146 214', 'none')
 
 call s:hi('TabLineFill', s:STATUSLINE_NC_FG, s:WINDOW_SEPARATOR_BG, 'none')
 call s:hi('TabLine', 'red 242', 'red 236', 'none')

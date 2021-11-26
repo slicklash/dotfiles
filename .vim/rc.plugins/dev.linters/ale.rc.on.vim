@@ -45,6 +45,10 @@ let g:ale_linters = {
 \   'nim': ['nimlsp', 'nimcheck'],
 \}
 
+let g:ale_pattern_options = {
+\   '.*\.min\.js$': {'ale_enabled': 0},
+\}
+
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --extension-pkg-whitelist=cv2'
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'

@@ -17,9 +17,11 @@ endfunction
 
 function! _tmux_js(cmd, ...) abort
   let path = expand('%:p')
-  if path =~ '.spec.js'
+  if path =~ '.spec.[jt]s'
     let type = get(a:, 0, 'test')
-    if path =~ 'app-market'
+    if path =~ 'blog-ooi'
+      let test_cmd = 'npx yoshi-flow-editor test '
+    elseif path =~ 'app-market'
       let test_cmd = path =~ 'client-common' ? 'npx yoshi-library test ' : 'npx yoshi test '
     else
       let test_cmd = 'npm test '
@@ -35,7 +37,7 @@ function! s:tmux_exec() abort
   if &filetype =~ 'python'
     map <buffer> <Leader>e :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
-  elseif &filetype =~ 'javascript'
+  elseif &filetype =~ 'javascript' || expand('%:p') =~ 'app-market'
     map <buffer> <Leader>c :call _tmux_js('node %:p', 'coverage')<Bar>redraw!<C-M>
     map <buffer> <Leader>e :call _tmux_js('node %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('node --inspect-brk %:p')<Bar>redraw!<C-M>

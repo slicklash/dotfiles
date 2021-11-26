@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('maksimr/vim-jsbeautify', { 'on_ft' : ['javascript', 'vim', 'json', 'xml', 'html'] })
+  call dein#add('maksimr/vim-jsbeautify', { 'on_ft' : ['javascript', 'typescript', 'vim', 'json', 'xml', 'html'] })
   finish
 endif
 

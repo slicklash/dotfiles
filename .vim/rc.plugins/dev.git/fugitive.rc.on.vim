@@ -15,7 +15,23 @@ function! FugitiveOpenFile() abort
   execute printf('noswapfile vsplit %s', path)
 endfunction
 
-autocmd FileType fugitive map E :call FugitiveOpenFile()<cr>
+function! FuView()
+  let cwd = split(getcwd(), '/')
+  let curline = strpart(getline('.'), 2)
+  for i in range(len(cwd) - 1)
+    let prefix = join(slice(cwd, i), '/')
+    if stridx(curline, prefix) == 0
+      break
+    endif
+  endfor
+  let path = '/' . join(slice(cwd, 0, i), '/') . '/' . curline
+  echo path
+  execute 'silent !xdg-open ' . path . '> /dev/null 2>&1 &'
+  redraw!
+endfunction
+
+autocmd User FugitiveIndex nnoremap <buffer> E :call FuView()<cr>
+" autocmd FileType fugitive map E :call FugitiveOpenFile()<cr>
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
 nnoremap <silent> <leader>gg :Git<cr>

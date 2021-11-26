@@ -19,6 +19,8 @@ if InitStep() == 0
   let g:LanguageClient_rootMarkers = {
         \ 'javascript': ['.prettierrc'],
         \ 'javascript.jsx': ['.prettierrc'],
+        \ 'typescript': ['tsconfig.json'],
+        \ 'typescript.tsx': ['tsconfig.json'],
         \ }
   finish
 endif

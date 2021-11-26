@@ -28,7 +28,7 @@ let g:fzf_options = ['--layout=reverse', '--info=inline']
 function! _rg(ignores, ...)
   let rg_options = extend(['rg', '--hidden', '--no-ignore-vcs', '--column', '--line-number', '--no-heading', '--smart-case'], a:000)
   for item in a:ignores
-    call extend(rg_options, ['--glob', '!' . item])
+    call extend(rg_options, ['--glob', '"!' . item . '"'])
   endfor
   return join(rg_options, ' ')
 endfunction

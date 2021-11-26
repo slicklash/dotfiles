@@ -12,6 +12,11 @@ function! PMarkdown()
   redraw!
 endfunction
 
+function! FPreview()
+  execute 'silent !firefox ' . expand('%:p') . '> /dev/null 2>&1 &'
+  redraw!
+endfunction
+
 augroup filtype_pandoc
   autocmd!
   autocmd FileType pandoc noremap <F5> :call PMarkdown()<CR>

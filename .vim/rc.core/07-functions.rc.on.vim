@@ -222,6 +222,12 @@ function! Eslint() abort
   copen
 endfunction
 
+function! EslintSled() abort
+  setlocal makeprg=npx\ eslint\ -f\ unix\ sled
+  make
+  copen
+endfunction
+
 function! DeleteFile() abort
   let curline = getline('.')
   let choice = confirm('delete ' . curline . '?', "&Yes\n&No\n&Cancel")

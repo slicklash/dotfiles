@@ -20,6 +20,7 @@ function! s:ft_js_ts() abort
   let b:project_dir='/home/slicklash/code/app-market/communities'
 
   if &filetype =~? 'javascript'
+    setlocal suffixesadd=.ts,.tsx,.js,.jsx
     setlocal filetype=javascript.jsx
     setlocal formatprg=prettier\ --parser\ babel\ --single-quote\ --trailing-comma\ es5
   elseif &filetype =~? 'typescript'
