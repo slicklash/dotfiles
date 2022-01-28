@@ -60,7 +60,7 @@ function! s:is_local(linter) abort
    return !empty(path)
 endfunction
 
-if !has('gui_running')
+if !has('gui_running') && empty('$TERMUX_VERSION')
   let s:missing_linters = uniq(sort(
         \ map(values(
         \ filter(copy(g:ale_linters), { k, v -> !executable(v[0]) && !s:is_local(v[0]) })),

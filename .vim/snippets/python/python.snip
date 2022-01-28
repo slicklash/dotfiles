@@ -186,9 +186,9 @@ options     word
 
 # regexp
 
-snippet     re_find_digits
-abbr        Regex: all digits
-alias       rfd
+snippet     re_find_numbers
+abbr        Regex: all numbers
+alias       rfn
 options     word
     ${0}[int($2) for ${2:x} in re.findall(r'-?\d+', ${1:line})]
 

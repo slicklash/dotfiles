@@ -1,0 +1,21 @@
+#/bin/bash
+
+[ -z "$REPO_DOTFILES" ] && echo "missing env var REPO_DOTFILES" && exit 1
+
+pkg upgrade -y
+pkg install -y termux-api openssh zsh tmux fzf python3 perl git git-delta bat ripgrep nim lua53 luajit ctags rsync man
+pip3 install --user pynvim vim-vint pylint black isort
+chsh -s zsh
+
+if [ ! -d "$HOME/.git-dotfiles" ]; then
+  git clone --bare "/storage/emulated/0/$REPO_DOTFILES" "$HOME/.git-dotfiles"
+  _dotfiles="git --git-dir=$HOME/.git-dotfiles/ --work-tree=$HOME"
+  $_dotfiles config --local status.showUntrackedFiles no
+  $_dotfiles checkout
+  bat cache --build
+fi
+
+[ -d "$HOME/code" ] || mkdir $HOME/code
+[ -d "$HOME/storage" ] || echo "[-] Run termux-setup-storage on phone"
+
+echo "[+] Done"

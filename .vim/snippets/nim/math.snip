@@ -1,3 +1,44 @@
+snippet     no01
+abbr        normalize -1 0 1
+options     head
+	min(1, max(${1:val}, -1))${0}
+
+snippet     mdis
+abbr        Manhattan distance
+options     head
+	proc distance(p1, p2: Point): int =
+		for _, a, b in fieldPairs(p1, p2):
+			result.inc(abs(a - b))
+
+snippet     smdis
+abbr        Manhattan distance
+options     head
+	proc distance(a, b: seq[int]): int =
+		zip(a, b).mapIt(abs(it[0] - it[1])).sum
+
+snippet     mdis2
+abbr        Manhattan distance
+options     head
+	proc distance(a, b: (int, int)): int =
+		abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+snippet     edis
+abbr        Euclidean distance
+options     head
+	proc distance(a, b: (int, int)): int =
+		abs(a[0] - b[0])^2 + abs(a[1] - b[1])^2
+
+snippet     angle
+abbr        Angle between points
+options     head
+	proc angle(x1, y1, x2, y2: int): int =
+		let dy = (y1 - y2).toFloat
+		let dx = (x2 - x1).toFloat
+		var degs = arctan2(dy,dx).radToDeg
+		if degs < 0 : degs += 360
+		result = degs.toInt
+	${0}
+
 snippet modinv
 abbr Math: Mod Inverse
 	proc modInv*(a0, m: int): int =

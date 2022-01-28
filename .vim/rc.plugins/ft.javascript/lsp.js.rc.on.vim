@@ -17,7 +17,6 @@ function! s:ft_js_ts() abort
 
   setlocal shiftwidth=2
   let b:keyword_lookup_url='https://developer.mozilla.org/en-US/search?q=%s&topic=js'
-  let b:project_dir='/home/slicklash/code/app-market/communities'
 
   if &filetype =~? 'javascript'
     setlocal suffixesadd=.ts,.tsx,.js,.jsx

@@ -1,4 +1,5 @@
 export NVM_DIR="$HOME/.nvm"
+
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
@@ -7,6 +8,10 @@ autoload -U add-zsh-hook
 export NODE_OPTIONS="--max-old-space-size=4096"
 
 load-nvmrc() {
+
+  if [ -n "$TERMUX_VERSION" ]; then
+    [ ! -s "$NVM_DIR/nvm.sh" ] && return 0
+  fi
 
   local node_version="$(nvm version)"
   local nvmrc_path="$(nvm_find_nvmrc)"

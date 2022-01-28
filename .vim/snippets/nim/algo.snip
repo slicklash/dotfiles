@@ -1,32 +1,125 @@
-snippet gp
+snippet tgf
+abbr Type: Graph
+	Graph[T] = Table[T, seq[T]]
+	${0}
+
+snippet tpt
+abbr Type: Point
+	Point = (int, int)
+	${0}
+
+snippet tpz
+abbr Type: Point
+	Point = (int, int, int)
+	${0}
+
+snippet tbou
+abbr Type: Bounds
+	Bounds = tuple[left: int, top: int, right: int, bottom: int]
+	${0}
+
+snippet oinb
+alias   inbou
+options head
+abbr    Operator: in bounds
+	proc ``in``(p: Point, b: Bounds): bool =
+		p[0] >= b.left and p[0] <= b.right and
+		p[1] >= b.top and p[1] <= b.bottom
+	${0}
+
+snippet tgr
+abbr Type: Grid
+	Grid = object
+		points: HashSet[Point]
+		tiles: Table[Point, char]
+		width: int
+		height: int
+		start: Point
+		finish: Point
+	${0}
+
+snippet gff
+abbr Graph: Fill
+	var g: Graph[${1:string}]
+	for x in xs:
+		let (a, b) = (x[0], x[1])
+		g.mgetOrPut(a, @[]).add(b)
+		g.mgetOrPut(b, @[]).add(a)
+	${0}
+
+snippet gffdac
+abbr Graph: Fill (DAC)
+	var g: Graph[${1:string}]
+	for x in xs:
+		let (a, b) = (x[0], x[1])
+		g.mgetOrPut(a, @[]).add(b)
+		discard g.mgetOrPut(b, @[])
+	${0}
+
+snippet gfap
+abbr Graph: All paths
+	proc paths[T](g: Graph, start, finish: T): seq[seq[T]] =
+		var stack = @[(start, newSeq[T]())]
+		while stack.len > 0:
+			var (v, path) = stack.pop()
+			path.add(v)
+			if v == finish:
+				result.add(path)
+				continue
+			for n in g[v]:
+				if n notin path:
+					stack.add((n, path))
+	${0}
+
+snippet grp
 abbr Grid: parse
 	type
 		Point = (int, int)
-		Grid = Table[Point, char]
-		GridInfo = tuple[grid: Grid, width: int, height: int]
+		Grid = object
+			points: HashSet[Point]
+			tiles: Table[Point, char]
+			width: int
+			height: int
+			start: Point
+			finish: Point
 
-	proc parse(lines: seq[string]): (Grid, int, int) =
-		var grid: Grid
-		for x in 0..lines[0].high:
-			for y in 0..lines.high:
-				grid[(x,y)] = lines[y][x]
-		result = (grid, lines[0].high, lines.high)
+	proc `[]`(g: Grid, p: Point): char = g.tiles[p]
+	proc `[]=`(g: var Grid, p: Point, c: char) = g.tiles[p] = c
+
+	proc parse(xs: seq[string]): Grid =
+		result.width = xs[0].len
+		result.height = xs.len
+		for x in 0 .. xs[0].high:
+			for y in 0 .. xs.high:
+				let c = xs[y][x]
+				if c == 'S': result.start = (x, y)
+				if c == 'F': result.finish = (x, y)
+				result.points.incl((x,y))
+				result[(x, y)] = c
 	${0}
 
-snippet gs
+snippet grs
 abbr Grid: show
-	proc show(grid: Grid, width: int, height: int) =
-		for y in 0..height:
-			var line = newStringOfCap(width)
-			for x in 0..width:
-				line.add(grid[(x,y)])
+	proc show(g: Grid) =
+		for y in 0 ..< g.height:
+			var line = ""
+			for x in 0 ..< g.width:
+				line.add(grid[(x, y)])
 			echo line
 	${0}
 
 snippet d4
-abbr deltas 8
+abbr deltas 4
 options head
-	const Deltas = @[(-1,0), (1,0), (0,1), (0,1)]
+	const Deltas = @[(-1,0), (1,0), (0,-1), (0,1)]
+	${0}
+
+snippet m4
+abbr moves 4
+options head
+	const Directions = "w|e|n|s"
+	const Deltas = @[(-1,0), (1,0), (0,-1), (0,1)]
+	const Moves = zip(Directions.split('|'), Deltas).toTable
 	${0}
 
 snippet d8
@@ -35,14 +128,194 @@ options head
 	const Deltas = @[(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
 	${0}
 
+snippet m8
+abbr moves 8
+options head
+	const Directions = "e|se|sw|w|nw|ne"
+	const Deltas = @[(1,0), (0,-1), (-1,-1), (-1,0), (0,1), (1,1)]
+	const Moves = zip(Directions.split('|'), Deltas).toTable
+	${0}
+
+snippet n4
+abbr neighbours
+options head
+	const Deltas = @[(-1,0), (1,0), (0,-1), (0,1)]
+
+	iterator neighbours[T](grid: Table[Point, T], p: Point): (Point, T) =
+	for (dx, dy) in Deltas:
+		let key = (p[0] + dx, p[1] + dy)
+		if grid.hasKey(key):
+			yield (key, grid[key])
+	${0}
+
 snippet n8
 abbr neighbours
 options head
 	const Deltas = @[(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
 
-	iterator neighbours[T](grid: Table[(int, int), T], x: int, y: int): T =
+	iterator neighbours[T](grid: Table[Point, T], p: Point): (Point, T) =
 		for (dx, dy) in Deltas:
-			let key = (x + dx, y + dy)
+			let key = (p[0] + dx, p[1] + dy)
 			if grid.hasKey(key):
-				yield grid[key]
+				yield (key, grid[key])
+	${0}
+
+snippet m2p
+abbr moves to point
+options head
+	proc toPoint(s: string): Point =
+		for d in s.findAll(re(Directions)):
+			let (dx, dy) = Moves[d]
+				result[0] += dx
+				result[1] += dy
+	${0}
+
+snippet dfs
+options head
+	proc ${1:dfs}(g: Grid, start: Point): HashSet[Point] =
+		var stack = @[start]
+		while stack.len > 0:
+			let p = stack.pop()
+			result.incl(p)
+			for (np, v) in neighbours(g.tiles, p):
+				if np notin result:
+					stack.add(np)
+	${0}
+
+snippet A*
+options head
+	const Deltas = @[(-1,0), (1,0), (0,-1), (0,1)]
+
+	iterator neighbours[T](grid: Table[Point, T], p: Point): (Point, T) =
+		for (dx, dy) in Deltas:
+			let key = (p[0] + dx, p[1] + dy)
+			if grid.hasKey(key):
+				yield (key, grid[key])
+
+	proc getCost(c: char): int =
+		if c in "SF.": return 1
+		if c == '~': return 2
+		result = int.high
+
+	proc dist(a, b: Point): int =
+		result = abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+	proc astar(grid: Grid, start, finish: Point): (int, seq[Point]) =
+		var costFromStart = {start: 0}.toTable
+		var prev: Table[Point, Point]
+		var queue = @[(0, start)].toHeapQueue
+		while queue.len > 0:
+			let (_, pos) = queue.pop
+			if pos == finish: break
+			for (newPos, c) in neighbours(grid.tiles, pos):
+				let cost = getCost(c)
+				if cost == int.high: continue
+				let pathCost = costFromStart[pos] + cost
+				if pathCost < costFromStart.getOrDefault(newPos, int.high):
+					costFromStart[newPos] = pathCost
+					queue.push((pathCost + newPos.dist(finish), newPos))
+					prev[newPos] = pos
+		if not costFromStart.hasKey(finish):
+			return
+		result[0] = costFromStart[finish]
+		var p = finish
+		while p != start:
+			result[1] = @[p] & result[1]
+			p = prev[p]
+	${0}
+
+snippet tops
+alias   gfts
+abbr    Graph: Topological sort
+options head
+	proc topoSort[T](g: Graph[T], start: T, auto = false): seq[T] =
+		var seen: HashSet[T]
+		var order: seq[string]
+		var dfs: proc (v: T)
+		dfs = proc (v: T) =
+			for n in g[v]:
+				if n notin seen:
+					seen.incl(n)
+					dfs(n)
+			order.insert(v, 0)
+		if auto:
+			var inDegree: Table[T, int]
+			for v, ns in g:
+				discard inDegree.mgetOrPut(v, 0)
+				for n in ns:
+					inDegree[n] = inDegree.getOrDefault(n) + 1
+			for v, c in inDegree:
+				if c == 0: dfs(v)
+		else:
+			dfs(start)
+		result = order
+	${0}
+
+snippet ccg
+alias   gfcc
+abbr    Graph: Connected components
+options head
+	proc ccg[T](g: Graph[T]): seq[seq[T]] =
+		var seen: HashSet[T]
+		var subgraph: proc(v: T): seq[T]
+		subgraph = proc(v: T): seq[T] =
+			seen.incl(v)
+			result.add(v)
+			for n in g[v]:
+				if n notin seen: result &= subgraph(n)
+		for v in g.keys:
+			if v notin seen: result.add(subgraph(v))
+	${0}
+
+snippet tnd
+abbr    Type: Tree node
+options head
+	${1:Node}[T] = ref object
+		level: int
+		value: T
+		left: $1
+		right: $1
+		parent: $1
+	${0}
+
+snippet fbou3
+abbr    Find bounds 3d
+options head
+	proc findBounds(ps: seq[Point]): (int, int, int, int, int, int) =
+		result = (int.high, int.high, int.high, -int.high, -int.high, -int.high)
+		for p in ps:
+			let (x, y, z) = p
+			result = (
+				min(x, result[0]),
+				min(y, result[1]),
+				min(z, result[2]),
+				max(x, result[3]),
+				max(y, result[4]),
+				max(z, result[5]),
+			)
+	${0}
+
+snippet fbou
+abbr    Find bounds
+options head
+	proc findBounds(ps: seq[Point]): (int, int, int, int) =
+		result = (int.high, int.high, -int.high, -int.high)
+		for p in ps:
+			let (x, y) = p
+			result = (
+				min(x, result[0]),
+				min(y, result[1]),
+				max(x, result[2]),
+				max(y, result[3]),
+			)
+	${0}
+
+snippet pnorm
+abbr    Normalize points
+options head
+	proc normalize(ps: seq[Point]): seq[Point] =
+		let (minx, miny, _, _) = ps.findBounds
+		for p in ps:
+			let (x, y) = p
+			result.add((x - minx, y - miny))
 	${0}

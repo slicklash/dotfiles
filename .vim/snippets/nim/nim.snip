@@ -1,16 +1,47 @@
 snippet NN
 abbr    New
 options     head
+	import strutils, sequtils
+
 	proc main() =
+	  let xs = readFile("day.txt").split("\n\n")
+	  let xs = lines("day.txt").toSeq.map(parseInt)
 	  ${0:echo}
 
 	when isMainModule:
 		main()
 
+snippet AOC
+options     head
+	import algorithm, heapqueue, intsets, math, re, sets, strutils, sequtils, tables
+
+	proc part1(): int =
+		result = 0
+
+	proc part2(): int =
+		result = 0
+
+	when isMainModule:
+	  #let xs = readFile("day.txt").split("\n\n")
+	  #let xs = lines("day.txt").toSeq.map(parseInt)
+	  ${0}
+	  doAssert part1() == 0
+	  doAssert part2() == 0
+
+snippet     va
+abbr        var
+	var ${0}
+
+snippet     le
+abbr        let
+	var ${0}
+
 snippet     ee
 abbr        echo
 alias       pp
 	echo ${0}
+
+# seq
 
 snippet     ss
 abbr        seq[string]
@@ -19,6 +50,37 @@ abbr        seq[string]
 snippet     si
 abbr        seq[int]
 	seq[int]${0}
+
+snippet     sp
+abbr        seq[Point]
+	seq[int]${0}
+
+snippet     sq
+abbr        seq[]
+	seq[${1}]${0}
+
+snippet     nsq
+abbr        newSeq[]
+	newSeq[${1}](${2})${0}
+
+snippet     fit
+abbr        filterIt
+options     word
+	filterIt(${0})
+
+# HashSet
+
+snippet     hs
+abbr        HashSet[]
+	HashSet[${1}]${0}
+
+snippet     hss
+abbr        HashSet[string]
+	HashSet[string]${0}
+
+snippet     hsc
+abbr        HashSet[char]
+	HashSet[char]${0}
 
 snippet ret
 abbr    return
@@ -48,7 +110,6 @@ options     head
 		${0}
 
 snippet     ife
-abbr         if else
 options     head
 	if ${1:#:condition}:
 		${2}
@@ -58,6 +119,14 @@ options     head
 snippet     ?:
 abbr        ternary
 	if ${1:conditon}: ${2:true} else: ${3:false}
+
+snippet     cas
+abbr        caseof
+options     head
+	case ${1:x}
+		of ${2}:
+			${3:echo 1}${0}
+		else: discard
 
 # loops
 
@@ -89,3 +158,67 @@ abbr        File: read lines
 alias       fl
 options     word
 	lines(${0})
+
+snippet     file_read
+abbr        File: read
+alias       fr
+options     word
+	readFile(${0})
+
+# regexp
+
+snippet     re_find_numbers
+abbr        Regex: all numbers
+alias       rfn
+options     word
+	${1:line}.findAll(re"-?\d+").map(${2:parseInt})${0}
+
+snippet     re_find_all_groups
+abbr        Regex: all groups
+alias       rfag
+options     word
+	iterator findAllGroups(s: string, r: Regex): seq[string] =
+		var g: array[${1:2}, string]
+		for m in s.findAll(r):
+			if m.match(r, g):
+				yield g.toSeq
+	${0}
+
+# parse
+
+snippet     sp,
+abbr        Split: comma
+options     word
+	split(',')${0}
+
+snippet     sps
+abbr        Split: space
+options     word
+	split(' ')${0}
+
+snippet     spw
+abbr        Split: whitespace
+options     word
+	splitWhitespace${0}
+
+snippet     spn
+abbr        Split: newline
+options     word
+	split('\n')${0}
+
+snippet     spnn
+abbr        Split: newline 2x
+options     word
+	split("\n\n")${0}
+
+snippet     mpi
+abbr        Map: parseInt
+options     word
+	map(parseInt)${0}
+
+# misc
+
+snippet     rax
+abbr        raise newException
+options     word
+	raise newException(ValueError, "${1:error}")${0}

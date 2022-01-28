@@ -1,3 +1,23 @@
+function scp103 {
+  [[ "$#" != 1  ]] && return 1
+  scp -P 8022 $1 192.168.1.103:~/tmp/
+}
+
+function scpf103 {
+  [[ "$#" != 2  ]] && return 1
+  scp -P 8022 192.168.1.103:$1 $2
+}
+
+function scp109 {
+  [[ "$#" != 1  ]] && return 1
+  scp -P 8022 $1 192.168.1.109:~/tmp/
+}
+
+function scpf109 {
+  [[ "$#" != 2  ]] && return 1
+  scp -P 8022 192.168.1.109:$1 $2
+}
+
 function cbfile {
   [[ "$#" != 1  ]] && return 1
   local file_to_copy=$1

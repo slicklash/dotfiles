@@ -17,8 +17,8 @@ if InitStep() == 0
         \ 'nim': ['nimlsp'],
         \ }
   let g:LanguageClient_rootMarkers = {
-        \ 'javascript': ['.prettierrc'],
-        \ 'javascript.jsx': ['.prettierrc'],
+        \ 'javascript': ['tsconfig.json', '.prettierrc', '.nvmrc'],
+        \ 'javascript.jsx': ['tsconfig.json', '.prettierrc', '.nvmrc'],
         \ 'typescript': ['tsconfig.json'],
         \ 'typescript.tsx': ['tsconfig.json'],
         \ }

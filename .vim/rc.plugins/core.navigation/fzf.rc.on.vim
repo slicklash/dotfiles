@@ -79,8 +79,8 @@ endfunction
 
 nnoremap <Space>f :call _fzf()<CR>
 nnoremap <Space>F :call _fzf({'ft': '?'})<CR>
-nnoremap <Space>a :call _fzf({'dir': '~/code/app-market/communities/'})<CR>
-nnoremap <Space>A :call _fzf({'dir': '~/code/app-market/communities/', 'ft': '?'})<CR>
+nnoremap <Space>a :call _fzf({'dir': b:project_dir})<CR>
+nnoremap <Space>A :call _fzf({'dir': b:project_dir, 'ft': '?'})<CR>
 
 nnoremap <Space>c :call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
 nnoremap <Space>z :call _fzf({'dir': '~/.zsh/'})<CR>
@@ -93,9 +93,9 @@ nnoremap <Space>h :Helptags<CR>
 nnoremap <Space>r :call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))<CR>
 
 nnoremap <Leader>fd :call _fzf({'grep': expand('<cword>')})<CR>
-nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': '~/code/app-market/communities'})<CR>
+nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': b:project_dir})<CR>
 
 nnoremap <Space>/ :call SearchIn('')<CR>
 nnoremap <Space>? :call SearchIn('', v:none, {'ft': '?'})<CR>
-nnoremap <Space>\ :call SearchIn('~/code/app-market/communities')<CR>
-nnoremap <Space>\| :call SearchIn('~/code/app-market/communities', v:none, {'ft': '?'})<CR>
+nnoremap <Space>\ :call SearchIn(b:project_dir)<CR>
+nnoremap <Space>\| :call SearchIn(b:project_dir, v:none, {'ft': '?'})<CR>
