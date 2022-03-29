@@ -43,9 +43,9 @@ function! Grep(cword, ...) abort
 endfunction
 
 function! GrepInProject(...) abort
-  let dir = get(b:, 'project_dir')
+  let dir = GetProjectDir()
   if empty(dir)
-    return EchoHi('b:project_dir is not defined', 'ErrorMsg')
+    return EchoHi('project_dir is not defined', 'ErrorMsg')
   endif
   call Grep(a:0 > 0 ? a:1 : '', dir)
 endfunction

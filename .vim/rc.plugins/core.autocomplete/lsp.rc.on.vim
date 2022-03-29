@@ -1,8 +1,5 @@
 if InitStep() == 0
-  call dein#add('autozimu/LanguageClient-neovim', {
-        \ 'rev': 'next',
-        \ 'build': 'bash install.sh',
-        \ })
+  call dein#add('autozimu/LanguageClient-neovim', { 'rev': 'next', 'build': 'bash install.sh' })
   let g:LanguageClient_autoStart = 1
   let g:LanguageClient_changeThrottle = 0.5
   let g:LanguageClient_diagnosticsEnable = 0

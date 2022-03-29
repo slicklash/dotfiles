@@ -62,3 +62,4 @@ alias kln='killall node'
 
 alias o='xdg-open'
 alias open='xdg-open'
+alias taoc='tmux-workspace code code/aoc21'

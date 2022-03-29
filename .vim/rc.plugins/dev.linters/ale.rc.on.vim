@@ -1,6 +1,6 @@
 if InitStep() == 0
-    call dein#add('w0rp/ale')
-    finish
+  call dein#add('w0rp/ale', { 'rev': '80dcd648d389965603246c2c5a4554e3e4aa184c' })
+  finish
 endif
 
 scriptencoding utf-8
@@ -54,6 +54,8 @@ let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'
 let g:ale_nim_nimpretty_options = '--indent:2'
+
+
 
 function! s:is_local(linter) abort
    let path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)

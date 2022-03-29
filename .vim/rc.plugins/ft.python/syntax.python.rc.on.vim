@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('vim-python/python-syntax')
+  call dein#add('vim-python/python-syntax', { 'rev': '2cc00ba72929ea5f9456a26782db57fb4cc56a65' })
   finish
 endif
 

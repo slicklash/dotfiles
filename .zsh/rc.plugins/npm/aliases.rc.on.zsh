@@ -24,3 +24,7 @@ alias ctw="ct --watch"
 alias st="export COMMUNITIES_TEST_ENV=test-server && DEBUG='wix:*,wnp:*' npx mocha --file ./env/test/setup/tests.js --reporter mocha-env-reporter --exit --bail"
 alias neslint="npx eslint"
 alias find-pkg-locks='find . -name "package-lock.json" -not -path "*/node_modules/*"'
+alias y='yarn'
+alias ys='y start'
+alias yb='y build'
+alias ytu='y run test:unit'

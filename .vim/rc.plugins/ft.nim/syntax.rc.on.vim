@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('zah/nim.vim')
+  call dein#add('zah/nim.vim', { 'rev': 'a15714fea392b0f06ff2b282921a68c7033e39a2' })
   finish
 endif
 

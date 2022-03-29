@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('t9md/vim-choosewin')
+  call dein#add('t9md/vim-choosewin', { 'rev': '839da609d9b811370216bdd9d4512ec2d0ac8644' })
   finish
 endif
 

@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('elzr/vim-json', { 'filetypes' : ['json'] })
+  call dein#add('elzr/vim-json', { 'rev': '3727f089410e23ae113be6222e8a08dd2613ecf2', 'filetypes' : ['json'] })
   finish
 endif
 

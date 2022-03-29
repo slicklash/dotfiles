@@ -5,8 +5,8 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
+  call dein#add('junegunn/fzf', { 'rev': 'a06671b47f0284733c7edf7dae8f22f9758c8393', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf.vim', { 'rev': 'b23e4bb8f853cb9641a609c5c8545751276958b0', 'depends': 'fzf' })
   finish
 endif
 
@@ -79,8 +79,8 @@ endfunction
 
 nnoremap <Space>f :call _fzf()<CR>
 nnoremap <Space>F :call _fzf({'ft': '?'})<CR>
-nnoremap <Space>a :call _fzf({'dir': b:project_dir})<CR>
-nnoremap <Space>A :call _fzf({'dir': b:project_dir, 'ft': '?'})<CR>
+nnoremap <Space>a :call _fzf({'dir': GetProjectDir()})<CR>
+nnoremap <Space>A :call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
 
 nnoremap <Space>c :call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
 nnoremap <Space>z :call _fzf({'dir': '~/.zsh/'})<CR>
@@ -93,9 +93,9 @@ nnoremap <Space>h :Helptags<CR>
 nnoremap <Space>r :call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))<CR>
 
 nnoremap <Leader>fd :call _fzf({'grep': expand('<cword>')})<CR>
-nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': b:project_dir})<CR>
+nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
 
 nnoremap <Space>/ :call SearchIn('')<CR>
 nnoremap <Space>? :call SearchIn('', v:none, {'ft': '?'})<CR>
-nnoremap <Space>\ :call SearchIn(b:project_dir)<CR>
-nnoremap <Space>\| :call SearchIn(b:project_dir, v:none, {'ft': '?'})<CR>
+nnoremap <Space>\ :call SearchIn(GetProjectDir())<CR>
+nnoremap <Space>\| :call SearchIn(GetProjectDir(), v:none, {'ft': '?'})<CR>
