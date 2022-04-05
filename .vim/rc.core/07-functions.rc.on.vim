@@ -252,6 +252,16 @@ function! DeleteFiles() abort range
   normal gvd
 endfunction
 
+function! SortImports() abort
+  let line = getline('.')
+  if line !~# 'import '
+    echoerr 'no imports found'
+    return
+  endif
+  let line = 'import ' . join(sort(map(split(substitute(line, 'import ', '', ''), ','), {k, v -> trim(v)})), ', ')
+  call setline('.', line)
+endfunction
+
 function! s:reduce(list, fn, acc) abort
   let acc = a:acc
   for x in a:list

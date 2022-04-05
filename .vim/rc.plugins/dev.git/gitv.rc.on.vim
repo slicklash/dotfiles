@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('junegunn/gv.vim', {'rev': 'a73599c34202709eaa7da78f4fe32b97c6ef83f8', 'depends':['tpope/vim-fugitive'] })
+  call dein#add('junegunn/gv.vim', {'rev': '386d770e916dd680d1d622e715b9eb3a77f21bd1', 'depends':['tpope/vim-fugitive'] })
   finish
 endif

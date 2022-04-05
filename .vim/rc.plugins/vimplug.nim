@@ -9,10 +9,11 @@ let REGEX_REVISION = re".+'rev': '([^']+)'"
 proc showHelp() =
   echo """
   Manage Vim plugin revisions
-  -h | --help     : show help
-  -c | --check    : check for missing revisions
-  -l | --list     : list remote revisions
-  -o | --outdated : list outdated
+  -h, --help          : show help
+  -c, --check         : check for missing revisions
+  -l, --list          : list remote revisions
+  -o, --outdated      : list outdated
+  -u, --update <name> : update revision
   """
 
 proc byName(a, b: PluginInfo): int = cmp(a.name, b.name)
@@ -59,24 +60,50 @@ proc check(plugins: seq[PluginInfo]) =
   else:
     echo "No errors"
 
+proc fetchRevision(client: HttpClient, name: string): string =
+  let html = client.getContent("https://github.com/" & name)
+  let m = html.findAll(re"permalink.+/tree/[0-9a-f]+")
+  result = (if m.len > 0: m[0].substr(m[0].rfind('/') + 1) else: "")
+
 proc list(plugins: seq[PluginInfo], outdated = false) =
   let client = newHttpClient(sslContext=newContext(verifyMode=CVerifyPeer))
   let mlen = plugins.mapIt(it.name.len).max
   for p in plugins:
-    let html = client.getContent("https://github.com/" & p.name)
-    let m = html.findAll(re"permalink.+/tree/[0-9a-f]+")
-    let revision = (if m.len > 0: m[0].substr(m[0].rfind('/') + 1) else: "")
     let name = formatName(p.name, mlen)
+    let revision = fetchRevision(client, p.name)
     if revision.isEmptyOrWhitespace:
       stdout.write name
       stdout.styledWriteLine(fgRed, "NOT_FOUND")
     elif outdated:
       if revision != p.revision and p.revision != "next":
         stdout.write name
-        stdout.styledWrite(fgRed, p.revision.alignString(41, '<', ' '))
-        stdout.styledWriteLine(fgGreen, revision)
+        echo fmt"https://github.com/{p.name}/compare/{p.revision}..{revision}"
     else:
       echo name
+
+proc update(plugins: seq[PluginInfo], filters: seq[string]) =
+  let client = newHttpClient(sslContext=newContext(verifyMode=CVerifyPeer))
+  var target: seq[(string, string, string, string)] = @[]
+  for p in plugins:
+    if filters.len < 1 or filters.anyIt(p.name.contains(it)):
+      let revision = fetchRevision(client, p.name)
+      if revision != p.revision and p.revision != "next":
+        target.add((p.origin, p.name, p.revision, revision))
+  if target.len == 0: return
+
+  echo "The following plugins will be updated:"
+  for t in target:
+    echo "  ", t[1]
+  stdout.write "Do you want to continue? [Y/n]"
+  let choice = stdin.readLine
+  case choice
+    of "Y", "y", "":
+      for x in target:
+        let (origin, _, revision, newRevision) = (x[0], x[1], x[2], x[3])
+        let content = readFile(origin)
+        writeFile(origin, content.replace(revision, newRevision))
+    else: discard
+  echo "Done"
 
 when isMainModule:
   if paramCount() == 0:
@@ -85,13 +112,19 @@ when isMainModule:
 
   let plugins = getPlugins()
 
+  var cmd: string
+  var args: seq[string]
+
   for kind, key, val in getopt():
     case kind
-    of cmdLongOption, cmdShortOption:
-      case key
-      of "help", "h": showHelp()
-      of "check", "c": check(plugins)
-      of "list", "l": list(plugins)
-      of "outdated", "o": list(plugins, true)
-      else: discard
+    of cmdLongOption, cmdShortOption: cmd = key
+    of cmdArgument: args.add(key)
+    else: discard
+
+  case cmd
+    of "help", "h": showHelp()
+    of "check", "c": check(plugins)
+    of "list", "l": list(plugins)
+    of "outdated", "o": list(plugins, true)
+    of "update", "u": update(plugins, args)
     else: discard

@@ -61,7 +61,7 @@ endfunction
 
 function! QFSort(...)
   let sortBy = get(a:, 1, 'file')
-  if sortBy == 'text'
+  if sortBy ==# 'text'
     call setqflist(sort(getqflist(), 's:cmp_text'))
   else
     call setqflist(sort(getqflist(), 's:cmp'))

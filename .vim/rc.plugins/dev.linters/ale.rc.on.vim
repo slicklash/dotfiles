@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('w0rp/ale', { 'rev': '80dcd648d389965603246c2c5a4554e3e4aa184c' })
+  call dein#add('w0rp/ale', { 'rev': 'd3df00b89803f1891a772c47fc8eda6a1e9e1baa' })
   finish
 endif
 
