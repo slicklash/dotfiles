@@ -32,10 +32,6 @@ call defx#custom#column('mark', {
       \ 'selected_icon': '✓',
       \ })
 
-" let g:vimfiler_ignore_pattern =
-      " \ '^\%(\.git\|\.idea\|\.DS_Store\|\.vagrant\|.stversions\|.ropeproject\|.*\.js.map'
-      " \ .'\|node_modules\|.*\.pyc\|.*\.egg-info\|__pycache__\)$'
-
 nnoremap <space>V :Defx -split=vertical -winwidth=50<CR>
 nnoremap <space>v :Defx `expand('%:p:h')` -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
 

@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('w0rp/ale', { 'rev': 'd3df00b89803f1891a772c47fc8eda6a1e9e1baa' })
+  call dein#add('dense-analysis/ale', { 'rev': '607f33a1b0f662d9809d54363e8e81a4965862ce' })
   finish
 endif
 
@@ -23,18 +23,15 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s'
 
-let g:ale_fixers = {
-\   'javascript': ['eslint'],
-\   'typescript': ['eslint'],
-\   'python': ['black', 'isort'],
-\   'nim':  ['nimpretty'],
+let g:ale_pattern_options = {
+\   '.*\.min\.js$': {'ale_enabled': 0},
 \}
 
 " pip3 install vim-vint pylint
 " npm i -g eslint jsonlint htmlhint stylelint typescript
 let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'typescript': ['eslint'],
+\   'javascript': ['eslint', 'yoshi'],
+\   'typescript': ['eslint', 'yoshi'],
 \   'html': ['htmlhint'],
 \   'css': ['stylelint'],
 \   'scss': ['stylelint'],
@@ -45,8 +42,11 @@ let g:ale_linters = {
 \   'nim': ['nimlsp', 'nimcheck'],
 \}
 
-let g:ale_pattern_options = {
-\   '.*\.min\.js$': {'ale_enabled': 0},
+let g:ale_fixers = {
+\   'javascript': ['eslint', 'yoshifix'],
+\   'typescript': ['eslint', 'yoshifix'],
+\   'python': ['black', 'isort'],
+\   'nim':  ['nimpretty'],
 \}
 
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --extension-pkg-whitelist=cv2'
@@ -55,7 +55,37 @@ let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'
 let g:ale_nim_nimpretty_options = '--indent:2'
 
+function! YoshiFind(buffer) abort
+   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-flow-editor')
+   if !empty(path)
+     return path
+   endif
+   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-flow-bm')
+   if !empty(path)
+     return path
+   endif
+   echoerr 'yoshi not found'
+endfunction
 
+let yoshi = {
+\   'name': 'yoshi',
+\   'output_stream': 'both',
+\   'executable': function('YoshiFind'),
+\   'command': '%e lint --format json %s',
+\   'callback': function('ale#handlers#eslint#HandleJSON'),
+\}
+
+call ale#linter#Define('javascript', yoshi)
+call ale#linter#Define('typescript', yoshi)
+
+function! YoshiFix(buffer) abort
+  return {
+  \   'command': YoshiFind(a:buffer) . ' lint --fix %t',
+  \   'read_temporary_file': 1
+  \}
+endfunction
+
+execute ale#fix#registry#Add('yoshifix', 'YoshiFix', ['javascript', 'typescript'], 'yoshi')
 
 function! s:is_local(linter) abort
    let path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)

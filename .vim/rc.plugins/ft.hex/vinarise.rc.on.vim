@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('Shougo/vinarise.vim', { 'rev': '809f883357927d9fc15bf6209bf85e73f899b13d' })
+  call dein#add('Shougo/vinarise.vim', { 'rev': '84dd647932fbd029310cca31f417c42f56d60547' })
   finish
 endif

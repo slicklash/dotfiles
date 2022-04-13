@@ -5,8 +5,8 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': '209366754892b04a01fd40de03cb9874a1e8fef7', 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'rev': 'b23e4bb8f853cb9641a609c5c8545751276958b0', 'depends': 'fzf' })
+  call dein#add('junegunn/fzf', { 'rev': 'a0b42e6538092dc6dea9f918a7a74c9408e44d4c', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf.vim', { 'rev': 'd5f1f8641b24c0fd5b10a299824362a2a1b20ae0', 'depends': 'fzf' })
   finish
 endif
 
@@ -77,9 +77,14 @@ function! SearchIn(dir, ...) abort
   call _fzf(extend({'grep': pattern, 'dir': a:dir}, options))
 endfunction
 
+function! SearchModules() abort
+  call _fzf({'dir': GetProjectDir() . '/node_modules'})
+endfunction
+
 nnoremap <Space>f :call _fzf()<CR>
 nnoremap <Space>F :call _fzf({'ft': '?'})<CR>
 nnoremap <Space>a :call _fzf({'dir': GetProjectDir()})<CR>
+nnoremap <Space>m :call SearchModules()<CR>
 nnoremap <Space>A :call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
 
 nnoremap <Space>c :call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>

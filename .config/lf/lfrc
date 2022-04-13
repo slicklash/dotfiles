@@ -1,0 +1,46 @@
+set previewer lf-ueberzug-previewer
+set cleaner lf-ueberzug-cleaner
+
+cmd mkdir ${{
+  printf "Directory Name: "
+  read ans
+  mkdir $ans
+}}
+
+cmd mkfile ${{
+  printf "File Name: "
+  read ans
+  $EDITOR $ans
+}}
+
+cmd tmuxp ${{
+  tmux select-pane -l
+}}
+
+cmd m1 ${{
+  lf -remote "send $id set nopreview"
+  lf -remote "send $id set ratios 1"
+  lf -remote "send $id set info size:time"
+}}
+
+# unmap
+map d
+
+# map
+map M m1
+map <c-h> tmuxp
+map <c-l> tmuxp
+map dd delete
+map x cut
+map y copy
+map <enter> open
+map R reload
+map K mkdir
+map . set hidden!
+
+map ge cd ~/Desktop
+map gd cd ~/Downloads
+map gc cd ~/code
+map gv cd ~/Videos
+map gs cd ~/Sync
+map gw cd ~/SyncWork

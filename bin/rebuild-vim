@@ -1,10 +1,17 @@
 #!/bin/sh
 set -e
 
-#sudo apt-get install libncurses5-dev libgnome2-dev libgnomeui-dev \
-# libgtk2.0-dev libatk1.0-dev libbonoboui2-dev \
-# libcairo2-dev libx11-dev libxpm-dev libxt-dev python-dev \
-# lua53 liblua5.3-dev
+# apt-get install -y \
+#     dpkg-dev \
+#     curl \
+#     git \
+#     gcc \
+#     make \
+#     lua5.3 \
+#     liblua5.3-dev \
+#     ncurses-dev \
+#     python3-dev \
+#     libx11-dev libxtst-dev libxt-dev libsm-dev libxpm-dev
 
 SRC=~/code/vim
 
@@ -30,7 +37,6 @@ else
   FEAT="$FEAT --with-python3-config-dir=/usr/lib/python$PYTHON_VERSION/config-$PYTHON_VERSIONm-$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
   FEAT="$FEAT --with-x"
   FEAT="$FEAT --enable-xim"
-  FEAT="$FEAT --enable-gui=gtk2"
   FEAT="$FEAT --with-lua-prefix=/usr"
   CFLAGS="$CFLAGS -I/usr/include/lua5.3"
 fi
@@ -57,12 +63,12 @@ rm -f src/auto/config.cache
 CFLAGS="$CFLAGS" ./configure $FEAT --with-compiledby="$COMPILED_BY" \
 && make VIMRUNTIMEDIR=$PREFIX/share/vim/vim82 -j4 && uname -m > .arch || {
     echo "Consider" 1>&2
-    echo "  sudo apt-get build-dep vim-gnome" 1>&2
+    echo "  sudo apt-get build-dep vim-gtk" 1>&2
     exit 1
 }
 
 cd $SRC
-if [ -n "$TERMUX_VERSION" ]; then
+if [ -n "$TERMUX_VERSION" ] || grep -q docker /proc/1/cgroup; then
   make install clean
 else
   sudo make install clean
