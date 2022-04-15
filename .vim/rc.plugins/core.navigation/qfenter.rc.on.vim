@@ -68,7 +68,7 @@ function! QFSort(...)
   endif
 endfunction
 
-function! QFSave() abort
+function! QFSave(file) abort
   let qf = getqflist({'all': 1})
   for i in range(len(qf.items))
     let d = qf.items[i]
@@ -78,13 +78,20 @@ function! QFSave() abort
     silent! call remove(d, 'bufnr')
     let qf.items[i] = d
   endfor
-  return qf
+  call writefile([js_encode(qf.items)], a:file)
 endfunction
+
+function! QFLoad(file) abort
+  call setqflist(js_decode(get(readfile(a:file), 0)))
+  copen
+endfunction
+
+command! -nargs=1 -complete=file QFSave call QFSave(<f-args>)
+command! -nargs=1 -complete=file QFLoad call QFLoad(<f-args>)
 
 augroup my_qf
   autocmd! my_qf
   autocmd FileType qf nnoremap <silent> <buffer> dd :call RemoveQFItem()<cr>
   autocmd FileType qf vnoremap <silent> <buffer> dd :call RemoveQFItems()<cr>
-  autocmd FileType qf nnoremap <silent> <buffer> ,U :call QFUnique()<cr>
   autocmd! QuickfixCmdPost * call QFSort()
 augroup end
