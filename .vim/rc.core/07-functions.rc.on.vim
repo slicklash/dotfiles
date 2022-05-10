@@ -81,11 +81,7 @@ endfunction
 
 function! EchoHi(msg, ...) abort
   let hi = get(a:, 1, 'String')
-  if hi ==? 'ErrorMsg'
-    echohl ErrorMsg
-  else
-    echohl String
-  endif
+  execute 'echohl ' . hi
   echo a:msg
   echohl None
 endfunction
@@ -262,12 +258,41 @@ function! SortImports() abort
   call setline('.', line)
 endfunction
 
-function! s:reduce(list, fn, acc) abort
-  let acc = a:acc
-  for x in a:list
-    let acc = a:fn(acc, x)
-  endfor
-  return acc
+function! s:bufnumbers() abort
+  let [i, last] = [1, line('$')]
+  let result = []
+  while i <= last
+    let [line, i] = [getline(i), i + 1]
+    if match(line,'^\v-?\d+(\.\d+)?$') == 0
+      call add(result, str2float(line))
+    endif
+  endwhile
+  return result
+endfunction
+
+function! s:apply(fn, ...) abort
+  let xs = s:bufnumbers()
+  let initial = get(a:000, 0, v:false) ? xs[0] : 0
+  return reduce(xs, a:fn, initial)
+endfunction
+
+function! Sum() abort
+  call EchoHi(s:apply({ acc, x -> acc + x }), 'DiffAdd')
+endfunction
+
+function! Avg() abort
+  let xs = s:bufnumbers()
+  call EchoHi(reduce(xs, { acc, x -> acc + x }) / len(xs), 'DiffAdd')
+endfunction
+
+function! Min(...) abort
+  let n = get(a:000, 0, 1)
+  call EchoHi(sort(s:bufnumbers(), 'f')[0:n-1], 'DiffAdd')
+endfunction
+
+function! Max(...) abort
+  let n = get(a:000, 0, 1)
+  call EchoHi(reverse(sort(s:bufnumbers(), 'f'))[0:n-1], 'DiffAdd')
 endfunction
 
 function! Hist(...) abort
@@ -279,7 +304,7 @@ function! Hist(...) abort
         \'method=GET',
         \'method=HEAD' ,
         \]
-  let max_len = s:reduce(hints, {acc, x -> max([acc, len(x)])}, 0)
+  let max_len = reduce(hints, {acc, x -> max([acc, len(x)])}, 0)
   let counter = {}
   while i < last
     let [line, i] = [getline(i), i + 1]

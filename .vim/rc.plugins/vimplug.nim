@@ -1,7 +1,7 @@
 import algorithm, httpclient, net, os, parseopt, re, sequtils, strformat, strutils, tables, terminal
 
 type
-  PluginInfo = tuple[origin: string, name: string, revision: string, errors: seq[string]]
+  PluginInfo = tuple[origin: string, name: string, revision: string, locked: bool, errors: seq[string]]
 
 let REGEX_DEIN_ADD = re"dein#add\('([^']+)'.+"
 let REGEX_REVISION = re".+'rev': '([^']+)'"
@@ -28,15 +28,18 @@ proc getPlugins(): seq[PluginInfo] =
     if plugins.len == 0: continue
     for plugin in plugins:
       var name, revision: string
+      var locked: bool
       var errors: seq[string] = @[]
       var m: array[1, string]
       if plugin.match(REGEX_DEIN_ADD, m): name = m[0]
-      if plugin.match(REGEX_REVISION, m): revision = m[0]
+      if plugin.match(REGEX_REVISION, m):
+        revision = m[0]
+        locked = plugin.contains("lock-rev")
       if (seen.contains(name) and seen[name] != revision):
         errors.add(fmt"revision mismatch {revision} != {seen[name]}")
       else:
         seen[name] = revision
-      result.add((origin, name, revision, errors))
+      result.add((origin, name, revision, locked, errors))
   result.sort(byName)
 
 proc check(plugins: seq[PluginInfo]) =
@@ -54,7 +57,8 @@ proc check(plugins: seq[PluginInfo]) =
       echo p.origin
       hasError = true
     else:
-      stdout.styledWriteLine(fgGreen, "OK")
+      let suffix = if p.locked: " Locked" else: ""
+      stdout.styledWriteLine(fgGreen, fmt"OK{suffix}")
   if hasError:
     quit(1)
   else:
@@ -75,7 +79,7 @@ proc list(plugins: seq[PluginInfo], outdated = false) =
       stdout.write name
       stdout.styledWriteLine(fgRed, "NOT_FOUND")
     elif outdated:
-      if revision != p.revision and p.revision != "next":
+      if not p.locked and revision != p.revision and p.revision != "next":
         stdout.write name
         echo fmt"https://github.com/{p.name}/compare/{p.revision}..{revision}"
     else:

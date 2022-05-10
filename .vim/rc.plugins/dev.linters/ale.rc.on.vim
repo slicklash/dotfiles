@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': '607f33a1b0f662d9809d54363e8e81a4965862ce' })
+  call dein#add('dense-analysis/ale', { 'rev': '14265e464af0fde49c4c4751bc2f6a9f7b4812dd' })
   finish
 endif
 
@@ -61,6 +61,10 @@ function! YoshiFind(buffer) abort
      return path
    endif
    let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-flow-bm')
+   if !empty(path)
+     return path
+   endif
+   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-library')
    if !empty(path)
      return path
    endif

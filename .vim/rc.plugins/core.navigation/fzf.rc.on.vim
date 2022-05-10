@@ -5,7 +5,7 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': 'a0b42e6538092dc6dea9f918a7a74c9408e44d4c', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf', { 'rev': '6dcf5c3d7d6c321b17e6a5673f1533d6e8350462', 'build': './install --all', 'merged': 0 })
   call dein#add('junegunn/fzf.vim', { 'rev': 'd5f1f8641b24c0fd5b10a299824362a2a1b20ae0', 'depends': 'fzf' })
   finish
 endif
@@ -96,6 +96,7 @@ nnoremap <Space>b :call fzf#vim#buffers('', fzf#vim#with_preview({'placeholder':
 nnoremap <Space>d :call _fzf({'dir': expand('%:p:h')})<CR>
 nnoremap <Space>h :Helptags<CR>
 nnoremap <Space>r :call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))<CR>
+nnoremap <Space>; :History:<CR>
 
 nnoremap <Leader>fd :call _fzf({'grep': expand('<cword>')})<CR>
 nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
