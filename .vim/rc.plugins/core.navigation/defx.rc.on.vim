@@ -15,7 +15,7 @@ if InitStep() == 0
   endtry
   call dein#add('Shougo/defx.nvim', { 'rev': '8e53802a2691f8629ae08aca970595b6522aca46' }) "lock-rev
   if !has('nvim') && !dein#tap('nvim-yarp')
-    call dein#add('roxma/nvim-yarp', { 'rev': 'b710bf4daccb603a423754794fb446e5fbb59576' })
+    call dein#add('roxma/nvim-yarp', { 'rev': 'bb5f5e038bfe119d3b777845a76b0b919b35ebc8' })
     call dein#add('roxma/vim-hug-neovim-rpc', { 'rev': '93ae38792bc197c3bdffa2716ae493c67a5e7957' })
   endif
   finish
@@ -79,6 +79,7 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
   nnoremap <silent><buffer><expr> l defx#do_action('open_tree')
   nnoremap <silent><buffer><expr> E defx#do_action('open', 'MyDefxVsplit')
+  " nnoremap <silent><buffer><expr> P defx#do_action('open', 'MyDefxPsplit')
   nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
   nnoremap <silent><buffer><expr> N defx#do_action('new_file')
   nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')

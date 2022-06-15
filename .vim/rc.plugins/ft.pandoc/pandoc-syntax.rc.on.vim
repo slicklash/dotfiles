@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('vim-pandoc/vim-pandoc-syntax', { 'rev': '7bea0ba8929749b2a471520af87635163fb28bdf' })
+  call dein#add('vim-pandoc/vim-pandoc-syntax', { 'rev': 'ff52ed9296715988fc3269b64a903415c3bdf322' })
   finish
 endif
 

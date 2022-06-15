@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('HerringtonDarkholme/yats.vim', { 'rev': '3e6a46271fe307741dbd06507e36ec08f118263a' })
+  call dein#add('HerringtonDarkholme/yats.vim', { 'rev': 'a5dd9a768b33e843647bddd6e828403cf4ea4476' })
   finish
 endif
