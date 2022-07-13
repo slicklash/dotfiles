@@ -1,6 +1,6 @@
 if InitStep() == 0
   call dein#add('ludovicchabant/vim-gutentags', { 'rev': 'b77b8fabcb0b052c32fe17efcc0d44f020975244' })
-  call dein#add('kristijanhusak/vim-js-file-import', { 'rev': '50af21f3b08d766ea4a7f9d3abf61b242bee526b' })
+  call dein#add('kristijanhusak/vim-js-file-import', { 'rev': '2e49c9ec99a9fa673709099fd892a65a8f252ddb' })
   finish
 endif
 

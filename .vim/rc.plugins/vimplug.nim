@@ -37,9 +37,9 @@ proc getPlugins(): seq[PluginInfo] =
         locked = plugin.contains("lock-rev")
       if (seen.contains(name) and seen[name] != revision):
         errors.add(fmt"revision mismatch {revision} != {seen[name]}")
-      else:
-        seen[name] = revision
-      result.add((origin, name, revision, locked, errors))
+      if errors.len > 0 or not seen.contains(name):
+        result.add((origin, name, revision, locked, errors))
+      seen[name] = revision
   result.sort(byName)
 
 proc check(plugins: seq[PluginInfo]) =
@@ -91,7 +91,7 @@ proc update(plugins: seq[PluginInfo], filters: seq[string]) =
   for p in plugins:
     if filters.len < 1 or filters.anyIt(p.name.contains(it)):
       let revision = fetchRevision(client, p.name)
-      if revision != p.revision and p.revision != "next":
+      if not p.locked and  revision != p.revision and p.revision != "next":
         target.add((p.origin, p.name, p.revision, revision))
   if target.len == 0: return
 
