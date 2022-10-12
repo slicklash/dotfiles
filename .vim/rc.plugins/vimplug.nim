@@ -22,7 +22,7 @@ proc formatName(name: string, length: int): string = fmt"{name.alignString(lengt
 proc getPlugins(): seq[PluginInfo] =
   var seen: Table[string, string]
   for origin in walkDirRec("/home/slicklash/.vim/rc.plugins"):
-    if "rc.on" notin origin: continue
+    if not origin.endsWith("rc.on.vim"): continue
     let text = readFile(origin)
     let plugins = text.findAll(REGEX_DEIN_ADD)
     if plugins.len == 0: continue

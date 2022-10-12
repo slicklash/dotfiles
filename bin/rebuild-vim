@@ -26,7 +26,6 @@ FEAT="$FEAT --enable-multibyte"
 FEAT="$FEAT --enable-python3interp"
 FEAT="$FEAT --enable-luainterp"
 if [ -n "$TERMUX_VERSION" ]; then
-  # TODO: patch channel.c in vim (AI_V4MAPPED)
   FEAT="$FEAT --prefix=$PREFIX"
   FEAT="$FEAT --with-python3-config-dir=$PREFIX/lib/python3.10/config-3.10"
   FEAT="$FEAT --with-local-dir=$PREFIX"
@@ -58,10 +57,15 @@ test -d $SRC || {
 PREFIX="${PREFIX:-/usr/local}"
 
 cd $SRC
+git checkout -- .
 git pull
+if [ -n "$TERMUX_VERSION" ]; then
+  sed -i 's/| AI_V4MAPPED//g' src/channel.c
+  sed -i 's/PWENT/PWENT1/g' src/misc1.c
+fi
 rm -f src/auto/config.cache
 CFLAGS="$CFLAGS" ./configure $FEAT --with-compiledby="$COMPILED_BY" \
-&& make VIMRUNTIMEDIR=$PREFIX/share/vim/vim82 -j4 && uname -m > .arch || {
+&& make VIMRUNTIMEDIR=$PREFIX/share/vim/vim90 -j4 && uname -m > .arch || {
     echo "Consider" 1>&2
     echo "  sudo apt-get build-dep vim-gtk" 1>&2
     exit 1

@@ -285,6 +285,8 @@ hi! link xmlTag         Operator
 hi! link xmlEndTag      Operator
 hi! link xmlNamespace   Number
 
+hi! link javaIdentifier Normal
+
 hi! link javaScriptFuncDef Function
 hi! link javaScriptFuncExp Function
 hi! link javaScriptFuncKeyword Keyword

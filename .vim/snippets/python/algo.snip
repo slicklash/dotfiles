@@ -29,3 +29,75 @@ abbr        Grid: Bounds
 	for x, y in grid:
 	    b = (min(y, b[0]), min(x, b[1]), max(y, b[2]), max(x, b[3]))
 	return grid, Bounds(*b)
+
+snippet     d4
+abbr deltas 4
+options head
+	const Deltas = [(-1,0), (1,0), (0,-1), (0,1)]
+	${0}
+
+snippet n4
+abbr neighbours
+options head
+	Deltas = [(-1,0), (1,0), (0,-1), (0,1)]
+	def neighbours(grid, p):
+		for (dx, dy) in Deltas:
+			key = (p[0] + dx, p[1] + dy)
+			if key in grid:
+				yield (key, grid[key])
+	${0}
+
+snippet n8
+abbr neighbours
+options head
+	Deltas = [(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
+	def neighbours(grid, p):
+		for (dx, dy) in Deltas:
+			key = (p[0] + dx, p[1] + dy)
+			if key in grid:
+				yield (key, grid[key])
+	${0}
+
+snippet A*
+abbr    astar
+options head
+	Deltas = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+	def neighbours(grid, p):
+		for (dx, dy) in Deltas:
+			key = (p[0] + dx, p[1] + dy)
+			if key in grid:
+				yield (key, grid[key])
+
+	def getCost(c, n):
+		return abs(c - n)
+
+	def distance(p1, p2):
+		return sum(abs(a - b) for a, b in zip(p1, p2))
+
+	def astar(grid, start, finish):
+		costFromStart = {start: 0}
+		prev = {}
+		queue = [(0, start)]
+		while queue:
+			_, pos = heappop(queue)
+			if pos == finish:
+				break
+			cv = grid[pos]
+			for (np, nv) in neighbours(grid, pos):
+				cost = getCost(cv, nv)
+				if cost == inf:
+					continue
+				pathCost = costFromStart[pos] + cost
+				if pathCost < costFromStart.get(np, inf):
+					costFromStart[np] = pathCost
+					heappush(queue, (pathCost + distance(np, finish), np))
+					prev[np] = pos
+		if finish not in costFromStart:
+			return (inf, [])
+		path = []
+		p = finish
+		while p != start:
+			path.insert(0, p)
+			p = prev[p]
+		return (costFromStart[finish], path)
+	${0}

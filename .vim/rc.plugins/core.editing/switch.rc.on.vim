@@ -56,6 +56,11 @@ function! s:init_switch_definitions() abort
           \     from_single: to_double,
           \   },
           \ ]
+  elseif &ft == 'java'
+    let b:switch_custom_definitions =
+          \ [
+          \   ['public', 'private', 'protected'],
+          \ ]
   else
     let b:switch_custom_definitions =
           \ [

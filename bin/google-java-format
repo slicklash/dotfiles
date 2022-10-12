@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DIR=$(cd $(dirname $0); pwd)
+VER=1.15.0
+JAR="$DIR/google-java-format-$VER-all-deps.jar"
+
+if [ ! -f "$JAR" ]; then
+    wget -q -P $DIR "https://github.com/google/google-java-format/releases/download/v$VER/google-java-format-$VER-all-deps.jar"
+fi
+
+java -jar "$JAR" "$@"

@@ -1,0 +1,153 @@
+snippet     ee
+abbr        echo
+alias       pp
+	System.out.println(${0});
+
+snippet     sf
+options word
+alias       s.f
+abbr        String.format
+	String.format("${1}", ${0})
+
+snippet ret
+abbr    return
+options word
+	return ${0}
+
+# flow control
+
+snippet     if
+options     head
+	if (${1:#:condition}) {
+		${0}
+	}
+
+snippet     ife
+options     head
+	if (${1:#:condition}) {
+		${2}
+	} else {
+		${0}
+	}
+
+# loops
+
+snippet     for
+options     head
+	for (${1:#:type} ${2:i} = ${3:0}; $2 < ${4:n}; $2++) {
+		${0}
+	}
+
+snippet     fof
+abbr        for ... : ...
+options     head
+	for (${1:#:type} ${2:#:x}: ${3:#:list}) {
+		${0}
+	}
+
+snippet     wh
+abbr        while
+options     head
+	while (${1:#:condition}) {
+		${0}
+	}
+
+# access modifiers
+snippet po
+	protected ${0}
+snippet pu
+	public ${0}
+snippet pr
+	private ${0}
+snippet ab
+	abstract ${0}
+snippet fi
+	final ${0}
+snippet st
+	static ${0}
+snippet sy
+	synchronized ${0}
+
+snippet     me
+abbr        method
+alias       fu
+options     head
+	private ${1:void} ${2:name}(${3}) {
+		${0}
+	}
+
+snippet     mes
+abbr        method static
+alias       fu
+options     head
+	private static ${1:void} ${2:name}(${3}) {
+		${0}
+	}
+
+snippet     NN
+alias       main
+options     head
+	public class `expand('%:p:t:r')` {
+		public static void main(String args[]) {
+			System.out.println("Hello, world!");${0}
+		}
+	}
+
+snippet     pc
+options     head
+	public class ${1:`expand('%:p:t:r')`} {
+		public $1(${0}) {
+		}
+	}
+
+# misc
+
+snippet     DL
+alias       DefaultLogger
+options     head
+
+	public class DefaultLogger {
+		public static void init() throws IOException {
+			String config =
+				"handlers=java.util.logging.FileHandler\n"
+					+ ".level=INFO\n"
+					+ "java.util.logging.SimpleFormatter.format=%1$tF %1$tT %4$s %5$s%n\n"
+					+ "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n"
+					+ "java.util.logging.FileHandler.level=INFO\n"
+					+ "java.util.logging.FileHandler.pattern=%t/${1:logfile}.log\n"
+					+ "java.util.logging.FileHandler.limit=10485760\n"
+					+ "java.util.logging.FileHandler.count=5\n";
+			LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(config.getBytes()));
+		}
+	}
+	${0}
+
+snippet     lo
+options     head
+	private static Logger logger = Logger.getLogger(${1:`expand('%:p:t:r')`}.class.getName());
+	${0}
+
+snippet     TRE
+options     head
+	public class Result<TSuccess> {
+		public final TSuccess value;
+		public final Throwable error;
+
+		public static <TSuccess> Result<TSuccess> of(TSuccess value) {
+			return new Result<TSuccess>(value, null);
+		}
+
+		public static <TSuccess> Result<TSuccess> ofError(Throwable error) {
+			return new Result<TSuccess>(null, error);
+		}
+
+		public Result(TSuccess value, Throwable error) {
+			this.value = value;
+			this.error = error;
+		}
+
+		public boolean isError() {
+			return this.error != null;
+		}
+	}
+	${0}

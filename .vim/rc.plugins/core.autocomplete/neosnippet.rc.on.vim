@@ -1,10 +1,10 @@
 if InitStep() == 0
-  call dein#add('Shougo/neosnippet', { 'rev': '5973e801e7ad38a01e888cb794d74e076a35ea9b' })
+  call dein#add('Shougo/neosnippet', { 'rev': 'af18dc963b706568bf28f7dd2facea2ca2784299' })
   finish
 endif
 
 let g:neosnippet#data_directory='~/.vim/cache/snippets'
-let g:neosnippet#snippets_directory='~/.vim/snippets,~/.vim/snippets/javascript,~/.vim/snippets/python,~/.vim/snippets/vim,~/.vim/snippets/nim'
+let g:neosnippet#snippets_directory='~/.vim/snippets,~/.vim/snippets/java,~/.vim/snippets/javascript,~/.vim/snippets/python,~/.vim/snippets/vim,~/.vim/snippets/nim'
 let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
 
 function! s:check_back_space()

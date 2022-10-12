@@ -315,3 +315,13 @@ abbr        import pdb..
 snippet     ipdb
 abbr        import ipdb..
     import ipdb; ipdb.set_trace()
+
+# imports
+
+snippet     mic
+alias       impre
+abbr        Modules: import current
+options     head
+	import os, sys
+	sys.path.append(os.path.dirname(sys.path[0]))
+    ${0}

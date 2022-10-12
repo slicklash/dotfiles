@@ -1,0 +1,30 @@
+snippet     perm
+abbr        List: Permutation
+options     head
+	function perm(xs) {
+		if (xs.length < 2) return [xs]
+		const [head, ...tail] = xs
+		const result = []
+		for (const p of perm(tail)) {
+			for (let i = 0; i < xs.length; i++) {
+				const copy = [...p]
+				copy.splice(i, 0, head)
+				result.push(copy)
+			}
+		}
+		return result
+	}
+	${0}
+
+snippet     comb
+abbr        List: Combinations
+options     head
+	const combinations = (xs, k) => {
+	  if (k == 0) return[[]]
+	  if (k == xs.length) return [xs]
+	  const [head, ...tail] = xs
+	  return combinations(tail, k - 1)
+	    .map(c => [head, ...c])
+	    .concat(combinations(tail, k))
+	}
+	${0}

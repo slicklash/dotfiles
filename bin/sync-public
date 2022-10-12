@@ -5,7 +5,7 @@ DST=~/code/gh-dotfiles
 function _sync() {
   echo "~/$from"
   local dir="$DST/$from"
-  rm -rf $dir/*
+  rm -rf "$dir/*"
   for x in $white_list; do
     echo "[+] $x"
     rsync -ar --exclude '*private*' ~/$from/$x $dir
@@ -19,8 +19,9 @@ white_list=('README.md' '.tmux.conf' '.zshrc')
 _sync
 
 from='bin/'
-white_list=('dotfiles' 'rebuild-edb' 'rebuild-opencv' 'rebuild-vim' 'fix-washed-out-colors' 'fix-panel' 'sync-public' 'xrandr' 'tmux2' 'tvim' 'xsend-keys' 'setup-termux')
+white_list=('dotfiles' 'rebuild-edb' 'rebuild-opencv' 'rebuild-vim' 'fix-washed-out-colors' 'fix-panel' 'sync-public' 'xran' 'tmux2' 'tvim' 'xsend-keys' 'setup-termux' 'google-java-format' 'mtime')
 _sync
+rsync -ar --exclude '*private*' "$HOME/bin/java-lsp/install-eclipse-jdt-ls.sh" "$DST/bin/java-lsp/"
 
 from='.config/'
 white_list=('lf')

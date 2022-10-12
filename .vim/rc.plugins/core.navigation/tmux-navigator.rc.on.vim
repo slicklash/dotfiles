@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': '9ca5bfe5bd274051b5dd796cc150348afc993b80' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'afb45a55b452b9238159047ce7c6e161bd4a9907' })
   finish
 endif
 
@@ -21,7 +21,8 @@ function! _tmux_js(cmd, ...) abort
   if path =~ '.spec.[jt]s'
     let type = get(a:, 0, 'test')
     if path =~ 'blog-ooi'
-      let test_cmd = 'npx yoshi-flow-editor test '
+      " let test_cmd = 'npx yoshi-flow-editor test '
+      let test_cmd = 'yarn run test:unit -- '
     elseif path =~ 'blog-bm'
       let test_cmd = 'yarn run test:unit -- '
     elseif path =~ 'bookings' || path =~ 'blog-bm'
@@ -56,7 +57,7 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>E :call _tmux_send('vim --cmd "source %:p" --cmd ":q"')<Bar>redraw!<C-M>
   elseif &filetype =~ 'nim'
     map <buffer> <Leader>e :call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>m :call _tmux_send('nim c -r -d:ssl -hints:off %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>m :call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('nim c -r -d:release --hints:off %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>D :call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
   endif

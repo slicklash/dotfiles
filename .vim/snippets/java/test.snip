@@ -1,0 +1,43 @@
+snippet des
+options head
+	@Nested
+	class ${1:when} {
+		${0}
+	}
+
+snippet it
+options head
+	@Test
+	public void ${1:should}() {
+		${0}
+	}
+
+snippet itp
+options head
+	@ParameterizedTest(name = "should with {0}")
+	@ValueSource(strings = {"a", "b"})
+	@ValueSource(ints = {1, 2})
+	public void ${1:should}() {
+		${0}
+	}
+
+snippet aa
+options head
+	assertEquals(${1:expected}, ${2:actual});${0}
+
+snippet outs
+abbr    outputStream
+	private final PrintStream originalOut = System.out;
+	private ByteArrayOutputStream outputStream;
+
+	@BeforeEach
+	public void setUp() {
+		outputStream = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(outputStream));
+	}
+
+	@AfterEach
+		public void tearDown() {
+		System.setOut(originalOut);
+	}
+	${0}

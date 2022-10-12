@@ -1,0 +1,253 @@
+snippet     SRVM
+abbr        ServiceManager
+options     head
+	import java.util.List;
+	import java.util.concurrent.Executor;
+
+	import com.google.common.util.concurrent.MoreExecutors;
+	import com.google.common.util.concurrent.Service;
+	import com.google.common.util.concurrent.Service.State;
+
+	public class ServiceManager {
+		private final List<Service> services;
+
+		public ServiceManager(List<Service> services) {
+			this.services = services;
+			ShutdownListener listener = new ShutdownListener(this);
+			Executor executor = MoreExecutors.directExecutor();
+			services.forEach(service -> service.addListener(listener, executor));
+		}
+
+		public void startAsync() {
+			services.forEach(service -> service.startAsync());
+		}
+
+		public void stopAsync() {
+			services.forEach(service -> service.stopAsync());
+		}
+
+		private static final class ShutdownListener extends Service.Listener {
+			private final ServiceManager manager;
+
+			public ShutdownListener(ServiceManager manager) {
+				this.manager = manager;
+			}
+
+			@Override
+			public void terminated(State from) {
+				manager.stopAsync();
+			}
+
+			@Override
+			public void failed(State from, Throwable failure) {
+				manager.stopAsync();
+			}
+		}
+	}
+	${0}
+
+snippet     SAPP
+abbr        Service App
+options     head
+	import com.google.common.util.concurrent.Service;
+	import java.util.Arrays;
+
+	public class App {
+		public static void main(String[] args) throws Exception {
+			ServiceManager manager = new ServiceManager();
+			Runtime.getRuntime()
+				.addShutdownHook(
+					new Thread("shutdown-hook") {
+						@Override
+						public void run() {
+							manager.stopAsync();
+						}
+					});
+			manager.startAsync();
+		}
+	}
+	${0}
+
+snippet     SS
+abbr        Service Stub
+options     head
+	import com.google.common.util.concurrent.AbstractScheduledService;
+	import java.util.ArrayList;
+	import java.util.Collections;
+	import java.util.Iterator;
+	import java.util.List;
+	import java.util.Queue;
+	import java.util.concurrent.ConcurrentLinkedQueue;
+	import java.util.concurrent.ExecutorService;
+	import java.util.concurrent.Executors;
+	import java.util.concurrent.TimeUnit;
+	import java.util.logging.Logger;
+	import java.util.stream.Collectors;
+
+	public class ServiceStub extends AbstractScheduledService implements Collector {
+	private static Logger logger = Logger.getLogger(ServiceStub.class.getName());
+
+	@Override
+	protected void startUp() throws Exception {
+		String message = "starting";
+		System.out.println(message);
+		logger.info(message);
+	}
+
+	@Override
+	protected void runOneIteration() throws InterruptedException {
+		ExecutorService exec = Executors.newCachedThreadPool();
+		Queue<Object> results = new ConcurrentLinkedQueue<Object>();
+
+		for (final Object worker : this.workers) {
+		exec.execute(
+			new Runnable() {
+				@Override
+				public void run() {
+				results.add(worker.doWork());
+				}
+			});
+		}
+
+		exec.shutdown();
+		exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+
+		List<WorkResult> result = new ArrayList<>();
+		Iterator iterator = results.iterator();
+		while (iterator.hasNext()) {
+		WorkResult wr = (WorkResult) iterator.next();
+		result.add(wr);
+		}
+	}
+
+	@Override
+	protected void shutDown() throws Exception {
+		String message = "shutting down";
+		logger.info(message);
+		System.out.println(message);
+		// cleanUp();
+	}
+
+	@Override
+	protected Scheduler scheduler() {
+		return new CustomScheduler() {
+				@Override
+				protected Schedule getNextSchedule() throws Exception {
+					return new Schedule(Long.MAX_VALUE, TimeUnit.DAYS);
+				}
+			};
+		}
+	}
+	${0}
+
+snippet     SOS
+abbr        Socket Service Stub
+options     head
+	import com.google.common.util.concurrent.AbstractIdleService;
+	import com.google.common.util.concurrent.Service;
+	import java.io.IOException;
+	import java.io.InputStream;
+	import java.io.OutputStream;
+	import java.net.ServerSocket;
+	import java.net.Socket;
+	import java.util.List;
+	import java.util.concurrent.ExecutorService;
+	import java.util.concurrent.Executors;
+	import java.util.logging.Level;
+	import java.util.logging.Logger;
+
+	public class SocketService extends AbstractIdleService {
+	private static Logger logger = Logger.getLogger(SocketService.class.getName());
+
+	private ServerSocket serverSocket;
+	private ExecutorService executorService;
+	private int port;
+
+	@Override
+	protected void startUp() throws IOException {
+		String message = "listening at: " + this.port;
+		logger.info(message);
+		System.out.println(message);
+		try {
+			this.executorService = Executors.newCachedThreadPool();
+			this.serverSocket = new ServerSocket(this.port);
+			this.executorService.execute(new RequestHandler());
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+			this.shutDown();
+		}
+	}
+
+	public void handleRequest(Socket clientSocket) {
+		try (InputStream is = clientSocket.getInputStream();
+			OutputStream os = clientSocket.getOutputStream()) {
+			clientSocket.setSoTimeout(500);
+			Protocol.Packet req = Protocol.unpack(is);
+			byte[] resp = Protocol.pack(data);
+			os.write(resp);
+			os.flush();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+		}
+	}
+
+	@Override
+	protected void shutDown() {
+		String message = "stopping server";
+		logger.info(message);
+		System.out.println(message);
+		try {
+			if (this.executorService != null) {
+				this.executorService.shutdown();
+			}
+			if (this.serverSocket != null) {
+				this.serverSocket.close();
+			}
+		} catch (Exception ignore) {
+		}
+	}
+
+	private final class RequestHandler implements Runnable {
+		@Override
+		public void run() {
+			while (!executorService.isShutdown()) {
+				try {
+					final Socket conn = serverSocket.accept();
+					executorService.execute(
+						new Runnable() {
+							@Override
+							public void run() {
+							handleRequest(conn);
+							}
+						});
+				} catch (Exception e) {
+					logger.log(Level.WARNING, e.getMessage(), e);
+					return;
+				}
+			}
+		}
+	}
+
+		public int getPort() {
+			return this.serverSocket.getLocalPort();
+		}
+	}
+	${0}
+
+snippet     NOS
+abbr        NoOpService
+options     head
+	import com.google.common.util.concurrent.AbstractService;
+
+	public class NoOpService extends AbstractService {
+		@Override
+		protected void doStart() {
+			notifyStarted();
+		}
+
+		@Override
+		protected void doStop() {
+			notifyStopped();
+		}
+	}
+	${0}

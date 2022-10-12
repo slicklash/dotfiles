@@ -1,0 +1,39 @@
+snippet asl
+abbr    Arrays.asList
+options word
+	Arrays.asList(${0})
+
+snippet al
+abbr    new ArrayList<>
+options head
+	List<${1:Object}> ${2:list} = new ArrayList<>();${0}
+
+snippet am
+abbr    new HashMap<>
+options head
+	Map<${1:Object}, ${2:Object}> ${3:map} = new HashMap<>();${0}
+
+snippet thm
+abbr    Map<K, V>
+options word
+	Map<${1:Object}, ${2:Object}>${0}
+
+snippet ahs
+abbr    new HashSet<>
+options head
+	Set<${1:Object}> ${2:set} = new HashSet<>();${0}
+
+snippet ast
+abbr    new Stack<>
+options head
+	Stack<${1:Object}> ${2:stack} = new Stack<>();${0}
+
+snippet eml
+abbr    Collections.emptyList()
+options word
+	Collections.emptyList();${0}
+
+snippet emm
+abbr    Collections.emptyMap()
+options word
+	Collections.emptyMap();${0}

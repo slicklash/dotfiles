@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': 'ad2f75e4b207debb3b7cf2a007dd2d205fe603bd' })
+  call dein#add('dense-analysis/ale', { 'rev': '951a668b1490f0b3dcdcec6b4ebf3f626c0f416f' })
   finish
 endif
 
@@ -43,16 +43,20 @@ let g:ale_linters = {
 \}
 
 let g:ale_fixers = {
+\   'java': ['google_java_format'],
 \   'javascript': ['eslint', 'yoshifix'],
 \   'typescript': ['eslint', 'yoshifix'],
 \   'python': ['black', 'isort'],
 \   'nim':  ['nimpretty'],
 \}
 
+let g:ale_java_javac_executable = 'javac -cp ~/bin/java-lsp/lombok.jar'
+
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --extension-pkg-whitelist=cv2'
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'
+
 let g:ale_nim_nimpretty_options = '--indent:2'
 
 function! YoshiFind(buffer) abort
@@ -72,7 +76,7 @@ function! YoshiFind(buffer) abort
    if !empty(path)
      return path
    endif
-   echoerr 'yoshi not found'
+   " echoerr 'yoshi not found'
 endfunction
 
 let yoshi = {
