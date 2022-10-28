@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('tpope/vim-surround', { 'rev': 'bf3480dc9ae7bea34c78fbba4c65b4548b5b1fea' })
+  call dein#add('tpope/vim-surround', { 'rev': '3d188ed2113431cf8dac77be61b842acb64433d9' })
   finish
 endif

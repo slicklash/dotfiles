@@ -52,6 +52,16 @@ options     head
 		${0}
 	}
 
+# exceptions
+
+snippet     tr
+abbr        try ... catch
+options     head
+	try {
+		${0}
+	} catch (Exception ex) {
+	}
+
 # access modifiers
 snippet po
 	protected ${0}

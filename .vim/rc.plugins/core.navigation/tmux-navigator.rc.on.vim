@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'afb45a55b452b9238159047ce7c6e161bd4a9907' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'bd4c38be5b4882991494cf77c0601a55bc45eebf' })
   finish
 endif
 
@@ -13,6 +13,7 @@ augroup END
 function! _tmux_send(cmd) abort
   w
   let cmd = substitute(a:cmd, '%:p', expand('%:p'), '')
+  let cmd = substitute(cmd, '$GIT', FugitiveFind('.git'), 'i')
   execute 'silent !tmux send-keys -t 1 "'.escape(cmd, '"').'" Enter'
 endfunction
 
@@ -39,11 +40,27 @@ function! _tmux_js(cmd, ...) abort
   execute 'silent !tmux send-keys -t left "'.escape(cmd, '"').'" Enter'
 endfunction
 
+function! _python(cmd, ...) abort
+  let type = get(a:000, 0, 'run')
+  let cmd = type == 'run' ? 'python %:p' : a:cmd
+  let path = expand('%:p')
+  if path =~ 'test_.*\.py'
+    let cmd = 'pytest %:p'
+    if type == 'coverage'
+      let cmd = cmd . ' --cov=. --cov-report=html'
+    endif
+  endif
+  call _tmux_send(cmd)
+endfunction
+
+
 function! s:tmux_exec() abort
   if &filetype =~ 'python'
-    map <buffer> <Leader>e :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e :call _python('python3 %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>c :call _python('pytest %:p', 'coverage')<Bar>redraw!<C-M>
     map <buffer> <Leader>m :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>l :call _tmux_send('bash $GIT/hooks/pre-commit')<Bar>redraw!<C-M>
   elseif &filetype =~ 'javascript' || expand('%:p') =~ 'app-market'
     map <buffer> <Leader>c :call _tmux_js('node %:p', 'coverage')<Bar>redraw!<C-M>
     map <buffer> <Leader>e :call _tmux_js('node %:p')<Bar>redraw!<C-M>

@@ -163,3 +163,9 @@ fz() {
     fzf --query="$1 " --select-1 --exit-0 --height=25% --reverse --tac --no-sort --cycle) &&
     cd "$fasdlist"
 }
+
+fzs() {
+  local files
+  IFS=$'\n' files=($(FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --glob "!.cache" ~/' && fzf-tmux --query="$1" --multi --select-1 --exit-0))
+  [[ -n "$files" ]] && source "${files[@]}"
+}

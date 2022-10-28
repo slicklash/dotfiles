@@ -4,12 +4,14 @@ if InitStep() == 0
   let g:LanguageClient_changeThrottle = 0.5
   " let g:LanguageClient_diagnosticsEnable = 0
   " let g:LanguageClient_fzfContextMenu = 1
+        " \ 'java': ['/home/slicklash/bin/java-lsp/bin/jdtls', '--jvm-arg=-Dlog.level=ALL'],
+        " \ 'python': ['/home/slicklash/.local/bin/pylsp'],
   let g:LanguageClient_serverCommands = {
         \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-        \ 'python': ['/home/slicklash/.local/bin/pylsp'],
+        \ 'python': ['pylsp'],
         \ 'typescript': ['typescript-language-server', '--stdio'],
         \ 'typescript.tsx': ['typescript-language-server', '--stdio'],
-        \ 'java': ['/home/slicklash/bin/java-lsp/bin/jdtls', '--jvm-arg=-Dlog.level=ALL'],
+        \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
         \ 'javascript': ['typescript-language-server', '--stdio'],
         \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
         \ 'nim': ['nimlsp'],
@@ -21,6 +23,7 @@ if InitStep() == 0
         \ 'typescript': ['tsconfig.json'],
         \ 'typescript.tsx': ['tsconfig.json'],
         \ }
+  let g:LanguageClient_settingsPath = '~/.vim/settings.json'
   finish
 endif
 

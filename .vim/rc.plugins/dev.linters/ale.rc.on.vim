@@ -1,13 +1,13 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': '951a668b1490f0b3dcdcec6b4ebf3f626c0f416f' })
+  call dein#add('dense-analysis/ale', { 'rev': 'e4b20544082ba019d8095cbc24ffab43b15e8fc0' })
   finish
 endif
 
 scriptencoding utf-8
 
 if has('unix')
-    let g:ale_sign_error = '✗'
-    let g:ale_sign_warning = '∆'
+    let g:ale_sign_error = '✖'
+    let g:ale_sign_warning = '⚠'
 endif
 
 highlight ALEWarning ctermbg=none
@@ -36,15 +36,16 @@ let g:ale_linters = {
 \   'css': ['stylelint'],
 \   'scss': ['stylelint'],
 \   'sass': ['stylelint'],
-\   'json': ['jsonlint'],
+\   'json': ['jq'],
 \   'vim': ['vint'],
-\   'python': ['pylint'],
+\   'python': ['pylint', 'flake8', 'mypy'],
 \   'nim': ['nimlsp', 'nimcheck'],
 \}
 
 let g:ale_fixers = {
 \   'java': ['google_java_format'],
 \   'javascript': ['eslint', 'yoshifix'],
+\   'json': ['jq'],
 \   'typescript': ['eslint', 'yoshifix'],
 \   'python': ['black', 'isort'],
 \   'nim':  ['nimpretty'],
@@ -52,7 +53,7 @@ let g:ale_fixers = {
 
 let g:ale_java_javac_executable = 'javac -cp ~/bin/java-lsp/lombok.jar'
 
-let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --extension-pkg-whitelist=cv2'
+let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ignore-long-lines --extension-pkg-whitelist=cv2'
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'

@@ -413,15 +413,16 @@ hi! link csharpSystemValueType Type
 hi! link sqlKeyword Keyword
 hi! link sqlSpecial Function
 
-" NERDTree
 
-call s:hi('NERDTreeOpenable', '#2c4558 25', '', '')
-call s:hi('NERDTreeLink', '#800080 55', '', '')
-call s:hi('NERDTreePart', s:color.BG, '', '')
-hi! link NERDTreeExecFile String
-hi! link NERDTreeClosable NERDTreeOpenable
-hi! link NERDTreeDirSlash Comment
-hi! link NERDTreePartFile NERDTreePart
+" LanguageClient
+
+hi LanguageClientError ctermbg=52
+hi! link LanguageClientErrorSign Todo
+hi! link LanguageClientWarningSign Number
+hi! clear LanguageClientWarning
+
+hi ALEError ctermbg=52
+hi! link ALEErrorSign Todo
 
 " VimFiler
 
@@ -444,12 +445,5 @@ call s:hi('Defx_filename_3_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename_3_directory_icon', s:color.BLUE, '', '')
 call s:hi('Defx_mark_3_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename', s:color.BLUE, '', '')
-
-" Syntastic
-
-call s:hi('SyntasticErrorSign', s:color.RED, '', '')
-call s:hi('SyntasticWarningSign', s:color.ORANGE, '', '')
-call s:hi('ALEErrorSign', s:color.RED, '', '')
-call s:hi('ALEWarningSign', s:color.ORANGE, '', '')
 
 delfunction s:hi

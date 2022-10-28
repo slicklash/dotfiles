@@ -28,7 +28,7 @@ white_list=('lf')
 _sync
 
 from='.vim/'
-white_list=('init.vim' 'colors' 'rc.core' 'rc.plugins' 'snippets')
+white_list=('init.vim' 'colors' 'rc.core' 'rc.plugins' 'snippets' 'settings.json')
 _sync
 
 from='.zsh/'

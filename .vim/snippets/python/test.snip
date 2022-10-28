@@ -1,0 +1,9 @@
+snippet it
+options head
+	def test_${1:should}() -> None:
+		${0}
+
+snippet des
+options head
+	@pytest.mark.${1:name}
+	${0}

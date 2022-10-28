@@ -1,6 +1,6 @@
 if InitStep() == 0
   packadd cfilter
-  call dein#add('yssl/QFEnter', { 'rev': 'df0a75b287c210f98ae353a12bbfdaf73d858beb' })
+  call dein#add('yssl/QFEnter', { 'rev': 'fd5d378f97ee4847ce4fcb58b3719864228607da' })
   finish
 endif
 
