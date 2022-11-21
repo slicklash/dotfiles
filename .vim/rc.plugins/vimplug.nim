@@ -131,4 +131,4 @@ when isMainModule:
     of "list", "l": list(plugins)
     of "outdated", "o": list(plugins, true)
     of "update", "u": update(plugins, args)
-    else: discard
+    else: showHelp()

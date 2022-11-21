@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('Shougo/neosnippet', { 'rev': 'af18dc963b706568bf28f7dd2facea2ca2784299' })
+  call dein#add('Shougo/neosnippet', { 'rev': 'b7c241fb5737c50bf09cf1e26298492c3fc0457a' })
   finish
 endif
 

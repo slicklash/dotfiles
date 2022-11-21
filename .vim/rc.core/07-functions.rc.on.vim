@@ -171,38 +171,6 @@ function! ExpandSnippet(file, snip, params) abort
   return split(snip, '\n')
 endfunction
 
-function _cmp(a, b)
-  if a:a < a:b
-    return -1
-  elseif a:a == a:b
-    return 0
-  endif
-  return 1
-endfunction
-
-function! WhyBundled(...) abort
-  let sortByIndex = a:0 > 0 ? a:1 : 0
-  echo sortByIndex
-  let i = 1
-  let last = line("$")
-  let items = []
-  while i < last
-    let line = getline(i)
-    let isModule = line =~# 'MODULE'
-    if isModule || line =~# 'FILE'
-      let size = getline(i + (isModule ? 3 : 2))
-      let size = substitute(size, '^.* size: \(\d\+\).*$', '\1', '')
-      let name = substitute(line, ' FILE', ' FILE  ', '')
-      call add(items, [str2nr(size), name])
-    endif
-    let i += 1
-  endwhile
-  let items = sort(items, {a, b -> _cmp(b[sortByIndex], a[sortByIndex])})
-  let items = map(items,  {_, val -> printf('%04d KiB%s', val[0], val[1])})
-  normal ggVGd
-  call setbufline(bufnr('%'), 1, items)
-endfunction
-
 function! Turbo() abort
   setlocal synmaxcol=120
   call deoplete#disable()
@@ -293,54 +261,4 @@ endfunction
 function! Max(...) abort
   let n = get(a:000, 0, 1)
   call EchoHi(reverse(sort(s:bufnumbers(), 'f'))[0:n-1], 'DiffAdd')
-endfunction
-
-function! Hist(...) abort
-  let [i, last] = [1, line('$')]
-  let [lines, items] = [[], []]
-  let hints = [
-        \'Failed to get metaSite GrpcStatusError',
-        \'SSR failed for instanceId',
-        \'method=GET',
-        \'method=HEAD' ,
-        \]
-  let max_len = reduce(hints, {acc, x -> max([acc, len(x)])}, 0)
-  let counter = {}
-  while i < last
-    let [line, i] = [getline(i), i + 1]
-    let skip = line !~# '2020 @'
-    if skip
-      continue
-    endif
-    let line = trim(strcharpart(line, 30))
-    if empty(line)
-      continue
-    endif
-    call add(lines, line)
-    for key in hints
-      let name = key . repeat(' ', max_len - len(key))
-      if line =~# key
-        let m = matchstrpos(line, 'status=\d\+')
-        let name .= m[1] != -1 ? ' ' . m[0] : repeat(' ', 11)
-        let m = matchstrpos(line, 'url=/[^/? ]*')
-        if m[1] != -1
-          let ssr = line =~# 'ssr=true' ? 'ssr=true ' : 'ssr=false'
-          let name .= printf(' %s %s', ssr, m[0])
-        else
-          let name .= repeat(' ', 10)
-        endif
-        let counter[name] = get(counter, name, 0) + 1
-      endif
-    endfor
-  endwhile
-  for key in keys(counter)
-    let n = counter[key]
-    call add(items, [key, n])
-  endfor
-  let items = sort(items, {a, b -> _cmp(b[1], a[1])})
-  let items = map(items, {_, val -> printf('%4d %s', val[1], trim(val[0]))})
-  call add(items, '')
-  vnew
-  call setbufline(bufnr('%'), 1, extend(items, sort(lines)))
-  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowarn
 endfunction

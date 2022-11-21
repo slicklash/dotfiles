@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'bd4c38be5b4882991494cf77c0601a55bc45eebf' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'c2dab181185101070b0ad6c33451f4e2f56a446a' })
   finish
 endif
 
@@ -46,9 +46,6 @@ function! _python(cmd, ...) abort
   let path = expand('%:p')
   if path =~ 'test_.*\.py'
     let cmd = 'pytest %:p'
-    if type == 'coverage'
-      let cmd = cmd . ' --cov=. --cov-report=html'
-    endif
   endif
   call _tmux_send(cmd)
 endfunction
@@ -57,7 +54,7 @@ endfunction
 function! s:tmux_exec() abort
   if &filetype =~ 'python'
     map <buffer> <Leader>e :call _python('python3 %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>c :call _python('pytest %:p', 'coverage')<Bar>redraw!<C-M>
+    map <buffer> <Leader>c :call _python('pytest --cov=. --cov-report=html %:p', 'test')<Bar>redraw!<C-M>
     map <buffer> <Leader>m :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>l :call _tmux_send('bash $GIT/hooks/pre-commit')<Bar>redraw!<C-M>

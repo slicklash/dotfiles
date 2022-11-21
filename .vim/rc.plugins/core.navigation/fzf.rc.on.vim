@@ -5,7 +5,7 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': '168829b5550336886a426073670153f84f8a34b2', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf', { 'rev': 'b55f5554871e548c9c00a49df7a92f980c0191c2', 'build': './install --all', 'merged': 0 })
   call dein#add('junegunn/fzf.vim', { 'rev': '9ceac718026fd39498d95ff04fa04d3e40c465d7', 'depends': 'fzf' })
   finish
 endif
@@ -47,7 +47,7 @@ function! _fzf(...) abort
     endif
   endif
   if empty(source)
-    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.mypy_cache', 'node_modules', 'target', 'dist'])
+    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.mypy_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test'])
     let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
     if !empty(ft)
       if ft == '?'

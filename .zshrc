@@ -18,6 +18,8 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
 export NOTEBOOK_DIR=$HOME/code/nb
 export PATH=$PATH:$HOME/code/nb
 
+export GRAALVM_HOME=$HOME/bin/graalvm-ce-java
+
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # export TSS_LOG="-level verbose -file $HOME/tmp/tsserver.log"
 export BAT_THEME="aloneinthedark"
