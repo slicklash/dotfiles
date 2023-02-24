@@ -3,6 +3,14 @@ abbr        normalize -1 0 1
 options     head
 	min(1, max(${1:val}, -1))${0}
 
+snippet     pinc
+abbr        Point: inc
+options     head
+	proc \`+=\`(a: var Point, b: Point) =
+		a[0] += b[0]
+		a[1] += b[1]
+	${0}
+
 snippet     mdis
 abbr        Manhattan distance
 options     head
@@ -21,6 +29,12 @@ abbr        Manhattan distance
 options     head
 	proc distance(a, b: (int, int)): int =
 		abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+snippet     cdis2
+abbr        Chess distance
+options     head
+	proc distance(a, b: Point): int = max(abs(a[0] - b[0]), abs(a[1] - b[1]))
+	${0}
 
 snippet     edis
 abbr        Euclidean distance

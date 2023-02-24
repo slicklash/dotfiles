@@ -1,11 +1,11 @@
-function scp103 {
+function scp117 {
   [[ "$#" != 1  ]] && return 1
-  scp -P 8022 $1 192.168.1.103:~/tmp/
+  scp -P 8022 $1 192.168.1.117:~/tmp/
 }
 
-function scpf103 {
+function scpf117 {
   [[ "$#" != 2  ]] && return 1
-  scp -P 8022 192.168.1.103:$1 $2
+  scp -P 8022 192.168.1.117:$1 $2
 }
 
 function scp109 {

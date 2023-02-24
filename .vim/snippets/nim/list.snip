@@ -1,6 +1,28 @@
+snippet takewh
+abbr    List: takeWhile
+options head
+	template takeWhileIt*(s, pred: untyped): untyped =
+		var result = newSeq[typeof(s[0])]()
+		for it {.inject.} in items(s):
+			if pred: result.add(it)
+			else: break
+		result
+	${0}
+
+snippet chunk
+abbr    List: Chunks
+options head
+	proc chunks*[T](xs: openArray[T], size: Positive): seq[seq[T]] =
+		var i = 0
+		while i + size < xs.len:
+			result.add(xs[i ..< i + size])
+			i.inc(size)
+		result.add(xs[i .. ^1])
+	${0}
+
 snippet perm
 abbr    List: Permutation
-options     head
+options head
 	proc permutations*[T](xs: openArray[T]): seq[seq[T]] =
 		if xs.len() > 1:
 			let head = xs[0]
@@ -16,7 +38,7 @@ options     head
 
 snippet permr
 abbr    List: Permutation with repetition
-options     head
+options head
 	proc permutations*[T](xs: openArray[T], k: int, prefix: seq[T] = @[]): seq[seq[T]] =
 		if k == 1:
 			for x in xs:
@@ -29,7 +51,7 @@ options     head
 
 snippet comb
 abbr    List: Combinations
-options     head
+options head
 	proc combinations*[T](xs: openArray[T], k: int): seq[seq[T]] =
 	if k == 0:
 		return @[newSeq[T]()]
@@ -44,7 +66,7 @@ options     head
 
 snippet cxct
 abbr    List: CountTable
-options     head
+options head
 	var cx: seq[CountTable[${1:char}]]
 	for _ in 0 .. n:
 		cx.add(initCountTable[$1]())
@@ -52,25 +74,25 @@ options     head
 
 snippet un2
 abbr    Unpack: 2 tuple
-options     head
+options head
 	let (${1:x}, ${2:y}) = (${3:xs}[0], $3[1])
 	${0}
 
 snippet un3
 abbr    Unpack: 3 tuple
-options     head
+options head
 	let (${1:x}, ${2:y}, ${3:z}) = (${4:xs}[0], $4[1], $4[2])
 	${0}
 
 snippet un4
 abbr    Unpack: 4 tuple
-options     head
+options head
 	let (${1:x1}, ${2:y1}, ${3:x2}, ${4:y2}) = (${5:xs}[0], $5[1], $5[2], $5[3])
 	${0}
 
 snippet un6
 abbr    Unpack: 6 tuple
-options     head
+options head
 	let (${1:x1}, ${2:y1}, ${3:x2}, ${4:y2}, ${5:z1}, ${6:z2}) = (${7:xs}[0], $7[1], $7[2], $7[3], $7[4], $7[5])
 	${0}
 

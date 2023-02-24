@@ -316,6 +316,14 @@ snippet     ipdb
 abbr        import ipdb..
     import ipdb; ipdb.set_trace()
 
+snippet     dbgpy
+abbr        debugpy
+	import debugpy  # type: ignore
+	debugpy.listen(("0.0.0.0", 5678))
+	print("Waiting for client to attach...")
+	debugpy.wait_for_client()
+	${0}
+
 # imports
 
 snippet     mic

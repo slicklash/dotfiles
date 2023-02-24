@@ -1,0 +1,5 @@
+#!/bin/bash
+rt=$(ps -p "$1" -o etime | tail -1 | tr -d ' ')
+mem=$(sudo pmap -x "$1" | tail -1 | grep -oE '[0-9]+' | head -1)
+echo "Running time : $rt"
+echo "Memory       : $mem kB"

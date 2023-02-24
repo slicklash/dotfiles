@@ -24,13 +24,17 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # export TSS_LOG="-level verbose -file $HOME/tmp/tsserver.log"
 export BAT_THEME="aloneinthedark"
 
+export LF_UEBERZUG_TEMPDIR="/tmp/lf-ueberzug-tmp"
+
 source $HOME/.zsh/init.zsh
 
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+if [ -s "$PYENV_ROOT/bin/pyenv" ]; then
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+fi
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"

@@ -21,7 +21,7 @@ proc formatName(name: string, length: int): string = fmt"{name.alignString(lengt
 
 proc getPlugins(): seq[PluginInfo] =
   var seen: Table[string, string]
-  for origin in walkDirRec("/home/slicklash/.vim/rc.plugins"):
+  for origin in walkDirRec(getEnv("HOME") & "/.vim/rc.plugins"):
     if not origin.endsWith("rc.on.vim"): continue
     let text = readFile(origin)
     let plugins = text.findAll(REGEX_DEIN_ADD)

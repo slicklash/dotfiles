@@ -1,6 +1,6 @@
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
 
-alias fvim='vim $(fzf)'
+alias fvi='vim $(fzf)'
 
 # Key bindings
 # ------------
@@ -138,7 +138,7 @@ fda() {
 }
 
 # cd into the directory of the selected file
-fdf() {
+ffd() {
    local file
    local dir
    file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"

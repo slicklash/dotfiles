@@ -9,6 +9,6 @@ function drm() {
   fi
   local id=$(docker ps -a | grep "$1" | cut -d ' ' -f 1)
   if [ -n "$id" ]; then
-    docker rm $id
+    docker rm -f $id
   fi
 }

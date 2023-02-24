@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('ynkdir/vim-vimlparser', { 'rev': 'bf4bf54d0e4e4a2d3e1196b7379001b3f90d969f' })
+  call dein#add('ynkdir/vim-vimlparser', { 'rev': '71b3b3f274d0c855bd43ce8cce7bfc38fd710125' })
   finish
 endif

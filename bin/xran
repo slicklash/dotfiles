@@ -7,6 +7,10 @@ if [ -n "$(xrandr | grep "eDP-1-1")" ]; then
   eDP1="eDP-1-1"
   DP1="DP-1-2"
   HDMI2="HDMI-1-2"
+elif [ -n "$(xrandr | grep "DisplayPort-1")" ]; then
+  eDP1="eDP"
+  DP1="DisplayPort-1"
+  HDMI2="HDMI-A-0"
 else
   eDP1="eDP-1"
   DP1="DP-1"

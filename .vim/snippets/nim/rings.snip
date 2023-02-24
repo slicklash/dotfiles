@@ -1,0 +1,27 @@
+snippet tring
+abbr    Rings: init
+options head
+	proc peek[T](c: DoublyLinkedNode[T], n: int): DoublyLinkedNode[T] =
+		result = c
+		if n > 0:
+			for _ in 1 .. n: result = result.next
+		elif n < 0:
+			for _ in 1 .. abs(n): result = result.prev
+
+	proc move[T](c: DoublyLinkedNode[T], n = 1) =
+		if n == 0: return
+		c.next.prev = c.prev
+		c.prev.next = c.next
+		let p = if n > 0: c.peek(n) else: c.prev.peek(n)
+		c.next = p.next
+		c.prev = p
+		p.next.prev = c
+		p.next = c
+
+	var nodes: Table[int, DoublyLinkedNode[int]]
+	var ring: DoublyLinkedRing[int]
+	for i, x in xs:
+		let n = newDoublyLinkedNode[int](x)
+		nodes[i] = n
+		ring.append(n)
+	${0}

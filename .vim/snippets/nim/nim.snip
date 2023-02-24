@@ -13,7 +13,7 @@ options     head
 
 snippet AOC
 options     head
-	import algorithm, heapqueue, intsets, math, re, sets, strutils, sequtils, tables
+	import algorithm, deques, heapqueue, intsets, math, re, sets, strutils, sequtils, tables
 
 	proc part1(): int =
 		result = 0
@@ -222,3 +222,9 @@ snippet     rax
 abbr        raise newException
 options     word
 	raise newException(ValueError, "${1:error}")${0}
+
+snippet     sss
+options     word
+	"""${1}
+ """
+	${0}

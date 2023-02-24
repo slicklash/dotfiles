@@ -33,7 +33,7 @@ if [ -n "$TERMUX_VERSION" ]; then
   FEAT="$FEAT --with-luajit"
   CFLAGS="$CFLAGS -I$PREFIX/include/lua5.3"
 else
-  FEAT="$FEAT --with-python3-config-dir=/usr/lib/python$PYTHON_VERSION/config-$PYTHON_VERSIONm-$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
+  FEAT="$FEAT --with-python3-config-dir=/usr/lib/python$PYTHON_VERSION/config-$PYTHON_VERSION-$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
   FEAT="$FEAT --with-x"
   FEAT="$FEAT --enable-xim"
   FEAT="$FEAT --with-lua-prefix=/usr"
@@ -58,8 +58,9 @@ PREFIX="${PREFIX:-/usr/local}"
 
 cd $SRC
 git checkout -- .
+git checkout master
 git pull
-git checkout v9.0.0809
+# git checkout v9.0.0809
 if [ -n "$TERMUX_VERSION" ]; then
   sed -i 's/| AI_V4MAPPED//g' src/channel.c
   sed -i 's/PWENT/PWENT1/g' src/misc1.c

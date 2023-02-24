@@ -1,6 +1,6 @@
 snippet tgf
 abbr Type: Graph
-	Graph[T] = Table[T, seq[T]]
+	Graph[T] = Table[T, seq[(T, int)]]
 	${0}
 
 snippet tpt
@@ -11,6 +11,14 @@ abbr Type: Point
 snippet tpz
 abbr Type: Point
 	Point = (int, int, int)
+	${0}
+
+snippet 2pt
+	proc toPoint(it: seq[int]): Point = (it[0], it[1])
+	${0}
+
+snippet 2pt3
+	proc toPoint(it: seq[int]): Point = (it[0], it[1], it[2])
 	${0}
 
 snippet tbou
@@ -43,17 +51,40 @@ abbr Graph: Fill
 	var g: Graph[${1:string}]
 	for x in xs:
 		let (a, b) = (x[0], x[1])
-		g.mgetOrPut(a, @[]).add(b)
-		g.mgetOrPut(b, @[]).add(a)
+		g.mgetOrPut(a, @[]).add((b, 1))
+		g.mgetOrPut(b, @[]).add((a, 1))
 	${0}
 
-snippet gffdac
+snippet gffd
 abbr Graph: Fill (DAC)
 	var g: Graph[${1:string}]
 	for x in xs:
 		let (a, b) = (x[0], x[1])
-		g.mgetOrPut(a, @[]).add(b)
+		g.mgetOrPut(a, @[]).add((b, 1))
 		discard g.mgetOrPut(b, @[])
+	${0}
+
+snippet gfsp
+abbr Graph: Shortest path
+	proc shortestPath[T](g: Graph, start, finish: T): (int, seq[T]) =
+		var costFromStart = {start: 0}.toTable
+		var prev: Table[T, T]
+		var queue = @[(0, start)].toHeapQueue
+		while queue.len > 0:
+			let (_, pos) = queue.pop
+			if pos == finish: break
+			for (newPos, cost) in g[pos]:
+				let pathCost = costFromStart[pos] + cost
+				if pathCost < costFromStart.getOrDefault(newPos, int.high):
+					costFromStart[newPos] = pathCost
+					queue.push((pathCost, newPos))
+					prev[newPos] = pos
+		if finish notin costFromStart: return
+		result[0] = costFromStart[finish]
+		var p = finish
+		while p != start:
+			result[1] = @[p] & result[1]
+			p = prev[p]
 	${0}
 
 snippet gfap
@@ -66,9 +97,20 @@ abbr Graph: All paths
 			if v == finish:
 				result.add(path)
 				continue
-			for n in g[v]:
+			for (n, w) in g[v]:
 				if n notin path:
 					stack.add((n, path))
+	${0}
+
+snippet gfad
+abbr Graph: All distances
+	proc distances[T](g: Graph[T]): Table[(T, T), int] =
+		for a in g.keys:
+			for b in g.keys:
+				if a == b: continue
+				let (dist, _) = g.shortestPath(a, b)
+				if dist > 0:
+					result[(a, b)] = dist
 	${0}
 
 snippet grp
@@ -83,8 +125,8 @@ abbr Grid: parse
 			start: Point
 			finish: Point
 
-	proc `[]`(g: Grid, p: Point): char = g.tiles[p]
-	proc `[]=`(g: var Grid, p: Point, c: char) = g.tiles[p] = c
+	proc \`[]\`(g: Grid, p: Point): char = g.tiles[p]
+	proc \`[]=\`(g: var Grid, p: Point, c: char) = g.tiles[p] = c
 
 	proc parse(xs: seq[string]): Grid =
 		result.width = xs[0].len
@@ -104,7 +146,21 @@ abbr Grid: show
 		for y in 0 ..< g.height:
 			var line = ""
 			for x in 0 ..< g.width:
-				line.add(grid[(x, y)])
+				line.add(g[(x, y)])
+			echo line
+	${0}
+
+snippet grsb
+abbr Grid: show bounded
+	proc show(g: Grid) =
+		let (minX, minY, maxX, maxY) = g.bounds
+		let width = maxX - minX
+		let height = maxY - minY + 1
+		for y in 0 .. height:
+			var line = ""
+			for x in -1 .. width + 1:
+				let p = (minX + x, minY + y)
+				line.add(g.tiles.getOrDefault(p, '.'))
 			echo line
 	${0}
 
@@ -182,6 +238,22 @@ options head
 					stack.add(np)
 	${0}
 
+snippet bfs
+options head
+	proc ${1:bfs}(g: Grid, start: Point): bool =
+		var seen: HashSet[Point]
+		var queue = @[start].toDeque
+		while queue.len > 0:
+			let p = queue.popFirst
+			if fn(p):
+				return true
+			for n in p.neighboars:
+				if n notin seen:
+					seen.incl n
+					queue.addLast n
+		return false
+	${0}
+
 snippet A*
 options head
 	const Deltas = @[(-1,0), (1,0), (0,-1), (0,1)]
@@ -233,7 +305,7 @@ options head
 		var order: seq[string]
 		var dfs: proc (v: T)
 		dfs = proc (v: T) =
-			for n in g[v]:
+			for (n, w) in g[v]:
 				if n notin seen:
 					seen.incl(n)
 					dfs(n)
@@ -261,7 +333,7 @@ options head
 		subgraph = proc(v: T): seq[T] =
 			seen.incl(v)
 			result.add(v)
-			for n in g[v]:
+			for (n, w) in g[v]:
 				if n notin seen: result &= subgraph(n)
 		for v in g.keys:
 			if v notin seen: result.add(subgraph(v))
@@ -318,4 +390,31 @@ options head
 		for p in ps:
 			let (x, y) = p
 			result.add((x - minx, y - miny))
+	${0}
+
+snippet nparse
+abbr    Nested array: parse
+options head
+	type
+		PacketKind = enum Int, List
+		Packet = ref object
+			case kind: PacketKind
+			of Int: value: int
+			of List: values: seq[Packet]
+
+    proc \`$\`(p: Packet): string = (if p.kind == Int: $p.value else: "[" & p.values.mapIt($it).join(",") & "]")
+	proc parse(s: string): Packet =
+		if s[0] != '[':
+			return Packet(kind: Int, value: s.parseInt)
+		result = Packet(kind: List)
+		if s == "[]": return result
+		var open = 0
+		var markers: seq[int] = @[0]
+		for p, c in s[1 .. ^1]:
+			if c == '[': open.inc
+			elif c == ']': open.dec
+			elif c == ',' and open == 0: markers.add(p + 1)
+		markers.add(s.high)
+		for i in 0 ..< markers.high:
+			result.values.add(s[markers[i] + 1 ..< markers[i + 1]].parse)
 	${0}

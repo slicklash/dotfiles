@@ -161,3 +161,20 @@ options     head
 		}
 	}
 	${0}
+
+snippet     lmp
+options     head
+	for (Map.Entry<String, Object> entry : ${1:map}.entrySet()) {
+		System.out.println(entry.getKey() + " = " + entry.getValue());
+	}
+	${0}
+
+snippet     lsyp
+options     head
+	Properties props = System.getProperties();
+	Enumeration enumm = props.propertyNames();
+	while (enumm.hasMoreElements()) {
+		String key = enumm.nextElement().toString();
+		System.out.println(key + " = " + props.getProperty(key));
+	}
+	${0}

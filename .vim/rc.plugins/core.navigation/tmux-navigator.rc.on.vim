@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'c2dab181185101070b0ad6c33451f4e2f56a446a' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'cdd66d6a37d991bba7997d593586fc51a5b37aa8' })
   finish
 endif
 
@@ -44,7 +44,7 @@ function! _python(cmd, ...) abort
   let type = get(a:000, 0, 'run')
   let cmd = type == 'run' ? 'python %:p' : a:cmd
   let path = expand('%:p')
-  if path =~ 'test_.*\.py'
+  if path =~ 'test_.*\.py' && type != 'test'
     let cmd = 'pytest %:p'
   endif
   call _tmux_send(cmd)
@@ -74,6 +74,8 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>m :call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('nim c -r -d:release --hints:off %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>D :call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
+  elseif &filetype == 'er'
+    map <buffer> <Leader>e :call _tmux_send('docker run -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
   endif
   map <buffer> <Leader>r :execute 'silent !tmux send-keys -t 1 Up Enter'<Bar>redraw!<C-M>
 endfunction

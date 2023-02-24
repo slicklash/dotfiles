@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('Shougo/neco-vim', { 'rev': 'd43fa219390094ce2a8f5c929331f0a9e2f666d1' })
+  call dein#add('Shougo/neco-vim', { 'rev': '6c581808ac3179ea0c640e43c77de48bbbec4fbc' })
   finish
 endif
