@@ -1,3 +1,36 @@
+function _git_stash_select() {
+  echo $(git stash list | fzf --ansi --no-sort --reverse --preview="echo {} | cut -d':' -f1 | xargs git stash show -p | bat --color=always -p"  | cut -d ':' -f1)
+}
+
+function gpop(){
+  local ref=$(_git_stash_select)
+  if [ ! -z "$ref" ]; then
+    git stash pop $ref
+  fi
+}
+
+function gdrop(){
+  local ref=$(_git_stash_select)
+  if [ ! -z "$ref" ]; then
+    git stash drop $ref
+  fi
+}
+
+function gstp(){
+  if [ -z "$1" ]; then
+    local files=`git ls-files -m $(git rev-parse --show-toplevel)`
+    if [ -z "$files" ]; then
+      return
+    fi
+    files=$(echo $files | fzf -m --reverse --print0)
+    if [ ! -z "$files" ]; then
+      git stash push $(echo $files | tr '\000' '\040')
+    fi
+  else
+    git stash push $@
+  fi
+}
+
 function gco(){
   if [ -z "$1" ]; then
     git checkout "$(git branch | fzf | tr -d '[:space:]')"

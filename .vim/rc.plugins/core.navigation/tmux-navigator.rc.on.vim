@@ -58,6 +58,8 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>m :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>l :call _tmux_send('bash $GIT/hooks/pre-commit')<Bar>redraw!<C-M>
+  elseif &filetype =~ 'java'
+    map <buffer> <Leader>e :call _tmux_send('java %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'javascript' || expand('%:p') =~ 'app-market'
     map <buffer> <Leader>c :call _tmux_js('node %:p', 'coverage')<Bar>redraw!<C-M>
     map <buffer> <Leader>e :call _tmux_js('node %:p')<Bar>redraw!<C-M>
@@ -75,7 +77,7 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>E :call _tmux_send('nim c -r -d:release --hints:off %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>D :call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
   elseif &filetype == 'er'
-    map <buffer> <Leader>e :call _tmux_send('docker run -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e :call _tmux_send('docker run --rm -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
   endif
   map <buffer> <Leader>r :execute 'silent !tmux send-keys -t 1 Up Enter'<Bar>redraw!<C-M>
 endfunction

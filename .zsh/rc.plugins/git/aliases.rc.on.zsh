@@ -31,7 +31,6 @@ alias gkm='git commit -v -m'
 alias gam='git commit --amend'
 
 alias gst='git stash'
-alias gpop='git stash pop'
 
 alias gb='git branch'
 alias gbr='git branch'

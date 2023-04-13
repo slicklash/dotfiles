@@ -33,7 +33,7 @@ call defx#custom#column('mark', {
       \ })
 
 nnoremap <space>V :Defx -split=vertical -winwidth=50<CR>
-nnoremap <space>v :Defx `expand('%:p:h')` -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
+nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
 
 function! SearchPattern(context) abort
   let dir = a:context.targets[0] . '/'

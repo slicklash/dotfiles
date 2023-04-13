@@ -23,6 +23,10 @@ cmd m1 ${{
   lf -remote "send $id set info size:time"
 }}
 
+cmd thunar ${{
+  thunar "$f"
+}}
+
 # unmap
 map d
 
@@ -37,6 +41,7 @@ map <enter> open
 map R reload
 map K mkdir
 map . set hidden!
+map E thunar
 
 map ge cd ~/Desktop
 map gd cd ~/Downloads

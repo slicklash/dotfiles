@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': 'c8e914604963063b7bb827e9b6f5a6ca741dad60' })
+  call dein#add('dense-analysis/ale', { 'rev': '57254db9ef1e0b0bf21466ed2d3ebaf60338768f' })
   finish
 endif
 
@@ -18,6 +18,7 @@ let g:ale_lint_delay = 300
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_ignore_2_4_warnings = 1
+let g:ale_python_auto_poetry = 1
 
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
@@ -32,15 +33,17 @@ let g:ale_pattern_options = {
 let g:ale_linters = {
 \   'javascript': ['eslint', 'yoshi'],
 \   'typescript': ['eslint', 'yoshi'],
+\   'go': ['gofmt'],
 \   'html': ['htmlhint'],
 \   'css': ['stylelint'],
 \   'scss': ['stylelint'],
 \   'sass': ['stylelint'],
 \   'json': ['jq'],
 \   'vim': ['vint'],
-\   'python': ['pylint', 'flake8', 'mypy'],
 \   'nim': ['nimlsp', 'nimcheck'],
+\   'python': ['pylint', 'flake8', 'mypy'],
 \}
+
 
 let g:ale_fixers = {
 \   'java': ['google_java_format'],
@@ -49,6 +52,7 @@ let g:ale_fixers = {
 \   'typescript': ['eslint', 'yoshifix'],
 \   'python': ['black', 'isort'],
 \   'nim':  ['nimpretty'],
+\   'go': ['gofmt'],
 \}
 
 let g:ale_java_javac_executable = 'javac -cp ~/bin/java-lsp/lombok.jar'

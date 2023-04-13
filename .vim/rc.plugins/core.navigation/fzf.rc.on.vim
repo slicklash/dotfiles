@@ -5,12 +5,12 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': '3364d4d147ade148d8e5dd67609e46f0ef6c50fc', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf', { 'rev': '96670d5f16dcf23d590eb1d83d1de351b2e8fb15', 'build': './install --all', 'merged': 0 })
   call dein#add('junegunn/fzf.vim', { 'rev': 'dc71692255b62d1f67dc55c8e51ab1aa467b1d46', 'depends': 'fzf' })
   finish
 endif
 
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -47,7 +47,7 @@ function! _fzf(...) abort
     endif
   endif
   if empty(source)
-    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.mypy_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test'])
+    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.venv', '.mypy_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test', 'build/src', 'build/classes', 'build/generated', 'build/resources'])
     let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
     if !empty(ft)
       if ft == '?'

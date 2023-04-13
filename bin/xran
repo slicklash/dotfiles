@@ -2,6 +2,7 @@
 
 uhd=$(xrandr | grep "3840x")
 qhd=$(xrandr | grep "HDMI-2 connected")
+fhd=$(xrandr | grep "HDMI-A-0 connected")
 
 if [ -n "$(xrandr | grep "eDP-1-1")" ]; then
   eDP1="eDP-1-1"
@@ -10,6 +11,8 @@ if [ -n "$(xrandr | grep "eDP-1-1")" ]; then
 elif [ -n "$(xrandr | grep "DisplayPort-1")" ]; then
   eDP1="eDP"
   DP1="DisplayPort-1"
+  HDMI2="HDMI-A-0"
+elif [ -n "$fhd" ]; then
   HDMI2="HDMI-A-0"
 else
   eDP1="eDP-1"
@@ -47,6 +50,11 @@ elif [ -n "$qhd" ]; then
   --output $eDP1 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+0 --rate 120 \
   --output $HDMI2 --mode 2560x1440 --scale 1x1 --panning 2560x1440+1920+0 --rate 60 \
   --right-of $eDP1 --primary
+elif [ -n "$fhd" ]; then
+  xrandr \
+  --fb 1920x2160 \
+  --output $HDMI2 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+0 --rate 60 --brightness 1.1 \
+  --output $eDP1 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+1080 --rate 120 --pos 0x1080 --primary
 else
   xrandr \
   --fb 1920x1080 \

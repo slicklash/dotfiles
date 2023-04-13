@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('AndrewRadev/linediff.vim', { 'rev': 'b4d3c3f03eed00caa741c2650e13db5b7b7ce0ef' })
+  call dein#add('AndrewRadev/linediff.vim', { 'rev': '3925a50a02b4b1e7958807676f93e06b53c66e27' })
   finish
 endif

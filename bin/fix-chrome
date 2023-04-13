@@ -1,0 +1,2 @@
+rm -rf '~/.config/google-chrome/Default/Login Data'
+rm -rf '~/.config/google-chrome/Default/Login Data-journal'

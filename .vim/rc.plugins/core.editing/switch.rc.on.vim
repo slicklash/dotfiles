@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('AndrewRadev/switch.vim', { 'rev': '41fec8581f4816291481ab6c6e0516bf904d4a7a' })
+  call dein#add('AndrewRadev/switch.vim', { 'rev': 'a3fd7bf4d61fdbe00356a646744b2fe6f97524b6' })
   finish
 endif
 

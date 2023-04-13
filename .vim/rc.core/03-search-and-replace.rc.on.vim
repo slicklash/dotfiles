@@ -61,5 +61,5 @@ command! -nargs=+ GP call GrepInProject(<q-args>)
 function! Rep(search, target) abort
   execute 'cfdo %s#' . a:search . '#' . a:target . '#gec | update'
 endfunction
-vnoremap <C-h> "hy:cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
+vnoremap <C-t> "hy:cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
 nnoremap <leader>rf :cfdo %s#<C-r>/##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
