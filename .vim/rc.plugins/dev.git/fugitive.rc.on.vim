@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('tpope/vim-fugitive', { 'rev': 'ef99f1d90cdb33a52931aed5868785b51fb9411d' })
+  call dein#add('tpope/vim-fugitive', { 'rev': 'e6651a79facf5cc2b7c554fdc19eb8a9fe89602c' })
   finish
 endif
 
