@@ -102,15 +102,22 @@ abbr Graph: All paths
 					stack.add((n, path))
 	${0}
 
-snippet gfad
-abbr Graph: All distances
-	proc distances[T](g: Graph[T]): Table[(T, T), int] =
-		for a in g.keys:
-			for b in g.keys:
-				if a == b: continue
-				let (dist, _) = g.shortestPath(a, b)
-				if dist > 0:
-					result[(a, b)] = dist
+snippet gfasp
+abbr Graph: All shortest paths
+	proc all_shortest_paths[T](g: Graph[T]): Table[(T, T), int] =
+		for k, v in g:
+			for (n, c) in v:
+				result[(k, n)] = c
+		let keys = g.keys.toSeq
+		const inf = int.high div 2
+		for a in keys:
+			for b in keys:
+				for c in keys:
+					if a == b or b == c or a == c: continue
+					let bc = result.getOrDefault((b, c), inf)
+					let ba = result.getOrDefault((b, a), inf)
+					let ac = result.getOrDefault((a, c), inf)
+					result[(b, c)] = min(bc, ba + ac)
 	${0}
 
 snippet grp

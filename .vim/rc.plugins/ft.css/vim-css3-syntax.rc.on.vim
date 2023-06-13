@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('hail2u/vim-css3-syntax', { 'rev': '61bc815f2b33f38a132e2e3aa3846d9b092ad931', 'on_ft': ['css','scss','sass'] })
+  call dein#add('hail2u/vim-css3-syntax', { 'rev': '60ff15a81e698e05570aaccb9d0cf05fae9cd165', 'on_ft': ['css','scss','sass'] })
   finish
 endif
 

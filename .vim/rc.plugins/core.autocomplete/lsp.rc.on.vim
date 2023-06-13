@@ -10,6 +10,7 @@ if InitStep() == 0
         " \ 'java': ['/home/slicklash/bin/java-lsp/bin/jdtls', '--jvm-arg=-Dlog.level=ALL'],
         " \ 'python': ['/home/slicklash/.local/bin/pylsp'],
         " \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
+        " \ 'nim': ['nimlsp'],
   let g:LanguageClient_serverCommands = {
         \ 'go': ['gopls'],
         \ 'rust': ['rustup', 'run', 'stable', 'rls'],
@@ -19,7 +20,6 @@ if InitStep() == 0
         \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
         \ 'javascript': ['typescript-language-server', '--stdio'],
         \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
-        \ 'nim': ['nimlsp'],
         \ }
   let g:LanguageClient_rootMarkers = {
         \ 'java': ['pom.xml'],

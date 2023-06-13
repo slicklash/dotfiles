@@ -1,6 +1,6 @@
 if InitStep() == 0
-  call dein#add('github/copilot.vim', { 'rev': 'b6e5624351ba735e25eb8864d7d22819aad00606' })
+  call dein#add('github/copilot.vim', { 'rev': '1358e8e45ecedc53daf971924a0541ddf6224faf' })
   finish
 endif
 
-let g:copilot_filetypes = { '*': v:false, 'python': v:true }
+let g:copilot_filetypes = { '*': v:false, 'python': v:true, 'vim': v:true, 'nim': v:true }

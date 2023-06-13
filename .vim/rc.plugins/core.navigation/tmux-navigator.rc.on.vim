@@ -51,8 +51,16 @@ function! _python(cmd, ...) abort
 endfunction
 
 
+function! _open_shell() abort
+  let cmd = fnamemodify(get(defx#get_candidate(), 'action__path'), ':p:h')
+  execute 'silent !tmux splitw -c ' . cmd
+endfunction
+
+
 function! s:tmux_exec() abort
-  if &filetype =~ 'python'
+  if &filetype =~ 'defx'
+    map <buffer> S :call _open_shell()<Bar>redraw!<C-M>
+  elseif &filetype =~ 'python'
     map <buffer> <Leader>e :call _python('python3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>c :call _python('pytest --cov=. --cov-report=html %:p', 'test')<Bar>redraw!<C-M>
     map <buffer> <Leader>m :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>

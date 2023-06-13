@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': '61248e1453dc6373160154e1f6855ffc510a7dfc' })
+  call dein#add('dense-analysis/ale', { 'rev': 'c0eff9f2f18c5408596ce1e8e43dc7933340e514' })
   finish
 endif
 
@@ -61,6 +61,7 @@ let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ig
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'
+let g:ale_python_mypy_options = '--strict'
 
 let g:ale_nim_nimpretty_options = '--indent:2'
 

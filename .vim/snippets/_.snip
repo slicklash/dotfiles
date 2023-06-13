@@ -7,6 +7,10 @@ snippet     date
 options     word
     `strftime("%d %b %Y")`
 
+snippet     unixts
+options     word
+    `strftime("%s")`
+
 snippet     date_full
 alias       df
 options     word
@@ -149,19 +153,55 @@ snippet bit_hacks
 snippet shrug
 	¯\_(ツ)_/¯
 
-snippet fontmap
-	+-----------------------------------------+
-	| Theme key | Preset key | Editor element |
-	+-----------------------------------------+
-	| font_0    | Title      | Heading 1      |
-	| font_1    | Menu       | -              |
-	| font_2    | Page-title | Heading 2      |
-	| font_3    | Heading-XL | Heading 3      |
-	| font_4    | Heading-L  | Heading 4      |
-	| font_5    | Heading-M  | Heading 5      |
-	| font_6    | Heading-S  | Heading 6      |
-	| font_7    | Body-L     | Paragraph 1    |
-	| font_8    | Body-M     | Paragraph 2    |
-	| font_9    | Body-S     | Paragraph 3    |
-	| font_10   | Body-XS    | -              |
-	+-----------------------------------------+
+snippet MM
+	CMD_INSTALL = poetry install
+	CMD_FMT = poetry run python -m isort . && poetry run python -m black .
+	CMD_LINT = poetry run python -m flake8 . && poetry run python -m mypy .
+	CMD_TEST = poetry run pytest -svvv tests
+	CMD_COVERAGE = poetry run pytest --cov --cov-report html tests
+	CMD_FIX_LOCK = poetry lock --no-update
+
+	X := $(or ${X}, val)
+
+	all: test
+
+	setup:
+		cd core && $(CMD_INSTALL)
+		cd backend && $(CMD_INSTALL)
+
+	start:
+		cd backend && $(APP_ENV) poetry run uvicorn app.main:app --reload
+
+	test:
+		cd backend && $(APP_ENV) $(CMD_TEST)
+
+	cov:
+		cd backend && $(APP_ENV) $(CMD_COVERAGE)
+
+	fmt:
+		cd core && $(CMD_FMT)
+		cd backend && $(CMD_FMT)
+
+	lint: fmt
+		cd core && $(CMD_LINT)
+		cd backend && $(CMD_LINT)
+
+	relock:
+		cd core && $(CMD_FIX_LOCK)
+		cd backend && $(CMD_FIX_LOCK)
+
+
+	help:
+		@ echo "Usage   : make <target>"
+		@ echo "Targets :"
+		@ echo "   setup ............... Setups all packages"
+		@ echo "   start ............... Starts backend"
+		@ echo "   test ................ Runs unit tests"
+		@ echo "   cov ................. Generates coverage report"
+		@ echo "   fmt ................. Formats python files"
+		@ echo "   lint ................ Runs code checkers and linters"
+		@ echo "   relock .............. Fixes poetry.lock"
+		@ echo "   help ................ Prints this help message"
+
+	.PHONY: all setup start test cov lint fmt relock help
+
