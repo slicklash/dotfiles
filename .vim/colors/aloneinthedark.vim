@@ -446,4 +446,10 @@ call s:hi('Defx_filename_3_directory_icon', s:color.BLUE, '', '')
 call s:hi('Defx_mark_3_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename', s:color.BLUE, '', '')
 
+call s:hi('TagbarSignature', s:color.GREY, '', '')
+call s:hi('TagbarScope', s:color.PURPLE, '', '')
+call s:hi('TagbarVisibilityPublic', s:color.GREEN, '', '')
+call s:hi('TagbarVisibilityProtected', s:color.BLUE, '', '')
+call s:hi('TagbarVisibilityPrivate', s:color.RED, '', '')
+
 delfunction s:hi

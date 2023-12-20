@@ -1,14 +1,3 @@
-snippet lreduce
-abbr list:reduce
-options head
-	function! s:reduce(list, fn, acc) abort
-		let l:acc = a:acc
-		for l:x in a:list
-			let l:acc = a:fn(l:acc, l:x)
-		endfor
-		return l:acc
-	endfunction
-
 snippet mdist
 abbr Manhattan distance
 options head

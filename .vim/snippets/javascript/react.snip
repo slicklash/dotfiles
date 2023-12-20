@@ -1,7 +1,7 @@
 snippet ire
 abbr import React
 options head
-	import React from 'react';
+	import React from "react";
 	${0}
 
 snippet itl
@@ -13,27 +13,20 @@ options head
 snippet rco
 abbr React Component
 options head
-  import React from 'react';
-  import PropTypes from 'prop-types';
-  import { translate } from 'react-i18next';
-  import s from './${1}.scss';
+	import React from "react";
+	import styles from "./${1}.module.scss";
 
-  class $2 extends React.Component {
-    static propTypes = {
-      t: PropTypes.func,
-    };
+	type Props = {
+	};
 
-    render() {
-      const { t } = this.props;
-      return (
-        <div className={s.container}>
-          {t('app.intro')}${0}
-        </div>
-      );
-    }
-  }
+	const ${2}: React.FC<Props> = ({  }) => {
+		return (<div className={styles.container}>
+			${0}
+		</div>
+		);
+	};
 
-  export default translate(null, { wait: true })($2);
+	export default $2;
 
 snippet av
 abbr Action (value)

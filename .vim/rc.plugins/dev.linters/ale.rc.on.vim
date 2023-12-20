@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': 'c0eff9f2f18c5408596ce1e8e43dc7933340e514' })
+  call dein#add('dense-analysis/ale', { 'rev': '9a23ec1f60ec85f6afb70870a1978141b321fb3c' })
   finish
 endif
 
@@ -41,7 +41,7 @@ let g:ale_linters = {
 \   'json': ['jq'],
 \   'vim': ['vint'],
 \   'nim': ['nimlsp', 'nimcheck'],
-\   'python': ['pylint', 'flake8', 'mypy'],
+\   'python': ['flake8', 'mypy'],
 \}
 
 
@@ -61,7 +61,7 @@ let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ig
 let g:ale_python_flake8_options = '--ignore=E501,F403'
 let g:ale_python_autopep8_options = '--max-line-lengthi 125'
 let g:ale_python_black_options = '--skip-string-normalization'
-let g:ale_python_mypy_options = '--strict'
+let g:ale_python_mypy_options = '--strict --follow-imports silent'
 
 let g:ale_nim_nimpretty_options = '--indent:2'
 

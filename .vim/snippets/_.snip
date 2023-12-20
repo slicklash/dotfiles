@@ -1,4 +1,16 @@
 # Global snippets
+snippet ascii
+options head
+	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+snippet    kab
+options    word
+	„${1}“${0}
+
+snippet    bru
+options    word
+	– ${0}
+
 snippet    uuid
 options    word
 	`trim(system('uuidgen'))`
@@ -15,6 +27,11 @@ snippet     date_full
 alias       df
 options     word
     `strftime("%Y-%m-%dT%H:%M:%S")`
+
+snippet     datez
+alias       dz
+options     word
+    `strftime("%Y-%m-%dT%H:%M:%S.000Z")`
 
 snippet     date_day
 alias       dd
@@ -58,10 +75,6 @@ snippet     filename_lower_camel
 alias       fnamelc
 options     word
     `substitute(bufname('%') ==#'[Command Line]' ? expand('#:t:r:r:r') : expand('%:t:r:r:r'), '\%(_\(.\)\)', '\u\1', 'g')`${0}
-
-snippet petriOverride
-options word
-    ?petri_ovr=specs.UseWixBoltRenderer:false
 
 snippet ISC
 alias license_isc

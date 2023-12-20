@@ -1,0 +1,121 @@
+snippet tpt
+abbr Type: Point
+	struct @point :x :y
+	${0}
+
+snippet tpz
+abbr Type: Point
+	struct @point :x :y :z
+	${0}
+
+snippet d4
+abbr deltas 4
+options head
+	:DELTAS = @[@(-1,0), @(1,0), @(0,-1), @(0,1)]
+	${0}
+
+snippet d8
+abbr deltas 8
+options head
+	:DELTAS = @[@(-1,-1), @(0,-1), @(1,-1), @(-1,0), @(1,0), @(-1,1), @(0,1), @(1,1)]
+	${0}
+
+snippet n4
+abbr neighbours
+options head
+	fn neighbours :grid :p [
+		:DELTAS.fold @[] \:acc :d => [
+			:np = @point (:p:x + :d.1) (:p:y + :d.2)
+			if :grid:tiles.contains :np [ :acc.add @(:np, :grid:tiles.[:np]) ]
+			:acc
+		]
+	]
+	${0}
+
+snippet grp
+abbr Grid: parse
+	struct @point :x :y
+	struct @grid :tiles :width :height :start :finish
+
+	fn parse :xs [
+		:width = :xs.1.size
+		:height = :xs.size
+		:tiles = @[=]
+		:start = @nothing
+		:finish = @nothing
+		for :x in 1 .. :width [
+			for :y in 1 .. :height [
+				:c = :xs.[:y].[:x]
+				:p = @point :x :y
+				if :c == "S" [ :start = :p ]
+				if :c == "F" [ :finish = :p ]
+				:tiles.add :p :c
+			]
+		]
+		@grid :tiles :width :height :start :finish
+	]
+	${0}
+
+snippet grs
+abbr Grid: show
+	fn show :g [
+		for :y in 1 .. :g:height [
+			print 1 .. :g:width |> map \:x => [ :g:tiles.[@point :x :y] ] |> join
+		]
+	]
+	${0}
+
+snippet A*
+alias astar
+options head
+	:DELTAS = @[@(-1,0), @(1,0), @(0,-1), @(0,1)]
+	:WALL_COST = 10_000
+
+	fn neighbours :grid :p [
+		:DELTAS.fold @[] \:acc :d => [
+			:np = @point (:p:x + :d.1) (:p:y + :d.2)
+			if :grid:tiles.contains :np [ :acc.add @(:np, :grid:tiles.[:np]) ]
+			:acc
+		]
+	]
+
+	fn distance :p1 :p2 [
+		(:p1:x - :p2:x).abs + (:p1:y - :p2:y).abs
+	]
+
+	fn get_cost :c [
+		if "SF.".contains :c [ return 1 ]
+		:WALL_COST
+	]
+
+	fn astar :grid :start :finish [
+		:cost_from_start = @[:start = 0]
+		:prev = @[=]
+		:queue = @priority_queue @[@(0, :start)]
+		while :queue [
+			(:_, :pos) = :queue.remove_first
+			if :pos == :finish [ break ]
+			:from = :grid:tiles.[:pos]
+			:path_cost = :cost_from_start.[:pos]
+			for (:np, :c) in :grid.neighbours :pos [
+				:cost = get_cost :from :to
+				if :cost < :WALL_COST [
+					:new_path_cost = :path_cost + :cost
+					if :new_path_cost < :cost_from_start.get_or :np :WALL_COST [
+						:cost_from_start.add :np :new_path_cost
+						:queue.add @(:new_path_cost + (:np.distance :finish), :np)
+						:prev.add :np :pos
+					]
+				]
+			]
+		]
+		if :cost_from_start.contains :finish == 0 [ return @[] ]
+		:path = @deque
+		:p = :finish
+		while :p != :start [
+			:path.add_first :p
+			:p = :prev.[:p]
+		]
+		:path.@list
+	]
+	${0}

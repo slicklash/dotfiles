@@ -1,0 +1,124 @@
+snippet AOC
+options     head
+	#lang! en
+
+	fn part1 [
+	  0
+	]
+
+	fn part2 [
+	  0
+	]
+
+	:xs = "day.txt".read_file.split "\n"
+	${0}
+	check :xs.part1 == 0
+	check :xs.part2 == 0
+
+snippet     pp
+abbr        print
+	print ${0}
+
+snippet     ls
+alias       sq
+abbr        list
+	@[${1}]${0}
+
+snippet     hs
+abbr        HashSet
+	@{${1}}${0}
+
+snippet ret
+abbr    return
+options word
+	return ${0}
+
+snippet res
+abbr    result
+options word
+	:result${0}
+
+
+# flow control
+
+snippet     if
+options     head
+	if ${1:#:condition} [
+		${0}
+	]
+
+snippet     ife
+options     head
+	if ${1:#:condition} [
+		${2}
+	] else [
+	    ${0}
+	]
+
+snippet     wn
+abbr        when
+options     head
+	when [
+		${1:condition} [ ${0} ]
+		else [ @nothing ]
+	]
+
+# loops
+
+snippet     for
+abbr        for ... in ...:
+options     head
+	for ${1:#:value} in ${2:#:list} [
+		${0}
+	]
+
+snippet     wh
+abbr        while ...: ...
+options     head
+	while ${1:#:condition} [
+		${0}
+	]
+
+snippet     fu
+options     head
+	fn ${1:#:name} :${2:#:arg} [
+		${0}
+	]
+
+# files
+
+snippet     file_read
+abbr        File: read
+alias       fr
+options     word
+	read_file
+
+# regexp
+
+snippet     re_find_numbers
+abbr        Regex: all numbers
+alias       rfn
+options     word
+	find_all @r"-?\d+" |> map &@number${0}
+
+# parse
+
+snippet     sp,
+abbr        Split: comma
+options     word
+	split ","${0}
+
+snippet     sps
+abbr        Split: space
+options     word
+	split " "${0}
+
+snippet     spn
+abbr        Split: newline
+options     word
+	split "\n"${0}
+
+snippet     spnn
+abbr        Split: newline 2x
+options     word
+	split "\n\n"${0}

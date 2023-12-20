@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('AndrewRadev/switch.vim', { 'rev': 'a3fd7bf4d61fdbe00356a646744b2fe6f97524b6' })
+  call dein#add('AndrewRadev/switch.vim', { 'rev': '68d269301181835788dcdcb6d5bca337fb954395' })
   finish
 endif
 
@@ -73,9 +73,5 @@ function! s:init_switch_definitions() abort
           \ ]
   endif
 endfunction
-
-" '\\''\([^'']\+\)\\''': '''\1''',
-" '\\"\([^"\\]\+\)\\"': '''\1''',
-
 
 noremap <silent> <leader><space> :Switch<CR>

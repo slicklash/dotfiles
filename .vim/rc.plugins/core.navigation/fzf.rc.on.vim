@@ -5,8 +5,8 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': 'd0b7780239dd9f9e2bf6c252e03b463990a966bd', 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'rev': '1dcdb21db618055134cd611f4f5918f6d00a5df0', 'depends': 'fzf' })
+  call dein#add('junegunn/fzf', { 'rev': '87fc1c84b8700e694ec341b36ac3ce29a7a30e6b', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf.vim', { 'rev': '1e054c1d075d87903647db9320116d360eb8b024', 'depends': 'fzf' })
   finish
 endif
 
@@ -47,7 +47,7 @@ function! _fzf(...) abort
     endif
   endif
   if empty(source)
-    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.venv', '.mypy_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test', 'build/src', 'build/classes', 'build/generated', 'build/resources', 'htmlcov/'])
+    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.venv', '.mypy_cache', '.pytest_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test', 'build/src', 'build/classes', 'build/generated', 'build/resources', 'htmlcov/'])
     let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
     if !empty(ft)
       if ft == '?'

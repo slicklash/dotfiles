@@ -5,7 +5,13 @@ if InitStep() == 0
   let g:LanguageClient_changeThrottle = 0.5
   let g:LanguageClient_diagnosticsList = 'Location'
   let g:LanguageClient_selectionUI = 'fzf'
-  " let g:LanguageClient_diagnosticsEnable = 0
+  let g:LanguageClient_diagnosticsEnable = 1
+
+  augroup clear_highlight
+    autocmd!
+    autocmd BufWritePre * call clearmatches()
+  augroup END
+
   " let g:LanguageClient_fzfContextMenu = 1
         " \ 'java': ['/home/slicklash/bin/java-lsp/bin/jdtls', '--jvm-arg=-Dlog.level=ALL'],
         " \ 'python': ['/home/slicklash/.local/bin/pylsp'],
@@ -37,8 +43,8 @@ let g:LanguageClient_loggingFile =  expand('/tmp/LanguageClient.log')
 let g:LanguageClient_serverStderr = expand('/tmp/LanguageServer.log')
 
 
-" pip3 install python-language-server
-" pip3 install 'python-language-server[rope]'
+" pynvim python-lsp-server 'python-lsp-server[yapf]' 'python-lsp-server[flake8]' 'python-lsp-server[pylint]' pynvim pylsp-rope python-lsp-black pyls-isort pylsp-mypy
+
 
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>:normal! m`<CR>
 nnoremap <silent> <leader>b <C-o>

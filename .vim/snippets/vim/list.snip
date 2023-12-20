@@ -1,14 +1,3 @@
-snippet reduce
-abbr    List: Reduce
-options head
-	function! s:reduce(list, fn, acc) abort
-		let acc = a:acc
-		for x in a:list
-			let acc = a:fn(acc, x)
-		endfor
-		return acc
-	endfunction
-
 snippet perm
 abbr    List: Permutation
 options head

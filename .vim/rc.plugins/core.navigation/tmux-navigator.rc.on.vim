@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'cdd66d6a37d991bba7997d593586fc51a5b37aa8' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': '7db70e08ea03b3e4d91f63713d76134512e28d7e' })
   finish
 endif
 
@@ -14,6 +14,7 @@ function! _tmux_send(cmd) abort
   w
   let cmd = substitute(a:cmd, '%:p', expand('%:p'), '')
   let cmd = substitute(cmd, '$GIT', FugitiveFind('.git'), 'i')
+  let cmd = substitute(cmd, '$HOME', $HOME, 'i')
   execute 'silent !tmux send-keys -t 1 "'.escape(cmd, '"').'" Enter'
 endfunction
 
@@ -45,7 +46,7 @@ function! _python(cmd, ...) abort
   let cmd = type == 'run' ? 'python %:p' : a:cmd
   let path = expand('%:p')
   if path =~ 'test_.*\.py' && type != 'test'
-    let cmd = 'pytest %:p'
+    let cmd = 'pytest -svvv %:p'
   endif
   call _tmux_send(cmd)
 endfunction
@@ -66,8 +67,6 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>m :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>l :call _tmux_send('bash $GIT/hooks/pre-commit')<Bar>redraw!<C-M>
-  elseif &filetype =~ 'java'
-    map <buffer> <Leader>e :call _tmux_send('java %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'javascript' || expand('%:p') =~ 'app-market'
     map <buffer> <Leader>c :call _tmux_js('node %:p', 'coverage')<Bar>redraw!<C-M>
     map <buffer> <Leader>e :call _tmux_js('node %:p')<Bar>redraw!<C-M>
@@ -76,6 +75,8 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>c :call _tmux_js('ts-node %:p', 'coverage')<Bar>redraw!<C-M>
     map <buffer> <Leader>e :call _tmux_js('ts-node %:p')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_js('ts-node --inspect-brk %:p')<Bar>redraw!<C-M>
+  elseif &filetype =~ 'java'
+    map <buffer> <Leader>e :call _tmux_send('java %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'vim'
     map <buffer> <Leader>e :call _tmux_send('vim -enN -u NONE -i NONE --cmd "source %:p" --cmd ":q" 2>&1 \| cat')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send('vim --cmd "source %:p" --cmd ":q"')<Bar>redraw!<C-M>
@@ -86,6 +87,10 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>D :call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
   elseif &filetype == 'er'
     map <buffer> <Leader>e :call _tmux_send('docker run --rm -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
+  elseif &filetype == 'robo1'
+    map <buffer> <Leader>e :call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>m :call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>M :call _tmux_send(' mtime ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
   endif
   map <buffer> <Leader>r :execute 'silent !tmux send-keys -t 1 Up Enter'<Bar>redraw!<C-M>
 endfunction

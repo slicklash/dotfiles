@@ -48,6 +48,17 @@ function v2gif() {
   fi
 }
 
+function set_thumb() {
+  if [ -z "$2" ]; then
+    echo "Usage: $0 <time> <input>"
+  else
+    ffmpeg -ss $1 -i "$2" -frames:v 1 -q:v 5 out.png
+    mv "$2" "$2.bak"
+    ffmpeg -i "$2.bak" -i out.png -map 0 -map 1 -c copy -c:v:1 png -disposition:v:1 attached_pic "$2"
+    rm out.png
+  fi
+}
+
 _gitignireio_get_command_list() {
   curl -s https://www.gitignore.io/api/list | tr "," "\n"
 }

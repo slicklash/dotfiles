@@ -52,6 +52,7 @@ alias glog='glogf'
 alias glogm='glog origin/master..HEAD'
 alias gloga='glog --all'
 alias glogs='git log --stat'
+alias glogt='git log --tags --simplify-by-decoration --pretty="format:%ai %d"'
 
 alias gconf='git config'
 alias ggconf='git config --global'

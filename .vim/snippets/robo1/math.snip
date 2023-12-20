@@ -1,0 +1,15 @@
+snippet     mdis
+abbr        Manhattan distance
+options     head
+	fn distance :p1 :p2 [
+	  zip :p1 :p2 |> map \:x => [ abs (:x.1 - :x.2) ]
+                  |> sum
+	]
+
+snippet     mdis2
+abbr        Manhattan distance
+options     head
+	fn distance :p1 :p2 [
+		(:p1:x - :p2:x).abs + (:p1:y - :p2:y).abs
+	]
+	${0}

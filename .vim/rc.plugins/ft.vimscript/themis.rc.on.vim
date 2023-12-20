@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('thinca/vim-themis', { 'rev': '737e5444713ba53a9dcfbe3b962239bd0bd9162e' })
+  call dein#add('thinca/vim-themis', { 'rev': '77b37bef259b9979e15fd7fdaf659cc167487f21' })
   finish
 endif

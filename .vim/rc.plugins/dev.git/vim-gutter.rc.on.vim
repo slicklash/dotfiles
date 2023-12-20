@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('airblade/vim-gitgutter', { 'rev': 'e2056e54c50c6f3fbf386108eeb013e2a7f14ae3' })
+  call dein#add('airblade/vim-gitgutter', { 'rev': '4b49965897b8264cd6f90fa47ddb917f4296c469' })
   finish
 endif
