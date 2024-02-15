@@ -12,6 +12,8 @@ if InitStep() == 0
     autocmd BufWritePre * call clearmatches()
   augroup END
 
+  " :call clearmatches()
+
   " let g:LanguageClient_fzfContextMenu = 1
         " \ 'java': ['/home/slicklash/bin/java-lsp/bin/jdtls', '--jvm-arg=-Dlog.level=ALL'],
         " \ 'python': ['/home/slicklash/.local/bin/pylsp'],

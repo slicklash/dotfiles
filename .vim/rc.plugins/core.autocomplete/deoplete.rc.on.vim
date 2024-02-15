@@ -11,7 +11,7 @@ if InitStep() == 0
     echo 'Error: missing python3 package [pynvim]'
     cquit
   endtry
-  call dein#add('Shougo/deoplete.nvim', { 'rev': '62dd0192786a4e2429c60b29e16f8390bd65060d' })
+  call dein#add('Shougo/deoplete.nvim', { 'rev': '00a179968eb5f53408dafc22567c1e2933c01079' })
   if !has('nvim')
     call dein#add('roxma/nvim-yarp', { 'rev': 'bb5f5e038bfe119d3b777845a76b0b919b35ebc8' })
     call dein#add('roxma/vim-hug-neovim-rpc', { 'rev': '93ae38792bc197c3bdffa2716ae493c67a5e7957' })

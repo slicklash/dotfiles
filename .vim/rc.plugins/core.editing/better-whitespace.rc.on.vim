@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('ntpeters/vim-better-whitespace', { 'rev': '1b22dc57a2751c7afbc6025a7da39b7c22db635d' })
+  call dein#add('ntpeters/vim-better-whitespace', { 'rev': '029f35c783f1b504f9be086b9ea757a36059c846' })
   finish
 endif
 

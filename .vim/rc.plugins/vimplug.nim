@@ -64,10 +64,12 @@ proc check(plugins: seq[PluginInfo]) =
   else:
     echo "No errors"
 
+let pattern = re("\"currentOid\":\"([0-9a-f]+)")
+
 proc fetchRevision(client: HttpClient, name: string): string =
   let html = client.getContent("https://github.com/" & name)
-  let m = html.findAll(re"permalink.+/tree/[0-9a-f]+")
-  result = (if m.len > 0: m[0].substr(m[0].rfind('/') + 1) else: "")
+  let m = html.findAll(pattern)
+  result = (if m.len > 0: m[0].substr(m[0].rfind('"') + 1) else: "")
 
 proc list(plugins: seq[PluginInfo], outdated = false) =
   let client = newHttpClient(sslContext=newContext(verifyMode=CVerifyPeer))

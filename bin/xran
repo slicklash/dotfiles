@@ -1,67 +1,44 @@
 #!/bin/sh
 
-uhd=$(xrandr | grep "3840x")
-qhd=$(xrandr | grep "HDMI-2 connected")
-fhd=$(xrandr | grep "HDMI-A-0 connected")
+LAPTOP_PORT="eDP"
+LAPTOP_MODE="1920x1200"
+
+MONITOR_PORT="DisplayPort-0"
+MONITOR_MODE="3840x2160"
+
+SCREEN_SIZE="5760x2160"
 
 if [ -n "$(xrandr | grep "eDP-1-1")" ]; then
-  eDP1="eDP-1-1"
-  DP1="DP-1-2"
-  HDMI2="HDMI-1-2"
-elif [ -n "$(xrandr | grep "DisplayPort-1")" ]; then
-  eDP1="eDP"
-  DP1="DisplayPort-1"
-  HDMI2="HDMI-A-0"
-elif [ -n "$fhd" ]; then
-  HDMI2="HDMI-A-0"
-else
-  eDP1="eDP-1"
-  DP1="DP-1"
-  HDMI2="HDMI-2"
+  LAPTOP_PORT="eDP-1-1"
+  MONITOR_PORT="DP-1-2"
 fi
 
-MONO_FONT_NAME="JetBrains Mono NL Light"
-MONO_FONT_SIZE=11
-TERMINAL_FONT_SIZE=13
+FONT_NAME="JetBrains Mono NL Light"
+FONT_SIZE_MONO=10
+FONT_SIZE_TERMINAL=13
 DPI=96
 PANEL="panel-0"
 PANEL_SIZE=24
-PANEL_OUTPUT=$eDP1
+PANEL_OUTPUT=$MONITOR_PORT
 
-if [ -n "$uhd" ]; then
-  MONO_FONT_SIZE=12
-  TERMINAL_FONT_SIZE=15
+if [ -n "$(xrandr | grep -zoE "$MONITOR_PORT connected.+\s+3840x2160")" ]; then
+  FONT_SIZE_MONO=12
+  FONT_SIZE_TERMINAL=15
   DPI=122
   PANEL_SIZE=32
-  PANEL_OUTPUT=$DP1
-  dp2=$(xrandr | grep "DP-2 connected.*3840x")
-  if [ -n "$dp2" ]; then
-    PANEL_OUTPUT="DP-2"
-  fi
-  xrandr \
-  --fb 5760x2160 \
-  --output $eDP1 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+0 --rate 120 \
-  --output $PANEL_OUTPUT --mode 3840x2160 --scale 1x1 --panning 3840x2160+1920+0 --rate 60 \
-  --right-of $eDP1 --primary
-elif [ -n "$qhd" ]; then
-  PANEL_OUTPUT=$HDMI2
-  xrandr \
-  --fb 4480x1440 \
-  --output $eDP1 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+0 --rate 120 \
-  --output $HDMI2 --mode 2560x1440 --scale 1x1 --panning 2560x1440+1920+0 --rate 60 \
-  --right-of $eDP1 --primary
-elif [ -n "$fhd" ]; then
-  xrandr \
-  --fb 1920x2160 \
-  --output $HDMI2 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+0 --rate 60 --brightness 1.1 \
-  --output $eDP1 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+1080 --rate 120 --pos 0x1080 --primary
+elif [ -n "$(xrandr | grep -zoE "$MONITOR_PORT connected.+\s+2560x1440")" ]; then
+  MONITOR_MODE="2560x1440"
+  SCREEN_SIZE="4480x1440"
 else
-  xrandr \
-  --fb 1920x1080 \
-  --output $eDP1 --mode 1920x1080 --scale 1x1 --panning 1920x1080+0+0 --rate 120 \
-  --output $DP1 --off \
-  --output $HDMI2 --off
+  PANEL_OUTPUT=$LAPTOP_PORT
+  SCREEN_SIZE="1920x1200"
 fi
+
+xrandr \
+--fb $SCREEN_SIZE \
+--output $LAPTOP_PORT --mode $LAPTOP_MODE --scale 1x1 --panning "$LAPTOP_MODE+0+0" --rate 120 \
+--output $MONITOR_PORT --mode $MONITOR_MODE --scale 1x1 --panning "$MONITOR_MODE+1920+0" --rate 60 \
+--right-of $LAPTOP_PORT --primary
 
 xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -71,5 +48,5 @@ fi
 xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE"
 xfconf-query -c xfce4-panel -p "/panels/$PANEL/output-name" -s "$PANEL_OUTPUT"
 xfconf-query -c xsettings -p /Xft/DPI -s "$DPI"
-xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "$MONO_FONT_NAME $MONO_FONT_SIZE"
-sed -i "s#FontName=.*#FontName=$MONO_FONT_NAME $TERMINAL_FONT_SIZE#" ~/.config/xfce4/terminal/terminalrc
+xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "$FONT_NAME $FONT_SIZE_MONO"
+sed -i "s#FontName=.*#FontName=$FONT_NAME $FONT_SIZE_TERMINAL#" ~/.config/xfce4/terminal/terminalrc

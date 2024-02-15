@@ -24,3 +24,5 @@ stty stop undef
 stty -ixon
 
 autoload -U zmv
+autoload -Uz compinit
+compinit
