@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('tpope/vim-dispatch', { 'rev': 'b84d00f11567abfcfec82a6838c7d41dfa49a447' })
+  call dein#add('tpope/vim-dispatch', { 'rev': '4c695bc052cad2ae6b980aebbe48d046466e27ae' })
   finish
 endif

@@ -231,6 +231,11 @@ function! s:bufnumbers() abort
   let result = []
   while i <= last
     let [line, i] = [getline(i), i + 1]
+    let p = stridx(line, '#')
+    if p != -1
+      let line = strpart(line, 0, p)
+    endif
+    let line = trim(line)
     if match(line,'^\v-?\d+(\.\d+)?$') == 0
       call add(result, str2float(line))
     endif

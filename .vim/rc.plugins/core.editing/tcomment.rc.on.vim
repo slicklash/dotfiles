@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('tomtom/tcomment_vim', { 'rev': '90eaf759099bcd47aa0471f974109d7fd78e4eea' })
+  call dein#add('tomtom/tcomment_vim', { 'rev': '48ab639a461d9b8344f7fee06cb69b4374863b13' })
   finish
 endif
 
