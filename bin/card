@@ -19,7 +19,7 @@ class Card(object):
         *,
         col_width: Optional[int] = None,
         seed: Optional[int] = None,
-        charset: str = string.digits + string.ascii_letters + "@#$_&-+*()/*\"':;!?,.",
+        charset: str = string.digits + string.ascii_letters + "@#$_&-+*()/\"':;!?,.",
     ) -> None:
         self._col_width = col_width if col_width is not None else 3
         self._rows = [
