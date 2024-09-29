@@ -2,15 +2,20 @@
 
 LAPTOP_PORT="eDP"
 LAPTOP_MODE="1920x1200"
+LAPTOP_PAN="3840+0"
 
 MONITOR_PORT="DisplayPort-0"
 MONITOR_MODE="3840x2160"
+MONITOR_PAN="0+0"
 
 SCREEN_SIZE="5760x2160"
 
 if [ -n "$(xrandr | grep "eDP-1-1")" ]; then
   LAPTOP_PORT="eDP-1-1"
   MONITOR_PORT="DP-1-2"
+elif [ -n "$(xrandr | grep -zoE "DisplayPort-1 connected")" ]; then
+  MONITOR_PORT="DisplayPort-1"
+  LAPTOP_MODE="1920x1080"
 fi
 
 FONT_NAME="JetBrains Mono NL Light"
@@ -31,22 +36,22 @@ elif [ -n "$(xrandr | grep -zoE "$MONITOR_PORT connected.+\s+2560x1440")" ]; the
   SCREEN_SIZE="4480x1440"
 else
   PANEL_OUTPUT=$LAPTOP_PORT
-  SCREEN_SIZE="1920x1200"
+  SCREEN_SIZE=$LAPTOP_MODE
 fi
 
 xrandr \
 --fb $SCREEN_SIZE \
---output $LAPTOP_PORT --mode $LAPTOP_MODE --scale 1x1 --panning "$LAPTOP_MODE+0+0" --rate 120 \
---output $MONITOR_PORT --mode $MONITOR_MODE --scale 1x1 --panning "$MONITOR_MODE+1920+0" --rate 60 \
---right-of $LAPTOP_PORT --primary
+--output $LAPTOP_PORT --mode $LAPTOP_MODE --scale 1x1 --panning "$LAPTOP_MODE+$LAPTOP_PAN" --rate 120 \
+--output $MONITOR_PORT --mode $MONITOR_MODE --scale 1x1 --panning "$MONITOR_MODE+$MONITOR_PAN" --rate 60 \
+--left-of $LAPTOP_PORT --primary
 
 xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
   PANEL="panel-1"
   xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE"
 fi
-xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE"
 xfconf-query -c xfce4-panel -p "/panels/$PANEL/output-name" -s "$PANEL_OUTPUT"
+xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE"
 xfconf-query -c xsettings -p /Xft/DPI -s "$DPI"
 xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "$FONT_NAME $FONT_SIZE_MONO"
 sed -i "s#FontName=.*#FontName=$FONT_NAME $FONT_SIZE_TERMINAL#" ~/.config/xfce4/terminal/terminalrc

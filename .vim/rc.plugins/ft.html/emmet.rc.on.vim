@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('mattn/emmet-vim', { 'rev': 'def5d57a1ae5afb1b96ebe83c4652d1c03640f4d', 'on_ft': ['html','xml','xsl','xslt','xsd','css', 'sass','scss','less','mustache', 'javascript', 'jsx', 'javascript.jsx'] })
+  call dein#add('mattn/emmet-vim', { 'rev': '6c511a8d7d2863066f32e25543e2bb99d505172c', 'on_ft': ['html','xml','xsl','xslt','xsd','css', 'sass','scss','less','mustache', 'javascript', 'jsx', 'javascript.jsx'] })
   finish
 endif
 

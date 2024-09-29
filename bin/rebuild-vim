@@ -60,14 +60,13 @@ cd $SRC
 git checkout -- .
 git checkout master
 git pull
-# git checkout v9.0.0809
 if [ -n "$TERMUX_VERSION" ]; then
   sed -i 's/| AI_V4MAPPED//g' src/channel.c
   sed -i 's/PWENT/PWENT1/g' src/misc1.c
 fi
 rm -f src/auto/config.cache
 CFLAGS="$CFLAGS" ./configure $FEAT --with-compiledby="$COMPILED_BY" \
-&& make VIMRUNTIMEDIR=$PREFIX/share/vim/vim90 -j4 && uname -m > .arch || {
+&& make VIMRUNTIMEDIR=$PREFIX/share/vim/vim91 -j4 && uname -m > .arch || {
     echo "Consider" 1>&2
     echo "  sudo apt-get build-dep vim-gtk" 1>&2
     exit 1
