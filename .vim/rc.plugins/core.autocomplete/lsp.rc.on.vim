@@ -20,6 +20,7 @@ if InitStep() == 0
         " \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
         " \ 'nim': ['nimlsp'],
   let g:LanguageClient_serverCommands = {
+        \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
         \ 'go': ['gopls'],
         \ 'rust': ['rustup', 'run', 'stable', 'rls'],
         \ 'python': ['pylsp'],
@@ -37,6 +38,7 @@ if InitStep() == 0
         \ 'typescript.tsx': ['tsconfig.json'],
         \ }
   let g:LanguageClient_settingsPath = '~/.vim/settings.json'
+  let g:LanguageClient_serverCommands.cpp  = g:LanguageClient_serverCommands.c
   finish
 endif
 

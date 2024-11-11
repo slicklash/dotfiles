@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': 'a7ef1817b7aa06d0f80952ad530be87ad3c8f6e2' })
+  call dein#add('dense-analysis/ale', { 'rev': '898638abe586999d38a1f5b54505e2b351a3f80b' })
   finish
 endif
 

@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('github/copilot.vim', { 'rev': '782461159655b259cff10ecff05efa761e3d4764' })
+  call dein#add('github/copilot.vim', { 'rev': '87038123804796ca7af20d1b71c3428d858a9124' })
   finish
 endif
 
@@ -8,6 +8,7 @@ let g:copilot_filetypes = {
 \ 'c': v:true,
 \ 'css': v:true,
 \ 'java': v:true,
+\ 'go': v:true,
 \ 'javascript': v:false,
 \ 'nim': v:false,
 \ 'python': v:true,
