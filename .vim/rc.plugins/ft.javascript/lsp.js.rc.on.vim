@@ -18,13 +18,17 @@ function! s:ft_js_ts() abort
   setlocal shiftwidth=2
   let b:keyword_lookup_url='https://developer.mozilla.org/en-US/search?q=%s&topic=js'
 
+  setlocal suffixesadd=.ts,.tsx,.js,.jsx
+
   if &filetype =~? 'javascript'
-    setlocal suffixesadd=.ts,.tsx,.js,.jsx
-    setlocal filetype=javascript.jsx
+    if expand('%:e') =~? 'jsx'
+      setlocal filetype=javascript.jsx
+    endif
     setlocal formatprg=prettier\ --parser\ babel\ --single-quote\ --trailing-comma\ es5
   elseif &filetype =~? 'typescript'
-    setlocal suffixesadd=.ts,.tsx,.js,.jsx
-    setlocal filetype=typescript.tsx
+    if expand('%:e') =~? 'tsx'
+      setlocal filetype=typescript.tsx
+    endif
     setlocal formatexpr=
     setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5
     " syntax clear typescriptParamImpl
