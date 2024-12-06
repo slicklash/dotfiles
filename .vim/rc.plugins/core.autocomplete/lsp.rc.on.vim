@@ -37,8 +37,9 @@ if InitStep() == 0
         \ 'typescript': ['tsconfig.json'],
         \ 'typescript.tsx': ['tsconfig.json'],
         \ }
-  let g:LanguageClient_settingsPath = '~/.vim/settings.json'
   let g:LanguageClient_serverCommands.cpp  = g:LanguageClient_serverCommands.c
+
+
   finish
 endif
 

@@ -5,6 +5,7 @@ DST=~/code/gh-dotfiles
 function _sync() {
   echo "~/$from"
   local dir="$DST/$from"
+  mkdir -p "$dir"
   rm -rf "$dir/*"
   for x in $white_list; do
     echo "[+] $x"
@@ -33,6 +34,10 @@ _sync
 
 from='.zsh/'
 white_list=('rc.core' 'rc.plugins' 'rc.defer')
+_sync
+
+from='.config/Code/User/'
+white_list=('settings.json')
 _sync
 
 unfunction _sync

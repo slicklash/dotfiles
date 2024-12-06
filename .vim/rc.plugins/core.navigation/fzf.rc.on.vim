@@ -23,7 +23,7 @@ let g:fzf_action = {
   \ 'ctrl-l': 'vsplit',
   \ 'ctrl-n': 'tabedit' }
 
-let g:fzf_options = ['--layout=reverse', '--info=inline']
+let g:fzf_options = ['--layout=reverse', '--info=inline', '--preview-window=right:70%']
 
 function! _rg(ignores, ...)
   let rg_options = extend(['rg', '--hidden', '--no-ignore-vcs', '--column', '--line-number', '--no-heading', '--smart-case'], a:000)
