@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('ap/vim-css-color', { 'rev': '950e80352b325ff26d3b0faf95b29e301c200f7d', 'on_ft' : ['css','scss','sass','less','styl'] })
+  call dein#add('ap/vim-css-color', { 'rev': '14fd934cdd9ca1ac0e53511094e612eb9bace373', 'on_ft' : ['css','scss','sass','less','styl'] })
   finish
 endif

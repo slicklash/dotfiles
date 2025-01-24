@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('itchyny/lightline.vim', { 'rev': 'd6a07ea376a4b7372aa59e7ea6a051c9470bb4d0' })
+  call dein#add('itchyny/lightline.vim', { 'rev': 'e358557e1a9f9fc860416c8eb2e34c0404078155' })
   finish
 endif
 

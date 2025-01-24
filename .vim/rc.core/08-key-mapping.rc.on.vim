@@ -3,6 +3,8 @@ inoremap jj <ESC>l
 
 " yank to end of line
 nnoremap Y y$
+" past last yank
+nnoremap <leader>y "0P
 
 " write & write all
 nnoremap <leader>w :w!<cr>

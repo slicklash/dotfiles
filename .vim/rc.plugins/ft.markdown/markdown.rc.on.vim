@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('tpope/vim-markdown', { 'rev': 'f405b47fd8774ecd5e808e6de9c85d9029da251c', 'on_ft': ['markdown'] })
+  call dein#add('tpope/vim-markdown', { 'rev': 'f9f845f28f4da33a7655accb22f4ad21f7d9fb66', 'on_ft': ['markdown'] })
   finish
 endif
 

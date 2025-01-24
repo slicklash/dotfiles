@@ -5,7 +5,7 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': 'a6957aba117bac5139f6cd408f1bd1bb89183f8a', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf', { 'rev': '65db7352b72845b306e6bc1388a4ad02d0f57a70', 'build': './install --all', 'merged': 0 })
   call dein#add('junegunn/fzf.vim', { 'rev': '556f45e79ae5e3970054fee4c4373472604a1b4e', 'depends': 'fzf' })
   finish
 endif
@@ -23,12 +23,12 @@ let g:fzf_action = {
   \ 'ctrl-l': 'vsplit',
   \ 'ctrl-n': 'tabedit' }
 
-let g:fzf_options = ['--layout=reverse', '--info=inline', '--preview-window=right:70%']
+let g:fzf_options = ['--style=minimal', '--layout=reverse', '--info=inline', '--preview-window=right:70%']
 
 function! _rg(ignores, ...)
   let rg_options = extend(['rg', '--hidden', '--no-ignore-vcs', '--column', '--line-number', '--no-heading', '--smart-case'], a:000)
   for item in a:ignores
-    call extend(rg_options, ['--glob', '"!' . item . '"'])
+    call extend(rg_options, ['--glob', "'!" . item . "'"])
   endfor
   return join(rg_options, ' ')
 endfunction
@@ -56,6 +56,7 @@ function! _fzf(...) abort
       let source .= ' -t '. ft
     endif
   endif
+
   let options = fzf#vim#with_preview({'source': source, 'options': g:fzf_options})
   if !empty(dir)
     let options.dir = dir
@@ -81,11 +82,34 @@ function! SearchModules() abort
   call _fzf({'dir': GetProjectDir() . '/node_modules'})
 endfunction
 
+function! SearchGit(...) abort
+  let params = get(a:000, 0, {})
+  let source = get(params, 'source', 'git log')
+
+  let git_log_format = get(params, 'format', '%C(yellow)%h %C(bold blue)%>(12,trunc)%cr%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset')
+  let git_log_args = get(params, 'source_args', '--abbrev=7 --oneline --format="'.git_log_format.'"')
+  if source == 'git log'
+    let source = source . ' ' . git_log_args
+  endif
+
+  let git_show_args = get(params, 'preview_args', '')
+  let git_show = 'hash=$(echo {} | grep -o "[a-f0-9]\{7,\}"); [ -n "$hash" ] && git show --color=always '.git_show_args.' $hash || echo "No valid commit selected"'
+
+  let preview = get(params, 'preview', git_show)
+
+  let fzf_options = copy(g:fzf_options)
+  call add(fzf_options, '--preview='.preview)
+  call fzf#run(fzf#wrap({'source': source, 'options': fzf_options}))
+endfunction
+
 nnoremap <Space>f :call _fzf()<CR>
 nnoremap <Space>F :call _fzf({'ft': '?'})<CR>
 nnoremap <Space>a :call _fzf({'dir': GetProjectDir()})<CR>
 nnoremap <Space>m :call SearchModules()<CR>
 nnoremap <Space>A :call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
+
+nnoremap <Space>g :call SearchGit({'source': 'git log'})<CR>
+nnoremap <Space>o :call SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
 
 nnoremap <Space>c :call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
 nnoremap <Space>z :call _fzf({'dir': '~/.zsh/'})<CR>

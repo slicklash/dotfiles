@@ -59,6 +59,31 @@ function set_thumb() {
   fi
 }
 
+function v_trim_start() {
+  if [ -z "$3" ]; then
+    echo "Usage: $0 <time> <input> <out>"
+  else
+    ffmpeg -ss "$1" -i "$2" -map 0 -c copy "$3"
+  fi
+}
+
+function v_trim_end() {
+  if [ -z "$3" ]; then
+    echo "Usage: $0 <time> <input> <out>"
+  else
+    ffmpeg -to "$1" -i "$2" -map 0 -c copy "$3"
+  fi
+}
+
+function v_compress() {
+  if [ -z "$2" ]; then
+    echo "Usage: $0 <input> <out> <q>"
+  else
+    local quality=${3:-20}
+    ffmpeg -i "$1" -c:v libx265 -preset slow -crf $quality -x265-params "fps=60:vbv-bufsize=12000:vbv-maxrate=6000:aq-mode=3" -c:a copy "$2"
+  fi
+}
+
 _gitignireio_get_command_list() {
   curl -s https://www.gitignore.io/api/list | tr "," "\n"
 }

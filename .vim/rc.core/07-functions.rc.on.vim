@@ -267,3 +267,9 @@ function! Max(...) abort
   let n = get(a:000, 0, 1)
   call EchoHi(reverse(sort(s:bufnumbers(), 'f'))[0:n-1], 'DiffAdd')
 endfunction
+
+function! FindNearestFile(filename) abort
+  let buf_filename = fnameescape(fnamemodify(bufname('%'), ':p'))
+  let relative_path = findfile(a:filename, buf_filename . ';')
+  return !empty(relative_path) ? fnamemodify(relative_path, ':p') : ''
+endfunction
