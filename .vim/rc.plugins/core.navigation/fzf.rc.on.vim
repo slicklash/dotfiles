@@ -5,7 +5,7 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': '65db7352b72845b306e6bc1388a4ad02d0f57a70', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf', { 'rev': '26b9f5831a352f501e426d9e5c0c588a3656b0be', 'build': './install --all', 'merged': 0 })
   call dein#add('junegunn/fzf.vim', { 'rev': '556f45e79ae5e3970054fee4c4373472604a1b4e', 'depends': 'fzf' })
   finish
 endif
@@ -17,8 +17,19 @@ function! s:build_quickfix_list(lines)
   copen
 endfunction
 
+function! s:git_fixup(lines)
+  let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
+  if (!empty(hash))
+    let cmd = 'git commit --fixup=' . hash
+    execute 'silent !'.cmd
+    redraw!
+    call EchoHi(cmd)
+  endif
+endfunction
+
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-f': function('s:git_fixup'),
   \ 'ctrl-m': 'split',
   \ 'ctrl-l': 'vsplit',
   \ 'ctrl-n': 'tabedit' }
@@ -99,6 +110,7 @@ function! SearchGit(...) abort
 
   let fzf_options = copy(g:fzf_options)
   call add(fzf_options, '--preview='.preview)
+  call add(fzf_options, '--preview-window=right:55%')
   call fzf#run(fzf#wrap({'source': source, 'options': fzf_options}))
 endfunction
 

@@ -111,11 +111,13 @@ function gl () {
     fzf
     --ansi --no-sort --reverse --tiebreak=index
     --preview "f() { set -- \$(echo -- \$@ | grep -o '[a-f0-9]\{7\}'); [ \$# -eq 0 ] || git show --color=always $@ \$1; }; f {}"
+    --bind="ctrl-d:preview-page-down,ctrl-u:preview-page-up"
     --bind "ctrl-q:abort,ctrl-m:execute:
                 (grep -o '[a-f0-9]\{7\}' | head -1 |
                 xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
                 {}
                 FZF-EOF"
+                --bind="ctrl-f:execute(git commit --fixup=\$(echo {} | grep -o '^[a-f0-9]\\{7\\}' | head -1))+abort"
    --preview-window=right:60%
   )
 

@@ -54,5 +54,13 @@
         "**/.metals": true,
         "**/.ammonite": true
     },
-    "makefile.configureOnOpen": false
+    "makefile.configureOnOpen": false,
+    "github.copilot.enable": {
+      "*": false,
+      "plaintext": false,
+      "markdown": false,
+      "scminput": false
+    },
+    "lldb.suppressUpdateNotifications": true,
+    "jest.runMode": "on-demand",
 }
