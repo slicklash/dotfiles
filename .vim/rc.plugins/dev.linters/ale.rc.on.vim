@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': '6c337ad19ca32fcb11ff7f29a8e68598763b59a2' })
+  call dein#add('dense-analysis/ale', { 'rev': 'e5d6d94f71003e4d0d3b1c77cc4e2514b415e9f9' })
   finish
 endif
 
@@ -47,9 +47,9 @@ let g:ale_linters = {
 
 let g:ale_fixers = {
 \   'java': ['google_java_format'],
-\   'javascript': ['eslint', 'yoshifix'],
+\   'javascript': ['eslint', 'organizeImports'],
 \   'json': ['jq'],
-\   'typescript': ['eslint', 'yoshifix'],
+\   'typescript': ['eslint', 'organizeImports'],
 \   'python': ['black', 'isort'],
 \   'nim':  ['nimpretty'],
 \   'go': ['gofmt'],
@@ -96,14 +96,15 @@ let yoshi = {
 call ale#linter#Define('javascript', yoshi)
 call ale#linter#Define('typescript', yoshi)
 
-function! YoshiFix(buffer) abort
+function! OrganizeImports(buffer) abort
+call LanguageClient#workspace_executeCommand('_typescript.organizeImports', [expand('%:p')])
   return {
-  \   'command': YoshiFind(a:buffer) . ' lint --fix %t',
+  \   'command': 'call LanguageClient#workspace_executeCommand("_typescript.organizeImports", [expand("%:p")])',
   \   'read_temporary_file': 1
   \}
 endfunction
 
-execute ale#fix#registry#Add('yoshifix', 'YoshiFix', ['javascript', 'typescript'], 'yoshi')
+execute ale#fix#registry#Add('organizeImports', 'OrganizeImports', ['javascript', 'typescript'], 'organizeImports')
 
 function! s:is_local(linter) abort
    let path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)

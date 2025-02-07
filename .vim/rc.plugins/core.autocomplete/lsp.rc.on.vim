@@ -58,4 +58,6 @@ nnoremap <silent> <leader>rr :call LanguageClient#textDocument_rename()<CR>
 nnoremap <silent> <leader>fr :call LanguageClient#textDocument_references()<CR>
 nnoremap <silent> <leader>h :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> <leader>q :call LanguageClient#textDocument_codeAction()<CR>
+nnoremap <silent> <leader>n :call LanguageClient#diagnosticsNext()<CR>
+nnoremap <silent> <leader>N :call LanguageClient#diagnosticsPrevious()<CR>
 
