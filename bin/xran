@@ -10,10 +10,10 @@ MONITOR_PAN="0+0"
 
 SCREEN_SIZE="5760x2160"
 
-if [ -n "$(xrandr | grep "eDP-1-1")" ]; then
+if xrandr | grep -q "eDP-1-1"; then
   LAPTOP_PORT="eDP-1-1"
   MONITOR_PORT="DP-1-2"
-elif [ -n "$(xrandr | grep -zoE "DisplayPort-1 connected")" ]; then
+elif xrandr | grep -q -zoE "DisplayPort-1 connected"; then
   MONITOR_PORT="DisplayPort-1"
   LAPTOP_MODE="1920x1080"
 fi
@@ -26,12 +26,12 @@ PANEL="panel-0"
 PANEL_SIZE=24
 PANEL_OUTPUT=$MONITOR_PORT
 
-if [ -n "$(xrandr | grep -zoE "$MONITOR_PORT connected.+\s+3840x2160")" ]; then
+if xrandr | grep -q -zoE "$MONITOR_PORT connected.+\s+3840x2160"; then
   FONT_SIZE_MONO=12
   FONT_SIZE_TERMINAL=15
   DPI=122
   PANEL_SIZE=32
-elif [ -n "$(xrandr | grep -zoE "$MONITOR_PORT connected.+\s+2560x1440")" ]; then
+elif xrandr | grep -q -zoE "$MONITOR_PORT connected.+\s+2560x1440"; then
   MONITOR_MODE="2560x1440"
   SCREEN_SIZE="4480x1440"
 else
@@ -39,11 +39,24 @@ else
   SCREEN_SIZE=$LAPTOP_MODE
 fi
 
-xrandr \
---fb $SCREEN_SIZE \
---output $LAPTOP_PORT --mode $LAPTOP_MODE --scale 1x1 --panning "$LAPTOP_MODE+$LAPTOP_PAN" --rate 120 \
---output $MONITOR_PORT --mode $MONITOR_MODE --scale 1x1 --panning "$MONITOR_MODE+$MONITOR_PAN" --rate 60 \
---left-of $LAPTOP_PORT --primary
+if [ "$1" = "--laptop" ]; then
+  PANEL_OUTPUT=$LAPTOP_PORT
+  xrandr \
+    --fb $LAPTOP_MODE \
+    --output $LAPTOP_PORT --mode $LAPTOP_MODE --scale 1x1 --panning "$LAPTOP_MODE+0+0" --rate 120 --primary \
+    --output $MONITOR_PORT --off
+elif [ "$1" = "--monitor" ]; then
+  xrandr \
+    --fb $MONITOR_MODE \
+    --output $MONITOR_PORT --mode $MONITOR_MODE --scale 1x1 --panning "$MONITOR_MODE+0+0" --rate 60 \
+    --output $LAPTOP_PORT --off
+else
+  xrandr \
+    --fb $SCREEN_SIZE \
+    --output $LAPTOP_PORT --mode $LAPTOP_MODE --scale 1x1 --panning "$LAPTOP_MODE+$LAPTOP_PAN" --rate 120 \
+    --output $MONITOR_PORT --mode $MONITOR_MODE --scale 1x1 --panning "$MONITOR_MODE+$MONITOR_PAN" --rate 60 \
+    --left-of $LAPTOP_PORT --primary
+fi
 
 xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
