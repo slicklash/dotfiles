@@ -4,17 +4,19 @@ LAPTOP_PORT="eDP"
 LAPTOP_MODE="1920x1200"
 LAPTOP_PAN="3840+0"
 
-MONITOR_PORT="DisplayPort-0"
+MONITOR_PORT="DisplayPort-1"
 MONITOR_MODE="3840x2160"
 MONITOR_PAN="0+0"
 
 SCREEN_SIZE="5760x2160"
 
-if xrandr | grep -q "eDP-1-1"; then
+DEVICES=$(xrandr | python -c "import sys;xs=sys.stdin;print([x.split()[0]+'='+xs.readline().split()[0] for x in xs if ' connected' in x])")
+
+if echo "$DEVICES" | grep -q "eDP-1-1"; then
   LAPTOP_PORT="eDP-1-1"
   MONITOR_PORT="DP-1-2"
-elif xrandr | grep -q -zoE "DisplayPort-1 connected"; then
-  MONITOR_PORT="DisplayPort-1"
+elif echo "$DEVICES" | grep -q "DisplayPort-0"; then
+  MONITOR_PORT="DisplayPort-0"
   LAPTOP_MODE="1920x1080"
 fi
 
@@ -26,14 +28,15 @@ PANEL="panel-0"
 PANEL_SIZE=24
 PANEL_OUTPUT=$MONITOR_PORT
 
-if xrandr | grep -q -zoE "$MONITOR_PORT connected.+\s+3840x2160"; then
+if echo "$DEVICES" | grep -q "$MONITOR_PORT=3840x2160"; then
   FONT_SIZE_MONO=12
   FONT_SIZE_TERMINAL=15
   DPI=122
   PANEL_SIZE=32
-elif xrandr | grep -q -zoE "$MONITOR_PORT connected.+\s+2560x1440"; then
+elif echo "$DEVICES" | grep -q "$MONITOR_PORT=2560x1440"; then
   MONITOR_MODE="2560x1440"
   SCREEN_SIZE="4480x1440"
+  LAPTOP_PAN="2560+0"
 else
   PANEL_OUTPUT=$LAPTOP_PORT
   SCREEN_SIZE=$LAPTOP_MODE
