@@ -12,6 +12,7 @@ function! s:ft_js_ts() abort
     return
   endif
 
+  " nnoremap <buffer> K :LspHover<CR>
   nnoremap <buffer> K :call LanguageClient#textDocument_hover()<CR>
   nnoremap <buffer> <silent><leader>i :call<SID>import()<cr>
 

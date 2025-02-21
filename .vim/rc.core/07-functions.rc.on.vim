@@ -17,6 +17,12 @@ function! Preserve(command)
   call setreg('/', last_search)
 endfunction
 
+function! FindNearestFile(filename) abort
+  let buf_filename = fnameescape(fnamemodify(bufname('%'), ':p'))
+  let relative_path = findfile(a:filename, buf_filename . ';')
+  return !empty(relative_path) ? fnamemodify(relative_path, ':p') : ''
+endfunction
+
 function! s:is_ignore_special_windows(winnr) abort
   return index(['unite', 'defx', 'denite'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
 endfunction
@@ -89,24 +95,6 @@ endfunction
 function! OpenUrl(url) abort
   execute 'silent !firefox "' . a:url . '" > /dev/null 2>&1 &'
   redraw!
-endfunction
-
-function! OpenUrlAtCursor()
-  let regex = '\(www\.\|https\?:\/\/\)[^ ]\+'
-  let urls = s:matchstrpos_all(getline('.'), regex)
-  if empty(urls)
-    return EchoHi('URL not found', 'ErrorMsg')
-  endif
-  if len(urls) == 1
-    return OpenUrl(urls[0][0])
-  endif
-  let pos = getcurpos()[2]
-  for url_match in urls
-    let [url, start, end] = url_match
-    if pos >= start && pos <= end
-      return OpenUrl(url)
-    endif
-  endfor
 endfunction
 
 function! LookupKeyword() abort
@@ -182,12 +170,6 @@ endfunction
 
 function! Eslint() abort
   setlocal makeprg=npx\ eslint\ -f\ unix\ src
-  make
-  copen
-endfunction
-
-function! EslintSled() abort
-  setlocal makeprg=npx\ eslint\ -f\ unix\ sled
   make
   copen
 endfunction
@@ -268,8 +250,3 @@ function! Max(...) abort
   call EchoHi(reverse(sort(s:bufnumbers(), 'f'))[0:n-1], 'DiffAdd')
 endfunction
 
-function! FindNearestFile(filename) abort
-  let buf_filename = fnameescape(fnamemodify(bufname('%'), ':p'))
-  let relative_path = findfile(a:filename, buf_filename . ';')
-  return !empty(relative_path) ? fnamemodify(relative_path, ':p') : ''
-endfunction

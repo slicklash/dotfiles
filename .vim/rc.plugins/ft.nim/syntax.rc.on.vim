@@ -9,6 +9,23 @@ augroup filtype_nim
 augroup END
 
 function! s:ft_nim() abort
+
+  syntax keyword nimTestSuite suite contained
+  syntax keyword nimTestCase test contained
+  syntax keyword nimTestCheck check contained
+
+  syntax match nimTestSuiteDecl /\<suite\>\s*".\{-}"/ contains=nimTestSuite
+  syntax match nimTestCaseDecl /\<test\>\s*".\{-}"/ contains=nimTestCase
+  syntax match nimTestCheckCall /\<check\>\s\+.\+/ contains=nimTestCheck
+
+  hi! link nimTestSuiteDecl String
+  hi! link nimTestSuite Function
+
+  hi! link nimTestCaseDecl String
+  hi! link nimTestCase Function
+
+  hi! link nimTestCheck Keyword
+
   let b:keyword_lookup_url='https://nim-lang.org/docs/theindex.html\#%s'
   " setlocal formatprg=nimpretty\ --indent:2
   nnoremap <buffer> <silent><leader>i :call SortImports()<cr>

@@ -5,7 +5,7 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': '3347d6159156f2c3e269a54b7fb34aa905a3fd2d', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf', { 'rev': 'a24d274a3cdc680dd2d4e5664121e9727239f3b6', 'build': './install --all', 'merged': 0 })
   call dein#add('junegunn/fzf.vim', { 'rev': '6cda389bdea953c9c66a3cfe57e40463ffd61ae9', 'depends': 'fzf' })
   finish
 endif
@@ -27,9 +27,18 @@ function! s:git_fixup(lines)
   endif
 endfunction
 
+function! s:git_autosquash(lines)
+  let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
+  if (!empty(hash))
+    let cmd = 'zsh -i -c ''git rebase -i --autosquash ' . hash . ';exec zsh'''
+    execute 'silent !tmux splitw -v "' .  cmd . '"'
+  endif
+endfunction
+
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-f': function('s:git_fixup'),
+  \ 'ctrl-s': function('s:git_autosquash'),
   \ 'ctrl-m': 'split',
   \ 'ctrl-l': 'vsplit',
   \ 'ctrl-n': 'tabedit' }
@@ -58,7 +67,7 @@ function! _fzf(...) abort
     endif
   endif
   if empty(source)
-    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.venv', '.mypy_cache', '.pytest_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test', 'build/src', 'build/classes', 'build/generated', 'build/resources', 'htmlcov/'])
+    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.venv', '.turbo', '.mypy_cache', '.pytest_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test', 'build/src', 'build/classes', 'build/generated', 'build/resources', 'htmlcov/'])
     let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
     if !empty(ft)
       if ft == '?'

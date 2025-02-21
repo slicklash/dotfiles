@@ -385,7 +385,6 @@ call s:hi('typescriptPredefinedType', s:color.GREY, '', '')
 call s:hi('typescriptObjectLabel', s:color.DARKPURPLE, '', '')
 call s:hi('typescriptComputedPropertyName', s:color.VIOLET, '', '')
 
-
 hi! link cssClassName Normal
 hi! link cssImportant PreProc
 hi! link cssProp Keyword
@@ -413,9 +412,7 @@ hi! link csharpSystemValueType Type
 hi! link sqlKeyword Keyword
 hi! link sqlSpecial Function
 
-
 " LanguageClient
-
 hi LanguageClientError ctermbg=52
 hi! link LanguageClientErrorSign Todo
 hi! link LanguageClientWarningSign Number
@@ -425,7 +422,6 @@ hi ALEError ctermbg=52
 hi! link ALEErrorSign Todo
 
 " VimFiler
-
 call s:hi('vimfilerLeaf', '#2c4558 67', '', '')
 call s:hi('vimfilerClosedFile', s:color.BLUE, '', '')
 call s:hi('vimfilerOpenedFile', s:color.BLUE, '', '')
@@ -434,18 +430,17 @@ hi! link vimfilerNonMark vimfilerLeaf
 hi! link vimfilerMarkedFile Special
 hi! link vimfilerROFile Normal
 
+" sneak
+hi! link Sneak Search
+hi! link SneakCurrent CurSearch
+
 " defx
-" call s:hi('Defx_filename_directory', s:color.BLUE, '', '')
-" call s:hi('Defx_filename_directory_icon', s:color.BLUE, '', '')
-" call s:hi('Defx_mark_directory', s:color.BLUE, '', '')
-" call s:hi('Defx_filename_1_directory', s:color.BLUE, '', '')
-" call s:hi('Defx_filename_1_directory_icon', s:color.BLUE, '', '')
-" call s:hi('Defx_mark_1_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename_3_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename_3_directory_icon', s:color.BLUE, '', '')
 call s:hi('Defx_mark_3_directory', s:color.BLUE, '', '')
 call s:hi('Defx_filename', s:color.BLUE, '', '')
 
+" Tagbar
 call s:hi('TagbarSignature', s:color.GREY, '', '')
 call s:hi('TagbarScope', s:color.PURPLE, '', '')
 call s:hi('TagbarVisibilityPublic', s:color.GREEN, '', '')

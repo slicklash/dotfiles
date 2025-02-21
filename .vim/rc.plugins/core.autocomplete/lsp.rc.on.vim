@@ -18,8 +18,8 @@ if InitStep() == 0
         " \ 'java': ['/home/slicklash/bin/java-lsp/bin/jdtls', '--jvm-arg=-Dlog.level=ALL'],
         " \ 'python': ['/home/slicklash/.local/bin/pylsp'],
         " \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
-        " \ 'nim': ['nimlsp'],
   let g:LanguageClient_serverCommands = {
+        \ 'nim': ['nimlangserver'],
         \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
         \ 'go': ['gopls'],
         \ 'rust': ['rustup', 'run', 'stable', 'rls'],
