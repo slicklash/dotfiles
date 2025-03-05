@@ -61,7 +61,7 @@ function set_thumb() {
 
 function v_trim_start() {
   if [ -z "$3" ]; then
-    echo "Usage: $0 <time> <input> <out>"
+    echo "Usage: $0 <time_sec> <input> <out>"
   else
     ffmpeg -ss "$1" -i "$2" -map 0 -c copy "$3"
   fi

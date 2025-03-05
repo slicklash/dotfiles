@@ -25,13 +25,13 @@ function! s:ft_js_ts() abort
     if expand('%:e') =~? 'jsx'
       setlocal filetype=javascript.jsx
     endif
-    setlocal formatprg=prettier\ --parser\ babel\ --single-quote\ --trailing-comma\ es5
+    setlocal formatprg=prettier\ --parser\ babel\ --single-quote\ --trailing-comma\ es5\ --tab-width\ 2
   elseif &filetype =~? 'typescript'
     if expand('%:e') =~? 'tsx'
       setlocal filetype=typescript.tsx
     endif
     setlocal formatexpr=
-    setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5
+    setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5\ --tab-width\ 2
     " syntax clear typescriptParamImpl
     " syntax match  javaScriptTemplateDelim    "\${\|}" contained
     " syntax region javaScriptTemplateVar      start=+${+ end=+}+                        contains=javaScriptTemplateDelim keepend

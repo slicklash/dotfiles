@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': '699c0dbe80e4395370a4d2dc9816a4d18d85371f' })
+  call dein#add('dense-analysis/ale', { 'rev': 'e319d489410df7705d72708ff9e44ae730721ac8' })
   finish
 endif
 
@@ -47,9 +47,9 @@ let g:ale_linters = {
 
 let g:ale_fixers = {
 \   'java': ['google_java_format'],
-\   'javascript': ['eslint', 'organizeImports'],
+\   'javascript': ['organizeImports', 'eslint'],
 \   'json': ['jq'],
-\   'typescript': ['eslint', 'organizeImports'],
+\   'typescript': ['organizeImports', 'eslint'],
 \   'python': ['black', 'isort'],
 \   'nim':  ['nimpretty'],
 \   'go': ['gofmt'],
