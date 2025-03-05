@@ -25,7 +25,8 @@ function! _js(cmd, ...) abort
     let args = get(a:000, 1, '')
     if path =~ 'axio'
       let cwd = fnamemodify(FindNearestFile('package.json'), ':p:h')
-      let cmd = printf('yarn --cwd %s test %s %s', cwd, args, path)
+      let testCmd = path =~ 'e2e-test' ? 'test:e2e' : 'test'
+      let cmd = printf('yarn --cwd %s %s %s %s', cwd, testCmd, args, path)
     else
       let test_cmd = 'npm test '
       let cmd = type == 'test' ? test_cmd . path : 'npx nyc -r html ' . test_cmd . ' --coverage ' . path
