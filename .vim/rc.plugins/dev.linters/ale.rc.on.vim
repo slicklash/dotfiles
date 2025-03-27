@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': '1c91102112ac5addbdbf178268c61a2ead64fb2a' })
+  call dein#add('dense-analysis/ale', { 'rev': 'dd23b92ee9bfb6d790b6018ac1e52ba040649666' })
   finish
 endif
 
@@ -41,7 +41,7 @@ let g:ale_linters = {
 \   'json': ['jq'],
 \   'vim': ['vint'],
 \   'nim': ['nimlsp', 'nimcheck'],
-\   'python': ['flake8', 'mypy'],
+\   'python': ['ruff', 'mypy'],
 \}
 
 
@@ -50,7 +50,7 @@ let g:ale_fixers = {
 \   'javascript': ['organizeImports', 'eslint'],
 \   'json': ['jq'],
 \   'typescript': ['organizeImports', 'eslint'],
-\   'python': ['black', 'isort'],
+\   'python': ['ruff', 'isort'],
 \   'nim':  ['nimpretty'],
 \   'go': ['gofmt'],
 \}
@@ -58,9 +58,7 @@ let g:ale_fixers = {
 let g:ale_java_javac_executable = 'javac -cp ~/bin/java-lsp/lombok.jar'
 
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ignore-long-lines --extension-pkg-whitelist=cv2'
-let g:ale_python_flake8_options = '--ignore=E501,F403'
-let g:ale_python_autopep8_options = '--max-line-lengthi 125'
-let g:ale_python_black_options = '--skip-string-normalization'
+let g:ale_python_ruff_options = '--preview --select E,Q,I,FURB'
 let g:ale_python_mypy_options = '--strict --follow-imports silent'
 
 let g:ale_nim_nimpretty_options = '--indent:2'
