@@ -447,4 +447,8 @@ call s:hi('TagbarVisibilityPublic', s:color.GREEN, '', '')
 call s:hi('TagbarVisibilityProtected', s:color.BLUE, '', '')
 call s:hi('TagbarVisibilityPrivate', s:color.RED, '', '')
 
+" pandoc
+
+hi! link pandocStrong DiffChange
+
 delfunction s:hi

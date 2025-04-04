@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': 'dd23b92ee9bfb6d790b6018ac1e52ba040649666' })
+  call dein#add('dense-analysis/ale', { 'rev': '2883260ade25f2b173a68ad185c314b1e3b72a61' })
   finish
 endif
 
@@ -26,6 +26,7 @@ let g:ale_echo_msg_format = '[%linter%] %s'
 
 let g:ale_pattern_options = {
 \   '.*\.min\.js$': {'ale_enabled': 0},
+\   '.*\.env$': {'ale_enabled': 0},
 \}
 
 " pip3 install vim-vint pylint
@@ -58,8 +59,8 @@ let g:ale_fixers = {
 let g:ale_java_javac_executable = 'javac -cp ~/bin/java-lsp/lombok.jar'
 
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ignore-long-lines --extension-pkg-whitelist=cv2'
-let g:ale_python_ruff_options = '--preview --select E,Q,I,FURB'
 let g:ale_python_mypy_options = '--strict --follow-imports silent'
+let g:ale_python_ruff_options = '--preview --select E,Q,I,FURB'
 
 let g:ale_nim_nimpretty_options = '--indent:2'
 
