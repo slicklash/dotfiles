@@ -5,8 +5,8 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': 'e15cba0c8c7c9dd3388d260cf5b5de7fc044dfbc', 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'rev': '1fff637559f29d5edbdb05e03327954a8cd9e406', 'depends': 'fzf' })
+  call dein#add('junegunn/fzf', { 'rev': '66df24040fed3c76df545fc34b47387c86922786', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf.vim', { 'rev': '3cb44a8ba588e1ada409af495bdc6a4d2d37d5da', 'depends': 'fzf' })
   finish
 endif
 

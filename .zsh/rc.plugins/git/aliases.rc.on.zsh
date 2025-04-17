@@ -24,7 +24,6 @@ alias gau='git add -u'
 
 alias gco_m='git checkout main'
 alias gco_ma='git checkout master'
-alias greset='git reset HEAD'
 alias greset_last='git reset HEAD~'
 
 alias gk='git commit -v'

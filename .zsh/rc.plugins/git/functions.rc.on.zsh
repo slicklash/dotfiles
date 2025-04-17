@@ -1,3 +1,12 @@
+function greset() {
+  if [ -z "$1" ]; then
+    echo "Usage: $0 <file_path>"
+    return 0
+  fi
+  git reset HEAD $1
+  git checkout -- $1
+}
+
 function _git_stash_select() {
   echo $(git stash list | fzf --ansi --no-sort --reverse --preview="echo {} | cut -d':' -f1 | xargs git stash show -p | bat --color=always -p"  | cut -d ':' -f1)
 }

@@ -77,10 +77,11 @@ function v_trim_end() {
 
 function v_compress() {
   if [ -z "$2" ]; then
-    echo "Usage: $0 <input> <out> <q>"
+    echo "Usage: $0 <input> <out> <q> <fps>"
   else
     local quality=${3:-20}
-    ffmpeg -i "$1" -c:v libx265 -preset slow -crf $quality -x265-params "fps=60:vbv-bufsize=12000:vbv-maxrate=6000:aq-mode=3" -c:a copy "$2"
+    local fps=${4:-60}
+    ffmpeg -i "$1" -c:v libx265 -preset slow -crf $quality -x265-params "fps=$fps:vbv-bufsize=12800:vbv-maxrate=6000:aq-mode=3" -c:a copy "$2"
   fi
 }
 

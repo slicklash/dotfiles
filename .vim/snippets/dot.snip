@@ -1,0 +1,9 @@
+snippet fsm
+options head
+	digraph G {
+		rankdir=LR;
+		node [shape=circle];
+		${0}A -> B [label="event1"];
+		B -> C [label="event2"];
+		C -> A [label="event3"];
+	}

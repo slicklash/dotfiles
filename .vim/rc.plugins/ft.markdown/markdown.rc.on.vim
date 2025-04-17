@@ -21,5 +21,5 @@ endfunction
 
 augroup filtype_pandoc
   autocmd!
-  autocmd FileType pandoc noremap <F5> :call PMarkdown()<CR>
+  autocmd FileType pandoc noremap <buffer> <F5> :call PMarkdown()<CR>
 augroup END
