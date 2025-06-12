@@ -34,8 +34,8 @@ if InitStep() == 0
         \ 'java': ['pom.xml'],
         \ 'javascript': ['tsconfig.json', '.prettierrc', '.nvmrc'],
         \ 'javascript.jsx': ['tsconfig.json', '.prettierrc', '.nvmrc'],
-        \ 'typescript': ['tsconfig.json'],
-        \ 'typescript.tsx': ['tsconfig.json'],
+        \ 'typescript': ['yarn.lock', 'tsconfig.json'],
+        \ 'typescript.tsx': ['yarn.lock', 'tsconfig.json'],
         \ }
   let g:LanguageClient_serverCommands.cpp  = g:LanguageClient_serverCommands.c
 

@@ -20,7 +20,7 @@ elif echo "$DEVICES" | grep -q "DisplayPort-0"; then
   LAPTOP_MODE="1920x1080"
 fi
 
-FONT_NAME="JetBrains Mono Light" # v2.304
+FONT_NAME="JetBrainsMono Nerd Font Mono Light" # 2.304
 FONT_SIZE_MONO=10
 FONT_SIZE_TERMINAL=13
 DPI=96

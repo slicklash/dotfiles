@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('majutsushi/tagbar', { 'rev': '8de7694c0aeda253073098bbc9fb890b2902ddb8', 'on_cmd' : 'TagbarToggle' })
+  call dein#add('majutsushi/tagbar', { 'rev': '2ef4ecba94440fcf8a8c692a0f2b36b332f1f0f2', 'on_cmd' : 'TagbarToggle' })
   finish
 endif
 

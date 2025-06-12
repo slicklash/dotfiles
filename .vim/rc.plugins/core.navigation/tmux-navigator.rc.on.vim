@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': '791dacfcfc8ccb7f6eb1c853050883b03e5a22fe' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': '412c474e97468e7934b9c217064025ea7a69e05e' })
   finish
 endif
 
@@ -69,10 +69,10 @@ function! s:tmux_exec() abort
     map <buffer> <Leader>t :call _js(' node %:p', 'test', '--watch')<Bar>redraw!<C-M>
     map <buffer> <Leader>E :call _tmux_send(' node --inspect-brk %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'typescript'
-    map <buffer> <Leader>e :call _js('ts-node %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>c :call _js('ts-node %:p', 'test', '--coverage')<Bar>redraw!<C-M>
-    map <buffer> <Leader>t :call _js('ts-node %:p', 'test', '--watch')<Bar>redraw!<C-M>
-    map <buffer> <Leader>E :call _js('ts-node --inspect-brk %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e :call _js('node --no-warnings --experimental-transform-types %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>c :call _js('node --no-warnings --experimental-transform-types %:p', 'test', '--coverage')<Bar>redraw!<C-M>
+    map <buffer> <Leader>t :call _js('node --no-warnings --experimental-transform-types %:p', 'test', '--watch')<Bar>redraw!<C-M>
+    map <buffer> <Leader>E :call _js('node --no-warnings --experimental-transform-types --inspect-brk %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'java'
     map <buffer> <Leader>e :call _tmux_send('java %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'vim'

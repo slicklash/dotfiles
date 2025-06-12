@@ -48,12 +48,16 @@ function v2gif() {
   fi
 }
 
-function set_thumb() {
+function v_set_thumb() {
   if [ -z "$2" ]; then
     echo "Usage: $0 <time> <input>"
   else
     ffmpeg -ss $1 -i "$2" -frames:v 1 -q:v 5 out.png
-    mv "$2" "$2.bak"
+    if [[ -f "$2.bak" ]]; then
+      rm "$2"
+    else
+      mv "$2" "$2.bak"
+    fi
     ffmpeg -i "$2.bak" -i out.png -map 0 -map 1 -c copy -c:v:1 png -disposition:v:1 attached_pic "$2"
     rm out.png
   fi
@@ -77,11 +81,95 @@ function v_trim_end() {
 
 function v_compress() {
   if [ -z "$2" ]; then
-    echo "Usage: $0 <input> <out> <q> <fps>"
+    echo "Usage: $0 <input> <out> <q> <fps> <duration>"
   else
-    local quality=${3:-20}
-    local fps=${4:-60}
-    ffmpeg -i "$1" -c:v libx265 -preset slow -crf $quality -x265-params "fps=$fps:vbv-bufsize=12800:vbv-maxrate=6000:aq-mode=3" -c:a copy "$2"
+    local input="$1"
+    local output="$2"
+    local quality="${3:-20}"
+    local fps="${4:-25}"
+    local duration="$5"
+
+    local common_args=(-i "$input" -c:v libx265 -preset veryslow -crf "$quality" \
+        -x265-params "fps=$fps:vbv-bufsize=12800:vbv-maxrate=6000:aq-mode=3" \
+        -c:a copy)
+
+    [[ -n "$duration" ]] && common_args=(-t "$duration" "${common_args[@]}")
+
+    ffmpeg "${common_args[@]}" "$output"
+  fi
+}
+
+function v_info() {
+  local path="${1:-.}"
+
+  if [[ -f "$path" ]]; then
+    codec=$(/usr/bin/ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
+            -of default=noprint_wrappers=1:nokey=1 "$path" 2>/dev/null)
+    size=$(/usr/bin/ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$path" 2>/dev/null)
+    printf "%-50s %s %-10s\n" "$path" "${codec:-unknown}" "$size"
+  elif [[ -d "$path" ]]; then
+    /usr/bin/find "$path" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" -o -iname "*.flv" -o -iname "*.webm" \) | /usr/bin/sort | while read -r file; do
+      codec=$(/usr/bin/ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
+              -of default=noprint_wrappers=1:nokey=1 "$file" 2>/dev/null)
+      size=$(/usr/bin/ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$path" 2>/dev/null)
+      printf "%-50s %s %-10s\n" "$file" "${codec:-unknown}" "$size"
+    done
+  else
+    echo "Error: '$path' is not a valid file or directory." >&2
+    return 1
+  fi
+}
+
+function v_fix_avi() {
+  if [ -z "$1" ]; then
+    echo "Usage: $0 <input> <out>"
+  else
+    local out=${2:-output.mp4}
+    local base_name="${1:t:r}"
+    local unpacked="/tmp/unpacked_${base_name}.avi"
+    ffmpeg -i "$1" -c:v copy -bsf:v mpeg4_unpack_bframes -c:a copy "$unpacked"
+    ffmpeg -i "$unpacked" -ar 44100 -acodec aac -b:a 128k -vcodec copy "$out"
+    rm "$unpacked"
+  fi
+}
+
+function v_convert_avis() {
+  if [ -z "$1" ]; then
+    echo "Usage: $0 <input-dir> <out-dir> <quality>"
+  else
+    local input_dir="$1"
+    local output_dir="$2"
+    local quality="${3:-23}"
+    local total_files=$(find "$input_dir" -type f -name "*.avi" | wc -l)
+
+    if [[ $total_files -eq 0 ]]; then
+      echo "No AVI files found in '$input_dir'."
+      return 1
+    fi
+
+    local counter=1
+
+    mkdir -p "$output_dir"
+
+    for avi_file in "$input_dir"/*.avi; do
+      [[ -e "$avi_file" ]] || continue
+
+      local base_name="${avi_file:t:r}"
+      local tmp_file="/tmp/${base_name}.avi"
+      local output_file="$output_dir/${base_name}.mp4"
+
+      echo "Converting: ($counter/$total_files) $avi_file → $output_file"
+
+      v_fix_avi $avi_file $tmp_file
+      read -r width height <<< $(v_info "$tmp_file" | python -c "import sys;w,h=sys.stdin.read().strip().rsplit(' ',1)[-1].split(',');print(f'{w} {h}')")
+      # ffmpeg -i "$tmp_file" -c:v libx265 -preset veryslow -crf $quality -c:a copy "$output_file"
+      video2x -i $tmp_file -o $output_file -w $width -h $height -p libplacebo --libplacebo-shader anime4k-v4.1-gan -c libx265 -e crf=$quality -e preset=slow -e tune=animation
+      rm "$tmp_file"
+
+      ((counter++))
+    done
+
+    echo "[+] Done"
   fi
 }
 

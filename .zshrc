@@ -19,6 +19,7 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
 
 export NOTEBOOK_DIR=$HOME/code/nb
 export PATH=$PATH:$HOME/code/nb
+export PATH=$PATH:$HOME/code/san2img
 
 export GRAALVM_HOME=$HOME/bin/graalvm-ce-java
 

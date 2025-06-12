@@ -20,7 +20,7 @@ augroup END
 
 if has('gui_running')
   if has('unix')
-    set guifont=JetBrains\ Mono\ Semi-Light\ 12
+    set guifont=JetBrainsMono\ Nerd\ Font\ Mono\ Light\ 12
   elseif has('win32')
     set guifont=Consolas:h10
   endif

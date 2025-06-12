@@ -15,7 +15,7 @@ set scrolloff=1 scrolljump=5                " scroll content when cursor reaches
 set splitbelow                              " put the new window below the current
 set splitright                              " put the new window on the right of the current
 
-set diffopt+=algorithm:patience             " improved diff
+set diffopt+=algorithm:patience,inline:char " improved diff
 
 augroup filetype_vim
   autocmd!
