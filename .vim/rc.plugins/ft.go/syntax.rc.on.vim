@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('charlespascoe/vim-go-syntax', { 'rev': '722a2e09f64e3f49c1d0fc632a11f5792d6e0503', 'on_ft' : ['go'] })
+  call dein#add('charlespascoe/vim-go-syntax', { 'rev': '290fcd7df3f1d5746ab5db75240e02bc379cb524', 'on_ft' : ['go'] })
   finish
 endif
 

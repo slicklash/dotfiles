@@ -7,6 +7,8 @@ set showcmd                                 " in visual mode show size of select
 set showfulltag                             " show usage help
 set showmatch matchtime=2                   " show matching parentheses/brackets
 set laststatus=2                            " always show statusline
+set completeopt-=preview                    " disable snippet/complete preview window
+
 
 set cursorline
 if !has('nvim')
