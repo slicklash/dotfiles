@@ -1,5 +1,5 @@
 if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': '412c474e97468e7934b9c217064025ea7a69e05e' })
+  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'c45243dc1f32ac6bcf6068e5300f3b2b237e576a' })
   finish
 endif
 

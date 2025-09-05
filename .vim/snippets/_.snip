@@ -17,6 +17,10 @@ snippet    uuid
 options    word
 	`trim(system('uuidgen'))`
 
+snippet    isin
+options    word
+	`trim(system('gen-isin'))`
+
 snippet     date
 options     word
     `strftime("%d %b %Y")`

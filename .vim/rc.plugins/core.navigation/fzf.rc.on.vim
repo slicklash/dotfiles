@@ -5,8 +5,8 @@ if InitStep() == 0
     echo 'Error: missing '.missing
     cquit
   endif
-  call dein#add('junegunn/fzf', { 'rev': 'b99cb6323fef55ceb458528250e3b26149f1b5b5', 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'rev': '3725f364ccd25b85a91970720ba9bc2931861910', 'depends': 'fzf' })
+  call dein#add('junegunn/fzf', { 'rev': '9ed971cc90c9d65def3c52178578e43f29b68f9f', 'build': './install --all', 'merged': 0 })
+  call dein#add('junegunn/fzf.vim', { 'rev': '879db51d0965515cdaef9b7f6bdeb91c65d2829e', 'depends': 'fzf' })
   finish
 endif
 
@@ -30,7 +30,7 @@ endfunction
 function! s:git_autosquash(lines)
   let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
   if (!empty(hash))
-    let cmd = 'zsh -i -c ''git rebase -i --autosquash ' . hash . ';exec zsh'''
+    let cmd = 'zsh -i -c ''git rebase -i --autosquash --autostash ' . hash . ';exec zsh'''
     execute 'silent !tmux splitw -v "' .  cmd . '"'
   endif
 endfunction

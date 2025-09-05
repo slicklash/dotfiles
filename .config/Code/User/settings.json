@@ -41,7 +41,6 @@
     "git.openRepositoryInParentFolders": "always",
     "gitlens.advanced.messages": { "suppressShowKeyBindingsNotice": true },
     "gitlens.keymap": "chorded",
-    "github.copilot.editor.enableAutoCompletions": true,
 
     "python.defaultInterpreterPath": "/home/slicklash/.pyenv/versions/3.13.1/bin/python",
     "go.toolsManagement.autoUpdate": true,
@@ -57,10 +56,19 @@
     "makefile.configureOnOpen": false,
     "github.copilot.enable": {
       "*": false,
+      "typescript": true,
+      "javascript": true,
       "plaintext": false,
       "markdown": false,
       "scminput": false
     },
     "lldb.suppressUpdateNotifications": true,
     "jest.runMode": "on-demand",
+    "python.analysis.aiCodeActions": {
+
+      "implementAbstractClasses": true
+    },
+    "github.copilot.advanced": {
+
+    },
 }

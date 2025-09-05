@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('tpope/vim-unimpaired', { 'rev': '6d44a6dc2ec34607c41ec78acf81657248580bf1' })
+  call dein#add('tpope/vim-unimpaired', { 'rev': 'db65482581a28e4ccf355be297f1864a4e66985c' })
   finish
 endif
