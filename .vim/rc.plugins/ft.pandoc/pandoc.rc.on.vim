@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('vim-pandoc/vim-pandoc', { 'rev': 'a9896b7f7c09b7804dd9e200e7b96c18ecb5fa0b' })
+  call dein#add('vim-pandoc/vim-pandoc', { 'rev': 'f43b2d7a1334f3d283770fb85c1119efe85a738d' })
   finish
 endif

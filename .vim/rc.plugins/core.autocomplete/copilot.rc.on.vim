@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('github/copilot.vim', { 'rev': 'f3d66c148aa60ad04c0a21d3e0a776459de09eb2' })
+  call dein#add('github/copilot.vim', { 'rev': 'da369d90cfd6c396b1d0ec259836a1c7222fb2ea' })
   finish
 endif
 

@@ -79,6 +79,27 @@ function v_trim_end() {
   fi
 }
 
+function v_replace_audio() {
+  if [ -z "$3" ]; then
+    echo "Usage: $0 <input> <audio> <output> <offset>"
+  else
+    local input="$1"
+    local audio="$2"
+    local output="${3:-output.mp4}"
+    local offset="${4}"
+    local common_args=(-i "$input")
+
+    if [ -n "$offset" ]; then
+        common_args=("${common_args[@]}" -itsoffset "$offset" -i "$audio")
+    else
+        common_args=("${common_args[@]}" -i "$audio")
+    fi
+    common_args=("${common_args[@]}" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0)
+
+    ffmpeg "${common_args[@]}" "$output"
+  fi
+}
+
 function v_compress() {
   if [ -z "$2" ]; then
     echo "Usage: $0 <input> <out> <q> <fps> <duration>"
@@ -96,6 +117,20 @@ function v_compress() {
     [[ -n "$duration" ]] && common_args=(-t "$duration" "${common_args[@]}")
 
     ffmpeg "${common_args[@]}" "$output"
+  fi
+}
+
+function v_encode() {
+  if [ -z "$2" ]; then
+    echo "Usage: $0 <input> <out> <q>"
+  else
+    local input="$1"
+    local output="$2"
+    local quality="${3:-20}"
+    ffmpeg -init_hw_device vaapi=va:/dev/dri/renderD128 -filter_hw_device va \
+           -i "$input" -vf 'format=nv12,hwupload' \
+           -c:v hevc_vaapi -rc_mode CQP -qp "$quality" -profile:v main \
+           -c:a aac -b:a 256k -movflags +faststart "$output"
   fi
 }
 

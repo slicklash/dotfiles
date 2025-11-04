@@ -1,4 +1,4 @@
 if InitStep() == 0
-  call dein#add('chrisbra/Colorizer', { 'rev': 'f7ee18f9e3a5beef6312449bd2776f41cddd147f' })
+  call dein#add('chrisbra/Colorizer', { 'rev': 'f5d69c0dea9f36e2eb025c7d86cc62b5a0d8af62' })
   finish
 endif

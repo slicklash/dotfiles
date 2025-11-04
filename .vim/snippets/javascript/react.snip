@@ -89,3 +89,25 @@ abbr Changed props
         console.log('changed property:', key, 'from', this.props[key], 'to', nextProps[key]);
       });
   }
+
+snippet wdyr
+	import { useEffect, useRef } from 'react';
+
+	function useWhyDidYouUpdate(name: string, props: Record<string, any>) {
+	const previousProps = useRef(props);
+	useEffect(() => {
+		const changedProps = Object.entries(props).reduce(
+		(acc, [key, value]) => {
+			if (previousProps.current[key] !== value) {
+			acc[key] = { from: previousProps.current[key], to: value };
+			}
+			return acc;
+		},
+		{} as Record<string, { from: any; to: any }>,
+		);
+		if (Object.keys(changedProps).length > 0) {
+		console.log(`[why-did-you-update] ${name}`, changedProps);
+		}
+		previousProps.current = props;
+	});
+	}
