@@ -1,5 +1,5 @@
 if InitStep() == 0
-  call dein#add('justinmk/vim-sneak', { 'rev': '18b1faf020e6a66c1ce09b3ff5e6b6feb182973b' })
+  call dein#add('justinmk/vim-sneak', { 'rev': 'ed9aff2df0d503f043269180bed03c0592ccdf4d' })
   let g:sneak#streak = 1
   finish
 endif

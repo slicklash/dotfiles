@@ -40,5 +40,9 @@ from='.config/Code/User/'
 white_list=('settings.json')
 _sync
 
+from='.config/GIMP/3.0/'
+white_list=('plug-ins')
+_sync
+
 unfunction _sync
 echo "DONE"
