@@ -208,6 +208,70 @@ function v_convert_avis() {
   fi
 }
 
+function img2b64() {
+  if [ -z "$1" ]; then
+    echo "Usage: $0 <dir> [output]"
+    return 0
+  fi
+
+  local dir="$1"
+  if [[ ! -d "$dir" ]]; then
+    echo "Error: invalid directory"
+    return 1
+  fi
+
+  local output_file="${2:-output.b64.json}"
+
+  local tmp_json=$(mktemp)
+  echo "{" > "$tmp_json"
+
+  local first=1
+
+  setopt EXTENDED_GLOB
+
+  # Pattern: "<digits><space><anything>.png"
+  for file in $dir/*; do
+    [[ -e "$file" ]] || continue
+
+    local filename="${file##*/}"
+
+    # Validate pattern: digits + space + name + .png
+    if [[ ! "$filename" =~ ^([0-9]+)\ (.+)\.png$ ]]; then
+      continue
+    fi
+
+    echo "Processing: $file"
+
+    local avif_file="${file%.png}.avif"
+
+    # PNG → AVIF
+    avifenc "$file" --qalpha 50 -q 50 -y 420 "$avif_file" >/dev/null 2>&1
+
+    # Base64 encode AVIF
+    local DATA_URL="$(base64 -w 0 "$avif_file")"
+
+    # JSON key: remove dir prefix, remove .png, strip digits + space
+    local base="${file##*/}"     # file name only
+    local key="${base%.png}"
+    key="${key##[0-9]## }"
+
+    # Add comma except for first entry
+    if (( first )); then
+      first=0
+    else
+      echo "," >> "$tmp_json"
+    fi
+
+    printf '  "%s": "%s"' \
+      "$key" \
+      "$DATA_URL" >> "$tmp_json"
+  done
+
+  echo "\n}" >> "$tmp_json"
+
+  mv "$tmp_json" "$output_file"
+}
+
 _gitignireio_get_command_list() {
   curl -s https://www.gitignore.io/api/list | tr "," "\n"
 }

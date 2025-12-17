@@ -4,7 +4,8 @@
 
 pkg upgrade -y
 pkg install -y termux-api openssh zsh tmux fzf python3 perl git git-delta bat ripgrep nim lua53 luajit ctags rsync man
-pip3 install --user pynvim vim-vint pylint black isort
+pip install setuptools
+pip install --user pynvim vim-vint pylint black isort
 chsh -s zsh
 
 if [ ! -d "$HOME/.git-dotfiles" ]; then
