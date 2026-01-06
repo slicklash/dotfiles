@@ -44,5 +44,9 @@ from='.config/GIMP/3.0/'
 white_list=('plug-ins')
 _sync
 
+from='.config/xfce4/xfconf/xfce-perchannel-xml/'
+white_list=('xfce4-keyboard-shortcuts.xml')
+_sync
+
 unfunction _sync
 echo "DONE"
