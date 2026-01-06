@@ -1,7 +1,3 @@
-if InitStep() == 0
-  finish
-endif
-
 let s:react_comp = {
       \ 'is_selectable' : 0,
       \ }
@@ -38,8 +34,4 @@ function! s:react_comp.func(candidates) abort
   for [fileName, lines] in files
     call writefile(lines, dir . fileName)
   endfor
-
-  call vimfiler#view#_redraw_screen()
 endfunction
-
-" call unite#custom#action('directory', 'new react component', s:react_comp)

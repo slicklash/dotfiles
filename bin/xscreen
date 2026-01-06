@@ -1,0 +1,161 @@
+#!/bin/sh
+set -eu
+
+linux_detect() {
+  LAPTOP_PORT="eDP"
+  LAPTOP_MODE="1920x1200"
+  LAPTOP_PAN="3840+0"
+
+  MONITOR_PORT="DisplayPort-1"
+  MONITOR_MODE="3840x2160"
+  MONITOR_PAN="0+0"
+
+  SCREEN_SIZE="5760x2160"
+
+  FONT_NAME="JetBrainsMono Nerd Font Mono Light" # 2.304
+  FONT_SIZE_MONO=10
+  FONT_SIZE_TERMINAL=15
+  DPI=96
+  PANEL="panel-0"
+  PANEL_SIZE=24
+  PANEL_OUTPUT="$MONITOR_PORT"
+
+  DEVICES=$(xrandr | python -c "import sys;xs=sys.stdin;print([x.split()[0]+'='+xs.readline().split()[0] for x in xs if ' connected' in x])")
+
+  if echo "$DEVICES" | grep -q "eDP-1-1"; then
+    LAPTOP_PORT="eDP-1-1"
+    MONITOR_PORT="DP-1-2"
+  elif echo "$DEVICES" | grep -q "DisplayPort-0"; then
+    MONITOR_PORT="DisplayPort-0"
+    LAPTOP_MODE="1920x1080"
+  fi
+
+  PANEL_OUTPUT="$MONITOR_PORT"
+
+  if echo "$DEVICES" | grep -q "$MONITOR_PORT=3840x2160"; then
+    FONT_SIZE_MONO=12
+    FONT_SIZE_TERMINAL=15
+    DPI=122
+    PANEL_SIZE=32
+  elif echo "$DEVICES" | grep -q "$MONITOR_PORT=2560x1440"; then
+    MONITOR_MODE="2560x1440"
+    SCREEN_SIZE="4480x1440"
+    LAPTOP_PAN="2560+0"
+  else
+    PANEL_OUTPUT="$LAPTOP_PORT"
+    SCREEN_SIZE="$LAPTOP_MODE"
+  fi
+}
+
+linux_apply() {
+  linux_detect
+
+  case "${1:-}" in
+    --laptop)
+    PANEL_OUTPUT="$LAPTOP_PORT"
+    xrandr \
+      --fb "$LAPTOP_MODE" \
+      --output "$LAPTOP_PORT" --mode "$LAPTOP_MODE" --scale 1x1 --panning "$LAPTOP_MODE+0+0" --rate 120 --primary \
+      --output "$MONITOR_PORT" --off
+    ;;
+
+    --monitor)
+    xrandr \
+      --fb "$MONITOR_MODE" \
+      --output "$MONITOR_PORT" --mode "$MONITOR_MODE" --scale 1x1 --panning "$MONITOR_MODE+0+0" --rate 60 \
+      --output "$LAPTOP_PORT" --off
+    ;;
+
+    *)
+    xrandr \
+      --fb "$SCREEN_SIZE" \
+      --output "$LAPTOP_PORT" --mode "$LAPTOP_MODE" --scale 1x1 --panning "$LAPTOP_MODE+$LAPTOP_PAN" --rate 120 \
+      --output "$MONITOR_PORT" --mode "$MONITOR_MODE" --scale 1x1 --panning "$MONITOR_MODE+$MONITOR_PAN" --rate 60 \
+      --left-of "$LAPTOP_PORT" --primary
+    ;;
+  esac
+
+  if command -v xfconf-query >/dev/null 2>&1; then
+    xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE" > /dev/null 2>&1 || {
+      PANEL="panel-1"
+      xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE" >/dev/null 2>&1 || true
+    }
+    xfconf-query -c xfce4-panel -p "/panels/$PANEL/output-name" -s "$PANEL_OUTPUT" >/dev/null 2>&1 || true
+    xfconf-query -c xfce4-panel -p "/panels/$PANEL/size" -s "$PANEL_SIZE" >/dev/null 2>&1 || true
+    xfconf-query -c xsettings -p /Xft/DPI -s "$DPI" >/dev/null 2>&1 || true
+    xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "$FONT_NAME $FONT_SIZE_MONO" >/dev/null 2>&1 || true
+    xfconf-query -c xfce4-terminal -p /font-name -s "$FONT_NAME $FONT_SIZE_TERMINAL" >/dev/null 2>&1 || true
+  fi
+}
+
+mac_detect() {
+  MONITOR_MODE="2560x1440"
+  LAPTOP_MODE="1512x982"
+
+  if ! command -v displayplacer >/dev/null 2>&1; then
+    echo "displayplacer not found. Install with: brew install displayplacer" >&2
+    exit 1
+  fi
+  IDS=$(displayplacer list | python3 -c "
+import sys,re
+
+text=sys.stdin.read()
+
+internal, external = '', ''
+
+for b in re.split(r'\n(?=Persistent screen id:)', text):
+    m = re.search(r'Persistent screen id:\s*([^\s]+)', b)
+    if not m: continue
+    sid = m.group(1)
+
+    m = re.search(r'^Type:\s*(.*)$', b, re.M)
+    t = (m.group(1).lower() if m else '')
+
+    is_internal = ('built' in t or 'macbook' in t or 'internal' in t)
+
+    if is_internal and not internal:
+        internal = sid
+    elif not is_internal and not external:
+        external = sid
+
+if not internal: sys.exit(1)
+
+print(f'INTERNAL_ID={internal} EXTERNAL_ID={external}')")
+
+  if [ -z "$IDS" ]; then
+    echo "failed to detect display IDs" >&2
+    exit 1
+  fi
+
+  eval "$IDS"
+}
+
+mac_apply() {
+  mac_detect
+
+  case "${1:-}" in
+    --laptop)
+        displayplacer "id:$EXTERNAL_ID res:$MONITOR_MODE hz:60 color_depth:8 enabled:true scaling:on origin:(6000,0) degree:0" "id:$INTERNAL_ID res:$LAPTOP_MODE hz:120 color_depth:8 enabled:true scaling:on origin:(0,0) degree:0"
+        ;;
+    --monitor)
+        displayplacer "id:$EXTERNAL_ID res:$MONITOR_MODE hz:60 color_depth:8 enabled:true scaling:on origin:(0,0) degree:0" "id:$INTERNAL_ID res:$LAPTOP_MODE hz:120 color_depth:8 enabled:true scaling:on origin:(6000,0) degree:0"
+        ;;
+    *)
+        displayplacer "id:$INTERNAL_ID enabled:true origin:(0,0) degree:0"
+        ;;
+  esac
+}
+
+OS="$(uname -s)"
+case "$OS" in
+  Linux)
+    linux_apply "${1:-}"
+    ;;
+  Darwin)
+    mac_apply "${1:-}"
+    ;;
+  *)
+    echo "Unsupported OS: $OS" >&2
+    exit 1
+    ;;
+esac

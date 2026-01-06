@@ -1,18 +1,12 @@
-if InitStep() == 0
-  call dein#add('AndrewRadev/switch.vim', { 'rev': '0fe38fd3fa6433101f4e173f681bb134e175c022' })
-  finish
-endif
+call dein#add('AndrewRadev/switch.vim', { 'rev': '0fe38fd3fa6433101f4e173f681bb134e175c022' })
 
-augroup switch_js_ts
-  autocmd!
-  autocmd FileType * call s:init_switch_definitions()
-augroup END
+function! s:setup() abort
+  noremap <silent> <leader><space> :Switch<CR>
+endfunction
+
+autocmd User InitPost ++once call s:setup()
 
 function! s:init_switch_definitions() abort
-  if &ft =~ 'denite'
-    return
-  endif
-
   let from_double = '"\([^"]\+\)"'
   let from_single = '''\([^'']\+\)'''
   let from_backtick = '`\([^`]\+\)`'
@@ -74,4 +68,8 @@ function! s:init_switch_definitions() abort
   endif
 endfunction
 
-noremap <silent> <leader><space> :Switch<CR>
+augroup plug_switch
+  autocmd!
+  autocmd FileType * call s:init_switch_definitions()
+augroup END
+

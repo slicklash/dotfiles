@@ -1,7 +1,4 @@
-if InitStep() == 0
-  call dein#add('itchyny/lightline.vim', { 'rev': 'e358557e1a9f9fc860416c8eb2e34c0404078155' })
-  finish
-endif
+call dein#add('itchyny/lightline.vim', { 'rev': 'e358557e1a9f9fc860416c8eb2e34c0404078155' })
 
 scriptencoding utf-8
 
@@ -48,17 +45,16 @@ let g:lightline = {
       \ }
 
 function! MyModified()
-  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+  return &ft =~ 'help\|defx\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
 
 function! MyReadonly()
-  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+  return &ft !~? 'help\|defx\|gundo' && &readonly ? 'x' : ''
 endfunction
 
 function! MyFilename()
   return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
-        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \  &ft == 'unite' ? unite#get_status_string() :
+        \ (&ft == 'unite' ? unite#get_status_string() :
         \  &ft == 'nerdtree' ? 'NERDTree':
         \  &ft == 'vimshell' ? vimshell#get_status_string() :
         \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
@@ -66,7 +62,7 @@ function! MyFilename()
 endfunction
 
 function! MyFugitive()
-  if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#statusline")
+  if &ft !~? 'defx\|gundo' && exists("*fugitive#statusline")
     let g = fugitive#statusline()
     if !strlen(g)
       return ''
@@ -108,9 +104,8 @@ function! MyMode()
         \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
         \ fname =~ 'NERD_tree' ? '' :
         \ &ft == 'unite' ? 'Unite' :
-        \ &ft == 'vimfiler' ? 'VimFiler' :
+        \ &ft == 'defx' ? 'defx' :
         \ &ft == 'vimshell' ? 'VimShell' : bn
-        "\ winwidth(0) > 60 ? bn . ' ' . lightline#mode() : ''
 endfunction
 
 function! MyLintInfo() abort

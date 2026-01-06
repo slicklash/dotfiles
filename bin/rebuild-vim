@@ -27,7 +27,7 @@ FEAT="$FEAT --enable-python3interp"
 FEAT="$FEAT --enable-luainterp"
 if [ -n "$TERMUX_VERSION" ]; then
   FEAT="$FEAT --prefix=$PREFIX"
-  FEAT="$FEAT --with-python3-config-dir=$PREFIX/lib/python3.10/config-3.10"
+  FEAT="$FEAT --with-python3-config-dir=$PREFIX/lib/python3.12/config-3.12"
   FEAT="$FEAT --with-local-dir=$PREFIX"
   FEAT="$FEAT --with-lua-prefix=$PREFIX"
   FEAT="$FEAT --with-luajit"

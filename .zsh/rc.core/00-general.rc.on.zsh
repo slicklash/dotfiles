@@ -1,4 +1,4 @@
-ZSH_CACHE_DIR=$HOME/.cache/zsh
+ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh"
 
 [[ ! -d $ZSH_CACHE_DIR ]] && mkdir -p $ZSH_CACHE_DIR
 

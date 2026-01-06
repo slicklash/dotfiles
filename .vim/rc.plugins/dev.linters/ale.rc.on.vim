@@ -1,17 +1,9 @@
-if InitStep() == 0
-  call dein#add('dense-analysis/ale', { 'rev': 'ca1da76d5e91e42f676654905c0c7b6d074b8068' })
-  finish
-endif
+call dein#add('dense-analysis/ale', { 'rev': '8eb4803da99a575bc827a6c814e63b1053b7002f' })
 
 scriptencoding utf-8
 
-if has('unix')
-    let g:ale_sign_error = '✖'
-    let g:ale_sign_warning = '⚠'
-endif
-
-highlight ALEWarning ctermbg=none
-highlight ALEWarning ctermbg=88
+let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
 
 let g:ale_sign_column_always = 1
 let g:ale_lint_delay = 300
@@ -31,9 +23,10 @@ let g:ale_pattern_options = {
 
 " pip3 install vim-vint pylint
 " npm i -g eslint jsonlint htmlhint stylelint typescript
+
 let g:ale_linters = {
-\   'javascript': ['eslint', 'yoshi'],
-\   'typescript': ['eslint', 'yoshi'],
+\   'javascript': ['eslint'],
+\   'typescript': ['eslint'],
 \   'go': ['gofmt'],
 \   'html': ['htmlhint'],
 \   'css': ['stylelint'],
@@ -45,12 +38,11 @@ let g:ale_linters = {
 \   'python': ['ruff', 'mypy'],
 \}
 
-
 let g:ale_fixers = {
 \   'java': ['google_java_format'],
-\   'javascript': ['organizeImports', 'eslint'],
+\   'javascript': ['eslint'],
 \   'json': ['jq'],
-\   'typescript': ['organizeImports', 'eslint'],
+\   'typescript': ['eslint'],
 \   'python': ['ruff', 'isort'],
 \   'nim':  ['nimpretty'],
 \   'go': ['gofmt'],
@@ -64,50 +56,39 @@ let g:ale_python_ruff_options = '--preview --select E,Q,I,FURB'
 
 let g:ale_nim_nimpretty_options = '--indent:2'
 
-function! YoshiFind(buffer) abort
-   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-flow-editor')
-   if !empty(path)
-     return path
-   endif
-   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-flow-bm')
-   if !empty(path)
-     return path
-   endif
-   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi-library')
-   if !empty(path)
-     return path
-   endif
-   let path = ale#path#FindNearestFile(a:buffer, 'node_modules/.bin/yoshi')
-   if !empty(path)
-     return path
-   endif
-   " echoerr 'yoshi not found'
+function! s:setup() abort
+  nnoremap <silent> <Leader>x <cmd>call MyALEFix()<CR>
+  nnoremap <silent> ]w <cmd>ALENextWrap<CR>
+  nnoremap <silent> [w <cmd>ALEPreviousWrap<CR>
+
+  highlight ALEWarning ctermbg=none
+  highlight ALEWarning ctermbg=88
 endfunction
 
-let yoshi = {
-\   'name': 'yoshi',
-\   'output_stream': 'both',
-\   'executable': function('YoshiFind'),
-\   'command': '%e lint --format json %s',
-\   'callback': function('ale#handlers#eslint#HandleJSON'),
-\}
+autocmd User InitPost ++once call s:setup()
 
-call ale#linter#Define('javascript', yoshi)
-call ale#linter#Define('typescript', yoshi)
+function! MyALEFix() abort
+  if &filetype =~? 'typescript\|javascript'
+    call OrganizeImports()
+  endif
 
-function! OrganizeImports(buffer) abort
-call LanguageClient#workspace_executeCommand('_typescript.organizeImports', [expand('%:p')])
-  return {
-  \   'command': 'call LanguageClient#workspace_executeCommand("_typescript.organizeImports", [expand("%:p")])',
-  \   'read_temporary_file': 1
-  \}
+  ALEFix
 endfunction
 
-execute ale#fix#registry#Add('organizeImports', 'OrganizeImports', ['javascript', 'typescript'], 'organizeImports')
+function! OrganizeImports(...) abort
+ call g:LspRequestCustom(
+            \ 'typescriptlang',
+            \ 'workspace/executeCommand',
+            \ {
+            \   'command': '_typescript.organizeImports',
+            \   'arguments': [expand('%:p')]
+            \ }
+            \ )
+endfunction
 
 function! s:is_local(linter) abort
-   let path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)
-   return !empty(path)
+  let path = ale#path#FindNearestFile(bufnr('%'), 'node_modules/.bin/' . a:linter)
+  return !empty(path)
 endfunction
 
 if !has('gui_running') && empty('$TERMUX_VERSION')
@@ -120,7 +101,3 @@ if !has('gui_running') && empty('$TERMUX_VERSION')
     echo join(s:missing_linters, "\n")
   endif
 endif
-
-nnoremap <silent> <Leader>x :ALEFix<CR>
-nnoremap <silent> ]w :ALENextWrap<CR>
-nnoremap <silent> [w :ALEPreviousWrap<CR>

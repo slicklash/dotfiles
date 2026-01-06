@@ -1,8 +1,8 @@
-if InitStep() == 0
-  call dein#add('majutsushi/tagbar', { 'rev': '7bfffca1f121afb7a9e38747500bf5270e006bb1', 'on_cmd' : 'TagbarToggle' })
-  finish
-endif
+call dein#add('majutsushi/tagbar', { 'rev': '7bfffca1f121afb7a9e38747500bf5270e006bb1', 'on_cmd' : 'TagbarToggle' })
 
-let g:tagbar_compact = 1
-" toggle Tagbar
-nnoremap <leader>tt <Esc>:TagbarToggle<CR><Esc>
+function! s:setup() abort
+  let g:tagbar_compact = 1
+  nnoremap <leader>tt <Esc><cmd>TagbarToggle<CR><Esc>
+endfunction
+
+autocmd User InitPost ++once call s:setup()

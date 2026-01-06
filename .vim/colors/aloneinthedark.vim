@@ -421,15 +421,6 @@ hi! clear LanguageClientWarning
 hi ALEError ctermbg=52
 hi! link ALEErrorSign Todo
 
-" VimFiler
-call s:hi('vimfilerLeaf', '#2c4558 67', '', '')
-call s:hi('vimfilerClosedFile', s:color.BLUE, '', '')
-call s:hi('vimfilerOpenedFile', s:color.BLUE, '', '')
-hi! link vimfilerMark Special
-hi! link vimfilerNonMark vimfilerLeaf
-hi! link vimfilerMarkedFile Special
-hi! link vimfilerROFile Normal
-
 " sneak
 hi! link Sneak Search
 hi! link SneakCurrent CurSearch
@@ -448,7 +439,9 @@ call s:hi('TagbarVisibilityProtected', s:color.BLUE, '', '')
 call s:hi('TagbarVisibilityPrivate', s:color.RED, '', '')
 
 " pandoc
-
 hi! link pandocStrong DiffChange
+
+" lsp
+highlight LspDiagInlineError ctermbg=88
 
 delfunction s:hi

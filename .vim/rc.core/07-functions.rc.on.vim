@@ -1,20 +1,50 @@
-function! ProfileStart()
-  :profile start profile.log
-  :profile func *
-  :profile file *
+function! ProfileStart(...) abort
+  let l:file = a:0 ? a:1 : expand('~/.vim/profile.log')
+
+  if exists('g:profiling')
+    echohl WarningMsg | echom 'Profiling already active' | echohl None
+    return
+  endif
+
+  let g:profiling = 1
+  execute 'profile start' fnameescape(l:file)
+  profile func *
+  profile file *
+
+  echo 'Profiling started → ' . l:file
 endfunction
 
-function! ProfileStop()
-  :profile pause
-  :noautocmd qall!
+function! ProfileStop() abort
+  if !exists('g:profiling')
+    echohl WarningMsg | echom 'Profiling not active' | echohl None
+    return
+  endif
+
+  profile pause
+  unlet g:profiling
+
+  echo 'Profiling stopped'
 endfunction
 
-function! Preserve(command)
-  let last_view = winsaveview()
-  let last_search = getreg('/')
-  execute 'keepjumps ' . a:command
-  call winrestview(last_view)
-  call setreg('/', last_search)
+function! Preserve(command) abort
+  let l:view   = winsaveview()
+  let l:search = @/
+  let l:regs   = {}
+
+  " Save named registers
+  for l:r in split('abcdefghijklmnopqrstuvwxyz0123456789"', '\zs')
+    let l:regs[l:r] = getreg(l:r)
+  endfor
+
+  try
+    execute 'keepjumps keepmarks silent! ' . a:command
+  finally
+    call winrestview(l:view)
+    let @/ = l:search
+    for l:r in keys(l:regs)
+      call setreg(l:r, l:regs[l:r])
+    endfor
+  endtry
 endfunction
 
 function! FindNearestFile(filename) abort
@@ -160,12 +190,43 @@ function! ExpandSnippet(file, snip, params) abort
 endfunction
 
 function! Turbo() abort
-  setlocal synmaxcol=120
-  call deoplete#disable()
-  DisableWhitespace
-  LanguageClientStop
-  ALEDisableBuffer
-  NoMatchParen
+  if get(b:, 'turbo', 0)
+    return
+  endif
+  " Syntax performance
+  if exists('&synmaxcol')
+    setlocal synmaxcol=120
+  endif
+
+  " Deoplete
+  if exists('*deoplete#disable')
+    call deoplete#disable()
+  endif
+
+  " Whitespace highlighting (command)
+  if exists(':DisableWhitespace')
+    silent! DisableWhitespace
+  endif
+
+  " LanguageClient
+  if exists(':LanguageClientStop')
+    silent! LanguageClientStop
+  endif
+
+  " ALE
+  if exists(':ALEDisableBuffer')
+    silent! ALEDisableBuffer
+  endif
+
+  " MatchParen
+  if exists(':NoMatchParen')
+    silent! NoMatchParen
+  elseif exists('g:loaded_matchparen')
+    let b:matchparen_enabled = 0
+    silent! NoMatchParen
+  endif
+
+  let b:turbo = 1
 endfunction
 
 function! Eslint() abort

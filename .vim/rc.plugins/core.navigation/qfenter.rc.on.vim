@@ -1,8 +1,5 @@
-if InitStep() == 0
-  packadd cfilter
-  call dein#add('yssl/QFEnter', { 'rev': '1e4bf00b264e0f1541401c28c4b63ace5bb3d2be' })
-  finish
-endif
+packadd cfilter
+call dein#add('yssl/QFEnter', { 'rev': '1e4bf00b264e0f1541401c28c4b63ace5bb3d2be' })
 
 let g:qfenter_keymap = {}
 let g:qfenter_keymap.open = ['<CR>']
@@ -91,7 +88,7 @@ command! -nargs=1 -complete=file QFLoad call QFLoad(<f-args>)
 
 augroup my_qf
   autocmd! my_qf
-  autocmd FileType qf nnoremap <silent> <buffer> dd :call RemoveQFItem()<cr>
-  autocmd FileType qf vnoremap <silent> <buffer> dd :call RemoveQFItems()<cr>
+  autocmd FileType qf nnoremap <silent> <buffer> dd <cmd>call RemoveQFItem()<cr>
+  autocmd FileType qf vnoremap <silent> <buffer> dd <cmd>call RemoveQFItems()<cr>
   autocmd! QuickfixCmdPost * call QFSort()
 augroup end

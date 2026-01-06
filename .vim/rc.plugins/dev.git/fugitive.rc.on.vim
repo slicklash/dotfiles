@@ -1,7 +1,11 @@
-if InitStep() == 0
-  call dein#add('tpope/vim-fugitive', { 'rev': '61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4' })
-  finish
-endif
+call dein#add('tpope/vim-fugitive', { 'rev': '61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4' })
+
+function! s:setup() abort
+  nnoremap <silent> <leader>gg <cmd>Git<cr>
+  nnoremap <silent> <leader>gb <cmd>Gblame<CR>
+endfunction
+
+autocmd User InitPost ++once call s:setup()
 
 function! FugitiveOpenFile() abort
   let path = expand('<cfile>')
@@ -30,16 +34,5 @@ function! FuView()
   redraw!
 endfunction
 
-autocmd User FugitiveIndex nnoremap <buffer> E :call FuView()<cr>
-" autocmd FileType fugitive map E :call FugitiveOpenFile()<cr>
+autocmd User FugitiveIndex nnoremap <buffer> E <cmd>call FuView()<cr>
 autocmd BufReadPost fugitive://* set bufhidden=delete
-
-nnoremap <silent> <leader>gg :Git<cr>
-nnoremap <silent> <leader>gb :Gblame<CR>
-" nnoremap <silent> <leader>gk :Git push<cr>
-" nnoremap <silent> <leader>gj :Git pull<cr>
-" nnoremap <silent> <leader>gl :Glog -10<cr>
-" nnoremap <silent> <leader>gd :Gdiff<CR>
-" nnoremap <silent> <leader>gc :Gcommit<CR>
-" nnoremap <silent> <leader>gw :Gwrite<CR>
-" nnoremap <silent> <leader>gr :Gremove<CR>

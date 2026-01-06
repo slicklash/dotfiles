@@ -1,35 +1,35 @@
-if InitStep() == 0
-  if !has('python3')
-    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
-    echo 'Error: missing +python3'
-    cquit
-  endif
-  try
-    python3 import pynvim
-  catch
-    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
-    echo 'Error: missing python3 package [pynvim]'
-    cquit
-  endtry
-  call dein#add('Shougo/deoplete.nvim', { 'rev': 'e5a47d4a2f0b2b6f568e708163e2354097e611c6' })
-  if !has('nvim')
-    call dein#add('roxma/nvim-yarp', { 'rev': 'bb5f5e038bfe119d3b777845a76b0b919b35ebc8' })
-    call dein#add('roxma/vim-hug-neovim-rpc', { 'rev': '93ae38792bc197c3bdffa2716ae493c67a5e7957' })
-  endif
-  finish
+if !has('python3')
+  echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+  echo 'Error: missing +python3'
+  cquit
 endif
 
-let g:deoplete#enable_at_startup = 1
+try
+  python3 import pynvim
+catch
+  echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+  echo 'Error: missing python3 package [pynvim]'
+  cquit
+endtry
 
-call deoplete#custom#var('file', 'enable_buffer_path', v:true)
-call deoplete#custom#option('auto_refresh_delay', 300)
-call deoplete#custom#option('max_list', 25)
+call dein#add('Shougo/deoplete.nvim', { 'rev': 'e5a47d4a2f0b2b6f568e708163e2354097e611c6' })
+if !has('nvim')
+  call dein#add('roxma/nvim-yarp', { 'rev': 'bb5f5e038bfe119d3b777845a76b0b919b35ebc8' })
+  call dein#add('roxma/vim-hug-neovim-rpc', { 'rev': '93ae38792bc197c3bdffa2716ae493c67a5e7957' })
+endif
 
-" let g:deoplete#enable_debug = 1
-" let g:deoplete#enable_profile = 1
-" call deoplete#enable_logging('DEBUG', '/home/slicklash/tmp/deoplete.log')
+function! s:setup() abort
+  let g:deoplete#enable_at_startup = 1
 
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  call deoplete#custom#var('file', 'enable_buffer_path', v:true)
+  call deoplete#custom#option('auto_refresh_delay', 300)
+  call deoplete#custom#option('max_list', 25)
+
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+endfunction
+
+autocmd User InitPost ++once call s:setup()
+
 function! s:my_cr_function() abort
   return deoplete#close_popup() . "\<CR>"
 endfunction

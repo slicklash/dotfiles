@@ -1,7 +1,4 @@
-if InitStep() == 0
-  call dein#add('tpope/vim-markdown', { 'rev': 'f9f845f28f4da33a7655accb22f4ad21f7d9fb66', 'on_ft': ['markdown'] })
-  finish
-endif
+call dein#add('tpope/vim-markdown', { 'rev': 'f9f845f28f4da33a7655accb22f4ad21f7d9fb66', 'on_ft': ['markdown'] })
 
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'typescript']
 
@@ -21,5 +18,5 @@ endfunction
 
 augroup filtype_pandoc
   autocmd!
-  autocmd FileType pandoc noremap <buffer> <F5> :call PMarkdown()<CR>
+  autocmd FileType pandoc noremap <buffer> <F5> <cmd>call PMarkdown()<CR>
 augroup END

@@ -1,9 +1,5 @@
 scriptencoding utf-8
 
-if InitStep() == 0
-  finish
-endif
-
 augroup filtype_robo1
   autocmd!
   autocmd BufRead,BufNewFile *.robo1 call s:ft_robo1()

@@ -1,0 +1,6 @@
+Files    : ⌘⌥e : Run Shell : open ~
+Keepass  : ⌘⌥k : Open App  : KeePassXC
+Vim      : ⌘⌥v : Run Shell : /Applications/Ghostty.app/Contents/MacOS/ghostty -e ~/bin/tvim
+Terminal : ⌘⌥t : Run Shell : /Applications/Ghostty.app/Contents/MacOS/ghostty -e tmux
+ipython  : ⌘⌥c : Run Shell : /Applications/Ghostty.app/Contents/MacOS/ghostty -e ~/Library/Python/3.14/bin/ipython
+xscreen  : ⌘⌥p : Run Shell : ~/bin/xscreen

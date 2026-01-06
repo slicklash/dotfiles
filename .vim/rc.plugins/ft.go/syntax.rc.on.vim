@@ -1,7 +1,4 @@
-if InitStep() == 0
-  call dein#add('charlespascoe/vim-go-syntax', { 'rev': '290fcd7df3f1d5746ab5db75240e02bc379cb524', 'on_ft' : ['go'] })
-  finish
-endif
+call dein#add('charlespascoe/vim-go-syntax', { 'rev': '290fcd7df3f1d5746ab5db75240e02bc379cb524', 'on_ft' : ['go'] })
 
 augroup filtype_go
   autocmd!

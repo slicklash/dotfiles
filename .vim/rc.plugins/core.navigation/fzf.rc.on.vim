@@ -1,50 +1,55 @@
-if InitStep() == 0
-  let missing = Missing('rg', 'bat', 'delta')
-  if !empty(missing)
-    echo 'Error while processing ' . resolve(expand('<sfile>:p'))
-    echo 'Error: missing '.missing
-    cquit
-  endif
-  call dein#add('junegunn/fzf', { 'rev': 'b3b221854b231c2385bd2aadfc1eb5ec3153cf3e', 'build': './install --all', 'merged': 0 })
-  " call dein#add('junegunn/fzf', { 'rev': 'b3b221854b231c2385bd2aadfc1eb5ec3153cf3e' })
-  call dein#add('junegunn/fzf.vim', { 'rev': 'ddc14a6a5471147e2a38e6b32a7268282f669b0a', 'depends': 'fzf' })
-  finish
+let missing = Missing('rg', 'bat', 'delta')
+if !empty(missing)
+  echo 'Error while processing ' . resolve(expand('<sfile>:p'))
+  echo 'Error: missing '.missing
+  cquit
 endif
 
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
+call dein#add('junegunn/fzf', { 'rev': '3c7cbc9d476025e0cf90e2303bce38935898df1f', 'build': './install --bin', 'merged': 0 })
+call dein#add('junegunn/fzf.vim', { 'rev': 'ddc14a6a5471147e2a38e6b32a7268282f669b0a', 'depends': 'fzf' })
 
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
+function! s:setup() abort
+  let g:fzf_options = ['--style=minimal', '--layout=reverse', '--info=inline', '--preview-window=right:70%']
+  let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
+  let g:fzf_action = {
+    \ 'ctrl-q': function('s:build_quickfix_list'),
+    \ 'ctrl-f': function('s:git_fixup'),
+    \ 'ctrl-s': function('s:git_autosquash'),
+    \ 'ctrl-m': 'split',
+    \ 'ctrl-l': 'vsplit',
+    \ 'ctrl-n': 'tabedit' }
+
+  nnoremap <Space>f <cmd>call _fzf()<CR>
+  nnoremap <Space>F <cmd>call _fzf({'ft': '?'})<CR>
+  nnoremap <Space>a <cmd>call _fzf({'dir': GetProjectDir()})<CR>
+  nnoremap <Space>m <cmd>call SearchModules()<CR>
+  nnoremap <Space>A <cmd>call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
+
+  nnoremap <Space>g <cmd>call SearchGit({'source': 'git log'})<CR>
+  nnoremap <Space>o <cmd>call SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
+
+  nnoremap <Space>c <cmd>call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
+  nnoremap <Space>z <cmd>call _fzf({'dir': '~/.zsh/'})<CR>
+  nnoremap <Space>` <cmd>call _fzf({'dir': '~/'})<CR>
+
+  nnoremap <Space>b <cmd>call fzf#vim#buffers('', fzf#vim#with_preview({'placeholder': "{1}", 'options': g:fzf_options}))<CR>
+
+  nnoremap <Space>d <cmd>call _fzf({'dir': expand('%:p:h')})<CR>
+  nnoremap <Space>h <cmd>Helptags<CR>
+  nnoremap <Space>r <cmd>call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))<CR>
+  nnoremap <Space>; <cmd>History:<CR>
+
+  nnoremap <Leader>fd <cmd>call _fzf({'grep': expand('<cword>')})<CR>
+  nnoremap <Leader>fa <cmd>call _fzf({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
+  nnoremap <Space>p <cmd>call _fzf({'grep': expand('%:t:r')})<CR>
+
+  nnoremap <Space>/ <cmd>call SearchIn('')<CR>
+  nnoremap <Space>? <cmd>call SearchIn('', v:none, {'ft': '?'})<CR>
+  nnoremap <Space>\ <cmd>call SearchIn(GetProjectDir())<CR>
+  nnoremap <Space>\| <cmd>call SearchIn(GetProjectDir(), v:none, {'ft': '?'})<CR>
 endfunction
 
-function! s:git_fixup(lines)
-  let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
-  if (!empty(hash))
-    let cmd = 'git commit --fixup=' . hash
-    execute 'silent !'.cmd
-    redraw!
-    call EchoHi(cmd)
-  endif
-endfunction
-
-function! s:git_autosquash(lines)
-  let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
-  if (!empty(hash))
-    let cmd = 'zsh -i -c ''git rebase -i --autosquash --autostash ' . hash . ';exec zsh'''
-    execute 'silent !tmux splitw -v "' .  cmd . '"'
-  endif
-endfunction
-
-let g:fzf_action = {
-  \ 'ctrl-q': function('s:build_quickfix_list'),
-  \ 'ctrl-f': function('s:git_fixup'),
-  \ 'ctrl-s': function('s:git_autosquash'),
-  \ 'ctrl-m': 'split',
-  \ 'ctrl-l': 'vsplit',
-  \ 'ctrl-n': 'tabedit' }
-
-let g:fzf_options = ['--style=minimal', '--layout=reverse', '--info=inline', '--preview-window=right:70%']
+autocmd User InitPost ++once call s:setup()
 
 function! _rg(ignores, ...)
   let rg_options = extend(['rg', '--hidden', '--no-ignore-vcs', '--column', '--line-number', '--no-heading', '--smart-case'], a:000)
@@ -68,7 +73,26 @@ function! _fzf(...) abort
     endif
   endif
   if empty(source)
-    let ignore = get(params, 'ignore', ['.git', '__pycache__', '.venv', '.turbo', '.mypy_cache', '.pytest_cache', 'node_modules', 'target', 'dist', 'bin/main',  'bin/test', 'build/src', 'build/classes', 'build/generated', 'build/resources', 'htmlcov/'])
+    let ignore = get(params, 'ignore', [
+          \ '.git',
+          \ '__pycache__',
+          \ '.venv',
+          \ '.turbo',
+          \ '.mypy_cache',
+          \ '.pytest_cache',
+          \ 'node_modules',
+          \ 'target',
+          \ 'dist',
+          \ 'bin/main',
+          \ 'bin/test',
+          \ 'build/src',
+          \ 'build/classes',
+          \ 'build/generated',
+          \ 'build/resources',
+          \ 'htmlcov/',
+          \ 'Library/',
+          \ '.Trash/',
+          \ ])
     let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
     if !empty(ft)
       if ft == '?'
@@ -124,31 +148,25 @@ function! SearchGit(...) abort
   call fzf#run(fzf#wrap({'source': source, 'options': fzf_options}))
 endfunction
 
-nnoremap <Space>f :call _fzf()<CR>
-nnoremap <Space>F :call _fzf({'ft': '?'})<CR>
-nnoremap <Space>a :call _fzf({'dir': GetProjectDir()})<CR>
-nnoremap <Space>m :call SearchModules()<CR>
-nnoremap <Space>A :call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+endfunction
 
-nnoremap <Space>g :call SearchGit({'source': 'git log'})<CR>
-nnoremap <Space>o :call SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
+function! s:git_fixup(lines)
+  let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
+  if (!empty(hash))
+    let cmd = 'git commit --fixup=' . hash
+    execute 'silent !'.cmd
+    redraw!
+    call EchoHi(cmd)
+  endif
+endfunction
 
-nnoremap <Space>c :call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
-nnoremap <Space>z :call _fzf({'dir': '~/.zsh/'})<CR>
-nnoremap <Space>` :call _fzf({'dir': '~/'})<CR>
-
-nnoremap <Space>b :call fzf#vim#buffers('', fzf#vim#with_preview({'placeholder': "{1}", 'options': g:fzf_options}))<CR>
-
-nnoremap <Space>d :call _fzf({'dir': expand('%:p:h')})<CR>
-nnoremap <Space>h :Helptags<CR>
-nnoremap <Space>r :call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))<CR>
-nnoremap <Space>; :History:<CR>
-
-nnoremap <Leader>fd :call _fzf({'grep': expand('<cword>')})<CR>
-nnoremap <Leader>fa :call _fzf({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
-nnoremap <Space>p :call _fzf({'grep': expand('%:t:r')})<CR>
-
-nnoremap <Space>/ :call SearchIn('')<CR>
-nnoremap <Space>? :call SearchIn('', v:none, {'ft': '?'})<CR>
-nnoremap <Space>\ :call SearchIn(GetProjectDir())<CR>
-nnoremap <Space>\| :call SearchIn(GetProjectDir(), v:none, {'ft': '?'})<CR>
+function! s:git_autosquash(lines)
+  let hash = matchstr(a:lines[0], '[a-f0-9]\{7,\}')
+  if (!empty(hash))
+    let cmd = 'zsh -i -c ''git rebase -i --autosquash --autostash ' . hash . ';exec zsh'''
+    execute 'silent !tmux splitw -v "' .  cmd . '"'
+  endif
+endfunction

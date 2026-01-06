@@ -1,7 +1,3 @@
-if InitStep() == 0
-  finish
-endif
-
 augroup filetype_js_ts
   autocmd!
   autocmd FileType * call s:ft_js_ts()
@@ -12,11 +8,10 @@ function! s:ft_js_ts() abort
     return
   endif
 
-  " nnoremap <buffer> K :LspHover<CR>
-  nnoremap <buffer> K :call LanguageClient#textDocument_hover()<CR>
-  nnoremap <buffer> <silent><leader>i :call<SID>import()<cr>
+  setlocal sw=2 sts=2 ts=2 et
 
-  setlocal shiftwidth=2
+  nnoremap <buffer> <silent><leader>i <cmd>call<SID>import()<cr>
+
   let b:keyword_lookup_url='https://developer.mozilla.org/en-US/search?q=%s&topic=js'
 
   setlocal suffixesadd=.ts,.tsx,.js,.jsx
@@ -32,15 +27,7 @@ function! s:ft_js_ts() abort
     endif
     setlocal formatexpr=
     setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5\ --tab-width\ 2
-    " syntax clear typescriptParamImpl
-    " syntax match  javaScriptTemplateDelim    "\${\|}" contained
-    " syntax region javaScriptTemplateVar      start=+${+ end=+}+                        contains=javaScriptTemplateDelim keepend
-    " syntax region javaScriptTemplateString   start=+`+  skip=+\\\(`\|$\)+  end=+`+     contains=javaScriptTemplateVar,javaScriptSpecial keepend
-    " syn clear typescriptObjectLabel
-    " syn clear typescriptObjectLiteral
     syntax keyword typescriptSpecMethod describe it context test expect nextgroup=typescriptFuncCallArg
-    " syntax cluster props add=typescriptSpecMethod
-     " HiLink typescriptDOMDocMethod Keyword
   endif
 
 endfunction

@@ -1,7 +1,4 @@
-if InitStep() == 0
-  call dein#add('uiiaoo/java-syntax.vim', { 'rev': 'eb7b01237d0752f98a521f51c8daca760ddf082e', 'on_ft': ['java'] })
-  finish
-endif
+call dein#add('uiiaoo/java-syntax.vim', { 'rev': 'eb7b01237d0752f98a521f51c8daca760ddf082e', 'on_ft': ['java'] })
 
 augroup filtype_java
   autocmd!

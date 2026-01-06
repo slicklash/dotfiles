@@ -1,23 +1,28 @@
-set t_Co=256                                " number of colors
+if !has('termguicolors')
+  set t_Co=256
+" else
+  " set termguicolors
+endif
 
 colorscheme aloneinthedark
 
 set noshowmode                              " don't show mode
 set showcmd                                 " in visual mode show size of selection
-set showfulltag                             " show usage help
 set showmatch matchtime=2                   " show matching parentheses/brackets
 set laststatus=2                            " always show statusline
-set completeopt-=preview                    " disable snippet/complete preview window
-
+" set completeopt-=preview                    " disable snippet/complete preview window
+set completeopt=menu,menuone,noselect
 
 set cursorline
 if !has('nvim')
   set cursorlineopt=screenline
 endif
-augroup win_switch
+set cursorline
+
+augroup cursorline_control
   autocmd!
-  autocmd WinLeave * if &ft!='vimfiler' | setlocal nocursorline | endif
-  autocmd WinEnter * setlocal cursorline
+  autocmd WinEnter,BufEnter * setlocal cursorline
+  autocmd WinLeave,BufLeave * setlocal nocursorline
 augroup END
 
 if has('gui_running')
@@ -41,33 +46,37 @@ endif
 
 " custom Tabline
 function! Tabline()
-  let s = ''
-  let current = tabpagenr()
+  let l:line = ''
+  let l:current = tabpagenr()
 
-  for i in range(tabpagenr('$'))
-    let tab = i + 1
-    let selected = tab == current
-    let winnr = tabpagewinnr(tab)
-    let buflist = tabpagebuflist(tab)
-    let bufnr = buflist[winnr - 1]
-    let bufname = bufname(bufnr)
+  for l:i in range(tabpagenr('$'))
+    let l:tab = l:i + 1
+    let l:selected = l:tab == l:current
+    let l:winnr = tabpagewinnr(l:tab)
+    let l:buflist = tabpagebuflist(l:tab)
+    let l:bufnr = l:buflist[l:winnr - 1]
+    let l:name = bufname(l:bufnr)
 
-    let s .= '%' . tab . 'T'
-    if !selected && tab > 1 && current + 1 != tab
-      let s .= '%#TabSeparator#' . '|'
-    elseif tab > 1
-      let s .= ' '
+    let l:line .= '%' . l:tab . 'T'
+
+    if !l:selected && l:tab > 1 && l:current + 1 != l:tab
+      let l:line .= '%#TabSeparator#|'
+    elseif l:tab > 1
+      let l:line .= ' '
     endif
-    let s .= (selected ? '%#TabLineSel#' : '%#TabLine#')
-    let name = '' . tab . ': ' . (bufname != '' ? fnamemodify(bufname, ':t') : 'No Name')
-    if getbufvar(bufnr, '&mod')
-      let name .= '*'
+
+    let l:line .= l:selected ? '%#TabLineSel#' : '%#TabLine#'
+
+    let l:label = l:tab . ': ' . (l:name !=# '' ? fnamemodify(l:name, ':t') : 'No Name')
+    if getbufvar(l:bufnr, '&modified')
+      let l:label .= '*'
     endif
-    let s .= ' ' . name . ' '
+
+    let l:line .= ' ' . l:label . ' '
   endfor
 
-  let s .= '%#TabLineFill#'
-  return s
+  let l:line .= '%#TabLineFill#'
+  return l:line
 endfunction
 
 set tabline=%!Tabline()

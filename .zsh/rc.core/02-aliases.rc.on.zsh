@@ -24,6 +24,7 @@ autoload -U zmv
 alias mmv='noglob zmv -W'
 
 alias vi='vim'
+alias vin='vim -u NONE'
 alias vx='vim -c Vinarise'
 
 alias tmux='tmux -2'
@@ -32,35 +33,32 @@ alias notes='notebook.py'
 
 alias wrestart='watchmedo auto-restart'
 
-alias pu='portsnap fetch update'
-alias pv='portversion | grep "<"'
+# alias pu='portsnap fetch update'
+# alias pv='portversion | grep "<"'
 
-# alias pbcopy='xsel --clipboard --input'
-# alias pbpaste='xsel --clipboard --output'
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
+case "$OSTYPE" in
+  linux-android*)
+    alias pbcopy='termux-clipboard-set'
+    alias pbpaste='termux-clipboard-get'
+    ;;
+  linux*)
+    alias pbcopy='xclip -selection clipboard'
+    alias pbpaste='xclip -selection clipboard -o'
+    alias open='xdg-open'
+    ;;
+esac
+
+alias o='open'
 
 alias exclude_jsconfig='echo "jsconfig.json" >> .git/info/exclude'
 
-alias comdep="cat package.json | grep '^\s*\"communities-' | sed 's/^.*\"\(communities-[^\"]\+\).*/\1/' | sort | tr '\n' ' '"
-alias lblog="npm link communities-api-middleware communities-blog-external-contracts communities-blog-proto communities-blog-rce communities-blog-translations communities-common-services communities-common-testing communities-image-lib communities-notifications-service-testkit communities-storage communities-tpa-provision-handler communities-universal communities-user-service-client communities-viewer-keep-alive communities-window-resize"
-alias lforum="npm link communities-api-middleware communities-common-services communities-storage communities-tpa-provision-handler communities-translations communities-universal communities-user-service-client communities-viewer-keep-alive communities-common-testing communities-notifications-service-testkit"
-alias lmembers="npm link communities-api-middleware communities-common-services communities-members-translations communities-storage communities-tpa-provision-handler communities-universal communities-user-service-client communities-viewer-keep-alive communities-notifications-service-testkit"
-alias lnotifications="npm link communities-common-services communities-universal communities-viewer-keep-alive communities-notifications-service-testkit"
-
 alias ndebug-jest="node --inspect-brk node_modules/.bin/jest --runInBand"
 
-alias kill-blog-services='killall node || killall redis-server || killall mongod'
 alias kill-docker='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
-
-alias rce-versions="for x in \$(cat package.json | grep \\\"wix-rich | cut -d '\"' -f 2); do npm view \$x; done | grep versions"
-alias react-versions="for x in \$(cat package.json | grep \\\"react\\\" | cut -d '\"' -f 2); do npm view \$x; done | grep versions"
 
 alias rgni='rg --no-ignore'
 alias klr='killall redis-server'
 alias kln='killall turbo || killall node'
 
-alias o='xdg-open'
-alias open='xdg-open'
 alias taoc='tmux-workspace code code/aoc22'
 alias lf='lfub'

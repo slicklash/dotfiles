@@ -1,0 +1,21 @@
+# This is the configuration file for Ghostty (https://ghostty.org/docs/config)
+#
+# reload: (macOS: Command + Shift + comma
+#          other: Control + Shift + comma)
+
+background = #262626
+
+#ghostty +list-font
+font-family = JetBrainsMono NFM Light
+font-size = 15
+font-feature = -dlig
+font-feature = -liga
+font-feature = -calt
+
+#ghostty +list-keybinds
+keybind = cmd+k=text:\x1b[A
+keybind = cmd+j=text:\x1b[B
+keybind = cmd+shift+h=text:\x1b[D
+keybind = cmd+l=text:\x1b[C
+keybind = cmd+a=text:\x1ba
+keybind = cmd+d=text:\x1bd

@@ -1,7 +1,4 @@
-if InitStep() == 0 && exists('$TMUX')
-  call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'c45243dc1f32ac6bcf6068e5300f3b2b237e576a' })
-  finish
-endif
+call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'c45243dc1f32ac6bcf6068e5300f3b2b237e576a' })
 
 let g:tmux_navigator_disable_when_zoomed = 1
 
@@ -56,40 +53,39 @@ endfunction
 
 function! s:tmux_exec() abort
   if &filetype =~ 'defx'
-    map <buffer> S :call _open_shell()<Bar>redraw!<C-M>
+    map <buffer> S <cmd>call _open_shell()<Bar>redraw!<C-M>
   elseif &filetype =~ 'python'
-    map <buffer> <Leader>e :call _python('python3 %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>c :call _python('pytest --cov=. --cov-report=html %:p', 'test')<Bar>redraw!<C-M>
-    map <buffer> <Leader>m :call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>E :call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>l :call _tmux_send('bash $GIT/hooks/pre-commit')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _python('python3 %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>c <cmd>call _python('pytest --cov=. --cov-report=html %:p', 'test')<Bar>redraw!<C-M>
+    map <buffer> <Leader>m <cmd>call _tmux_send('python3 %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>E <cmd>call _tmux_send('pypy3 %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>l <cmd>call _tmux_send('bash $GIT/hooks/pre-commit')<Bar>redraw!<C-M>
   elseif &filetype =~ 'javascript'
-    map <buffer> <Leader>e :call _js(' node %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>c :call _js(' node %:p', 'test', '--coverage')<Bar>redraw!<C-M>
-    map <buffer> <Leader>t :call _js(' node %:p', 'test', '--watch')<Bar>redraw!<C-M>
-    map <buffer> <Leader>E :call _tmux_send(' node --inspect-brk %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _js(' node %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>c <cmd>call _js(' node %:p', 'test', '--coverage')<Bar>redraw!<C-M>
+    map <buffer> <Leader>t <cmd>call _js(' node %:p', 'test', '--watch')<Bar>redraw!<C-M>
+    map <buffer> <Leader>E <cmd>call _tmux_send(' node --inspect-brk %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'typescript'
-    map <buffer> <Leader>e :call _js('node --no-warnings --experimental-transform-types %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>c :call _js('node --no-warnings --experimental-transform-types %:p', 'test', '--coverage')<Bar>redraw!<C-M>
-    map <buffer> <Leader>t :call _js('node --no-warnings --experimental-transform-types %:p', 'test', '--watch')<Bar>redraw!<C-M>
-    map <buffer> <Leader>E :call _js('node --no-warnings --experimental-transform-types --inspect-brk %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _js('node --no-warnings --experimental-transform-types %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>c <cmd>call _js('node --no-warnings --experimental-transform-types %:p', 'test', '--coverage')<Bar>redraw!<C-M>
+    map <buffer> <Leader>t <cmd>call _js('node --no-warnings --experimental-transform-types %:p', 'test', '--watch')<Bar>redraw!<C-M>
+    map <buffer> <Leader>E <cmd>call _js('node --no-warnings --experimental-transform-types --inspect-brk %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'java'
-    map <buffer> <Leader>e :call _tmux_send('java %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _tmux_send('java %:p')<Bar>redraw!<C-M>
   elseif &filetype =~ 'vim'
-    map <buffer> <Leader>e :call _tmux_send('vim -enN -u NONE -i NONE --cmd "source %:p" --cmd ":q" 2>&1 \| cat')<Bar>redraw!<C-M>
-    map <buffer> <Leader>E :call _tmux_send('vim --cmd "source %:p" --cmd ":q"')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _tmux_send('vim -enN -u NONE -i NONE --cmd "source %:p" --cmd ":q" 2>&1 \| cat')<Bar>redraw!<C-M>
+    map <buffer> <Leader>E <cmd>call _tmux_send('vim --cmd "source %:p" --cmd ":q"')<Bar>redraw!<C-M>
   elseif &filetype =~ 'nim'
-    map <buffer> <Leader>e :call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>m :call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>E :call _tmux_send('nim c -r -d:release --hints:off %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>D :call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>m <cmd>call _tmux_send('nim c -r -d:ssl --hints:off %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>E <cmd>call _tmux_send('nim c -r -d:release --hints:off %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>D <cmd>call _tmux_send('nim c --debugger:native %:p')<Bar>redraw!<C-M>
   elseif &filetype == 'er'
-    map <buffer> <Leader>e :call _tmux_send('docker run --rm -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _tmux_send('docker run --rm -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
   elseif &filetype == 'robo1'
-    map <buffer> <Leader>e :call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>m :call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>M :call _tmux_send(' mtime ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>m <cmd>call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>M <cmd>call _tmux_send(' mtime ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
   endif
   map <buffer> <Leader>r :execute 'silent !tmux send-keys -t 1 Up Enter'<Bar>redraw!<C-M>
 endfunction
-

@@ -7,12 +7,12 @@ nnoremap Y y$
 nnoremap <leader>y "0P
 
 " write & write all
-nnoremap <leader>w :w!<cr>
-nnoremap <leader>W :wa!<cr>
+nnoremap <leader>w <cmd>w!<CR>
+nnoremap <leader>W <cmd>wa!<CR>
 
 " splits
 nnoremap <leader>v <C-w>v<C-w>l
-nnoremap <leader>s <C-w>s
+nnoremap <leader>s <C-w>s<C-w>j
 
 " change cursor position in insert mode
 inoremap <C-h> <left>
@@ -44,24 +44,22 @@ nnoremap <C-J> <C-W>j
 nnoremap <C-K> <C-W>k
 nnoremap <C-L> <C-W>l
 nnoremap <C-H> <C-W>h
-nnoremap <C-Tab> <C-W>w
-nnoremap <S-C-Tab> <C-W>p
 
 " manage windows
-noremap <silent> <leader>co <C-W>o
-noremap <silent> <leader>cc :close<CR>
-noremap <silent> <leader>cw :cclose<CR>
-noremap <silent> <leader>ml <C-W>L
-noremap <silent> <leader>mh <C-W>H
-noremap <silent> <leader>mk <C-W>K
-noremap <silent> <leader>mj <C-W>J
-noremap <silent> <leader>mt <C-W>
+nnoremap <silent> <leader>co <C-W>o
+nnoremap <silent> <leader>cc <cmd>close<CR>
+nnoremap <silent> <leader>cw <cmd>cclose<CR>
+nnoremap <silent> <leader>ml <C-W>L
+nnoremap <silent> <leader>mh <C-W>H
+nnoremap <silent> <leader>mk <C-W>K
+nnoremap <silent> <leader>mj <C-W>J
 
 " resize windows
-noremap <F9> :vertical resize -10<CR>
-noremap <F10> :resize -10<CR>
-noremap <F11> :resize +10<CR>
-noremap <F12> :vertical resize +10<CR>
+nnoremap <silent> <F9>  <cmd>vertical resize -10<CR>
+nnoremap <silent> <F10> <cmd>resize -10<CR>
+nnoremap <silent> <F11> <cmd>resize +10<CR>
+nnoremap <silent> <F12> <cmd>vertical resize +10<CR>
+
 noremap <S-Left> <C-w><
 noremap <S-Down> <C-w>-
 noremap <S-Up> <C-w>+
@@ -72,13 +70,14 @@ vnoremap < <gv
 vnoremap > >gv
 
 " toggle problematic whitespace
-nnoremap <silent> <leader>tl :call Toggle_list()<CR>
+nnoremap <silent> <leader>tl <cmd>call Toggle_list()<CR>
 function! Toggle_list()
-  set list! list?
+  set list!
+  set list?
 endfunction
 
 " remove trailing whitespaces
-nnoremap <silent> <leader>` :call Preserve("%s/\\s\\+$//e")<CR>
+nnoremap <silent> <leader>` <cmd>call Preserve("%s/\\s\\+$//e")<CR>
 
 " surround with quotes
 " nnoremap <leader>" ciw"<C-r>""<Esc>
@@ -86,32 +85,34 @@ nnoremap <silent> <leader>` :call Preserve("%s/\\s\\+$//e")<CR>
 nnoremap <leader>' ciw'<C-r>"'<Esc>
 vnoremap <leader>' c'<C-r>"'<Esc>
 
-inoremap <expr><C-Space> <C-x><C-o>
+" inoremap <expr><C-Space> <C-x><C-o>
+inoremap <C-Space> <C-x><C-o>
 
 if (has('win32') || has('nvim'))
-  nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+  nnoremap <leader>ev <cmd>vsplit $MYVIMRC<CR>
 else
-  nnoremap <leader>ev :vsplit `=resolve(expand($MYVIMRC))`<CR>
+  nnoremap <leader>ev <cmd>vsplit `=resolve(expand($MYVIMRC))`<CR>
 endif
 
-noremap <leader>ec :vsplit ~/.vim/colors/aloneinthedark.vim<CR>
+nnoremap <leader>ec <cmd>vsplit ~/.vim/colors/aloneinthedark.vim<CR>
+nnoremap <leader>eg <cmd>vsplit ~/.config/ghostty/config<CR>
 
-nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+nnoremap <leader>cd <cmd>cd %:p:h<CR><cmd>pwd<CR>
 
 " echo and copy file dir
-nnoremap <leader>d :call EchoHi(getcwd())<CR>
-nnoremap <silent> <leader>cD :let @+=getcwd()<CR>:call EchoHi('Copied: ' . @+)<CR>
+nnoremap <leader>d <cmd>call EchoHi(getcwd())<CR>
+nnoremap <silent> <leader>cD <cmd>let @+=getcwd()<CR><cmd>call EchoHi('Copied: ' . @+)<CR>
 
 " echo and copy file path
-nnoremap <silent> <leader>p :call EchoHi(substitute(expand('%:p'), getcwd(), '', ''))<CR>
-nnoremap <silent> <leader>cp :let @+=expand('%:p')<CR>:call EchoHi('Copied: ' . @+)<CR>
+nnoremap <silent> <leader>p <cmd>call EchoHi(substitute(expand('%:p'), getcwd(), '', ''))<CR>
+nnoremap <silent> <leader>cp <cmd>let @+=expand('%:p')<CR><cmd>call EchoHi('Copied: ' . @+)<CR>
 
 " copy filename to clipboard
-nnoremap <silent> <leader>cf :let @+=expand('%')<CR>:call EchoHi('Copied: ' . @+)<CR>
-nnoremap <silent> <leader>ct :let @+=expand('%:t')<CR>:call EchoHi('Copied: ' . @+)<CR>
+nnoremap <silent> <leader>cf <cmd>let @+=expand('%')<CR><cmd>call EchoHi('Copied: ' . @+)<CR>
+nnoremap <silent> <leader>ct <cmd>let @+=expand('%:t')<CR><cmd>call EchoHi('Copied: ' . @+)<CR>
 
 " alternate keyword lookup
-nnoremap <silent> <space>k :call LookupKeyword()<CR>:redraw!<CR>
+nnoremap <silent> <space>k <cmd>call LookupKeyword()<CR><cmd>redraw!<CR>
 
-nnoremap <silent> XX :call DeleteFile()<cr>
-vnoremap <silent> XX :call DeleteFiles()<cr>
+nnoremap <silent> XX <cmd>call DeleteFile()<cr>
+vnoremap <silent> XX <cmd>call DeleteFiles()<cr>
