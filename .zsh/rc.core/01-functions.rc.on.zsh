@@ -134,6 +134,14 @@ function v_encode() {
   fi
 }
 
+function v_encode_all() {
+  local q="$1"
+  for f in *.mkv; do
+    [[ -e "$f" ]] || continue
+     [[ -f "${f:r}.mp4" ]] || v_encode "$f" "${f:r}.mp4" "$q"
+  done
+}
+
 function v_info() {
   local path="${1:-.}"
 
@@ -270,6 +278,54 @@ function img2b64() {
   echo "\n}" >> "$tmp_json"
 
   mv "$tmp_json" "$output_file"
+}
+
+# Usage: tmux-run-all 'cmd1' 'cmd2' ... 'cmdN'
+function tmux-run-all() {
+  (( $# >= 2 )) || { print -u2 "error: need >= 2 commands"; return 2; }
+  [[ -n ${TMUX-} ]] || { print -u2 "error: not in tmux"; return 2; }
+
+  local win target
+  win="$(tmux display-message -p '#{window_id}')" || return 1
+
+  # left-most pane in this window
+  target="$(
+    tmux list-panes -t "$win" -F '#{pane_id} #{pane_left}' \
+    | sort -nk2,2 | head -n1 | awk '{print $1}'
+  )" || return 1
+
+  local n=$#
+  local -a cmds
+  cmds=("$@")
+
+  typeset -Ag SPLITS
+  SPLITS[2]="50"
+  SPLITS[3]="70,50"
+  SPLITS[4]="75,65,50"
+  SPLITS[5]="80,75,65,45"
+  SPLITS[6]="85,80,75,65,45"
+  SPLITS[7]="85,85,80,75,65,45"
+
+  local spec="${SPLITS[$n]}"
+  [[ -n "$spec" ]] || { print -u2 "error: no split spec for n=$n"; return 1; }
+
+  local -a pcts panes
+  pcts=("${(@s:,:)spec}")
+  (( ${#pcts} == n-1 )) || { print -u2 "error: spec for n=$n must have $((n-1)) values"; return 1; }
+
+  panes=("$target")
+  local last="$target" new i
+  for i in {1..$((n-1))}; do
+    new="$(tmux split-window -v -t "$last" -p "${pcts[$i]}" -P -F '#{pane_id}')" || return 1
+    panes+=("$new")
+    last="$new"
+  done
+
+  # run commands top -> bottom
+  local i
+  for (( i=1; i<=${#cmds}; i++ )); do
+    tmux send-keys -t "${panes[$i]}" -- "${cmds[$i]}" C-m
+  done
 }
 
 _gitignireio_get_command_list() {

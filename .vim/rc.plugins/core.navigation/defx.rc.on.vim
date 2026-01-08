@@ -32,11 +32,11 @@ function! s:setup() abort
         \ 'selected_icon': '✓',
         \ })
 
-if empty('$TERMUX_VERSION')
-  nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
-else
-  nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=25 -search=`expand('%:p')`<CR>
-endif
+  if !exists('$TERMUX_VERSION')
+    nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
+  else
+    nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=25 -search=`expand('%:p')`<CR>
+  endif
 endfunction
 
 autocmd User InitPost ++once call s:setup()

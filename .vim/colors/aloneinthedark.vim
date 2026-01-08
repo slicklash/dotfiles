@@ -419,6 +419,8 @@ hi! link ALEErrorSign Todo
 " LSP
 hi! link LspDiagInlineError ALEError
 hi LspDiagInlineWarning ctermbg=235
+hi LspDiagInlineHint ctermbg=235
+hi LspDiagInlineInfo ctermbg=235
 
 hi! link LspDiagSignErrorText Todo
 hi! link LspDiagSignWarningText Number

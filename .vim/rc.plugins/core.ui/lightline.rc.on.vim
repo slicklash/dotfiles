@@ -76,7 +76,7 @@ function! MyFugitive()
 endfunction
 
 function! MyFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
+  return winwidth(0) > 70 ? (&fileformat ==# 'dos' ? '🚨dos' : &fileformat) : ''
 endfunction
 
 function! MyFiletype()
