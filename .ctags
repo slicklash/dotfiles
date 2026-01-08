@@ -1,0 +1,80 @@
+--recurse=yes
+--tag-relative=yes
+--links=no
+--sort=yes
+--fields=+nksS
+
+--exclude=.git
+--exclude=.svn
+--exclude=.hg
+
+--exclude=.turbo
+--exclude=**/.turbo
+
+--exclude=node_modules
+--exclude=**/node_modules
+
+--exclude=.yarn
+--exclude=**/.yarn
+--exclude=.pnp.*
+--exclude=**/.pnp.*
+--exclude=.yarnrc.yml
+--exclude=**/.yarnrc.yml
+--exclude=.yarn/sdks
+--exclude=**/.yarn/sdks
+--exclude=.yarn/unplugged
+--exclude=**/.yarn/unplugged
+
+--exclude=*.zip
+
+--exclude=dist
+--exclude=**/dist
+--exclude=build
+--exclude=**/build
+--exclude=out
+--exclude=**/out
+--exclude=coverage
+--exclude=**/coverage
+--exclude=.next
+--exclude=**/.next
+--exclude=.nuxt
+--exclude=**/.nuxt
+--exclude=.cache
+--exclude=**/.cache
+--exclude=.parcel-cache
+--exclude=**/.parcel-cache
+--exclude=*.d.ts.map
+--exclude=*.tsbuildinfo
+
+--exclude=*.min.*
+--exclude=*.map
+--exclude=*.swp
+--exclude=*.bak
+
+--exclude=tags
+--exclude=TAGS
+--exclude=cscope.*
+
+--langmap=vim:+(vimrc)
+
+--regex-html=/id=["']([A-Za-z0-9_-]+)["']/\1/i,id,ids/
+--regex-html=/class=["']([A-Za-z0-9_-]+)["']/\1/c,class,classes/
+
+--langdef=markdown
+--langmap=markdown:.md
+--regex-markdown=/^(#+[ \t]+.*)/\1/h,heading,headings/
+
+--langdef=scss
+--langmap=scss:.scss
+--regex-scss=/^[ \t]*@mixin[ \t]+([A-Za-z0-9_-]+)/\1/m,mixin,mixins/
+--regex-scss=/^[ \t]*\$([A-Za-z0-9_-]+)/\1/v,variable,variables/
+--regex-scss=/^[ \t&]*\.([A-Za-z0-9_-]+)/\1/c,class,classes/
+--regex-scss=/^[ \t&]*#([A-Za-z0-9_-]+)/\1/i,id,ids/
+--regex-scss=/^[ \t]*([A-Za-z][A-Za-z0-9_-]*)[ \t]*\{/\1/t,tag,tags/
+--regex-scss=/^[ \t]*@media[ \t]+([^{]+)/\1/d,media,media/
+--regex-scss=/\/\/[ \t]*(TODO)\b[ \t]*:?(.*)/\1/T,TODO/
+--regex-scss=/\/\/[ \t]*(FIXME)\b[ \t]*:?(.*)/\1/F,FIXME/
+
+--langdef=apl
+--langmap=apl:.apl
+--regex-apl=/^\w+←(\w+\s+([^\s]+))/\2/f,function,functions/

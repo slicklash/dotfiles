@@ -39,13 +39,15 @@ map x cut
 map y copy
 map <enter> open
 map R reload
-map K mkdir
+map D mkdir
+map N mkfile
 map . set hidden!
 map E thunar
 
-map ge cd ~/Desktop
-map gd cd ~/Downloads
+map gh cd ~
 map gc cd ~/code
+map gd cd ~/Downloads
+map ge cd ~/Desktop
 map gv cd ~/Videos
 map gs cd ~/Sync
 map gw cd ~/SyncWork

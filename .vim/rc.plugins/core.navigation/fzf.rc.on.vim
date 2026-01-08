@@ -28,7 +28,7 @@ function! s:setup() abort
   nnoremap <Space>g <cmd>call SearchGit({'source': 'git log'})<CR>
   nnoremap <Space>o <cmd>call SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
 
-  nnoremap <Space>c <cmd>call _fzf({'dir': '~/.vim/', 'ignore':['.denite', '.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
+  nnoremap <Space>c <cmd>call _fzf({'dir': '~/.vim/', 'ignore':['.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
   nnoremap <Space>z <cmd>call _fzf({'dir': '~/.zsh/'})<CR>
   nnoremap <Space>` <cmd>call _fzf({'dir': '~/'})<CR>
 

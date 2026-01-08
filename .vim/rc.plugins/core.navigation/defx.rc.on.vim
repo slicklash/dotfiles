@@ -32,7 +32,11 @@ function! s:setup() abort
         \ 'selected_icon': '✓',
         \ })
 
+if empty('$TERMUX_VERSION')
   nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
+else
+  nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=25 -search=`expand('%:p')`<CR>
+endif
 endfunction
 
 autocmd User InitPost ++once call s:setup()
@@ -60,17 +64,17 @@ function! SearchFiles(context) abort
 endfunction
 
 command! -nargs=* -range MyDefxOpen call OpenPath('edit', <q-args>)
+command! -nargs=* -range MyDefxPreview call OpenPath('edit_keep', <q-args>)
 command! -nargs=* -range MyDefxVsplit call OpenPath('vsplit', <q-args>)
-command! -nargs=* -range MyDefxPsplit call OpenPath('psplit', <q-args>)
 
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> ,k defx#do_action('cd', ['..'])
-  nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
   nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
 
   nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+  nnoremap <silent><buffer><expr> gh defx#do_action('cd')
   nnoremap <silent><buffer><expr> gy defx#do_action('cd', [fnameescape(getreg('"'))])
   nnoremap <silent><buffer><expr> gv defx#do_action('cd', [expand('~/.vim')])
   nnoremap <silent><buffer><expr> gc defx#do_action('cd', [expand('~/code')])
@@ -94,8 +98,10 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
   nnoremap <silent><buffer><expr> l defx#do_action('open_tree')
   nnoremap <silent><buffer><expr> E defx#do_action('open', 'MyDefxVsplit')
+  nnoremap <silent><buffer><expr> J 'j' . defx#do_action('open', 'MyDefxPreview')
+  nnoremap <silent><buffer><expr> K 'k' . defx#do_action('open', 'MyDefxPreview')
 
-  nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
+  nnoremap <silent><buffer><expr> D defx#do_action('new_directory')
   nnoremap <silent><buffer><expr> N defx#do_action('new_file')
   nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
 

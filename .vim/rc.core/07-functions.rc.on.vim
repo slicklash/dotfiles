@@ -54,50 +54,35 @@ function! FindNearestFile(filename) abort
 endfunction
 
 function! s:is_ignore_special_windows(winnr) abort
-  return index(['unite', 'defx', 'denite'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
-endfunction
-
-function! s:find_preview(winnrs) abort
-  for n in a:winnrs
-    if getbufvar(winbufnr(n), 'preview') == 1
-      return n
-    endif
-  endfor
-  return -1
+  return index(['diff', 'qf', 'gitcommit', 'defx', 'help'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
 endfunction
 
 function! OpenPath(cmd, path) abort
-  let cmd = a:cmd
-  let wincmd = ''
-  let winnrs = range(1, tabpagewinnr(tabpagenr(), '$'))
-  let winnrs = filter(winnrs, '!s:is_ignore_special_windows(v:val)')
-  if cmd ==# 'psplit'
-    let winnr = s:find_preview(winnrs)
-    echo winnr
-    execute 'wincmd h'
-    if winnr == -1
-      execute printf('noswapfile vsplit %s', a:path)
-    else
-      execute printf('%swincmd w', winnr)
-      execute printf('noswapfile edit %s', a:path)
-    endif
-    let b:preview = 1
-    execute 'wincmd l'
-    return
+  let l:curr_winid = win_getid()
+  let l:winnrs = filter(range(1, tabpagewinnr(tabpagenr(), '$')), '!s:is_ignore_special_windows(v:val)')
+  let l:wincmd = ''
+
+  if a:cmd =~# 'split'
+    let l:wincmd = 'wincmd h'
   else
-    if len(winnrs) > 0
-      if cmd =~# 'split'
-        let wincmd = 'wincmd h'
-      else
-        let [_, winnr] = choosewin#start(winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
-        let wincmd = printf('%swincmd w', winnr)
+    if len(l:winnrs) > 0
+      let [_, l:winnr] = choosewin#start(l:winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
+      if l:winnr > 0
+        let l:wincmd = printf('%dwincmd w', l:winnr)
       endif
     endif
   endif
-  if !empty(wincmd)
-    execute wincmd
+
+  if !empty(l:wincmd)
+    execute l:wincmd
   endif
-  execute printf('noswapfile %s %s', cmd, a:path)
+
+  if a:cmd ==# 'edit_keep'
+    execute printf('noswapfile %s %s', 'edit', a:path)
+    call win_gotoid(l:curr_winid)
+  else
+    execute printf('noswapfile %s %s', a:cmd, a:path)
+  endif
 endfunction
 
 function! SyntaxItem()

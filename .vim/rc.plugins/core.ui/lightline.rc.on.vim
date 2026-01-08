@@ -1,8 +1,7 @@
-call dein#add('itchyny/lightline.vim', { 'rev': 'e358557e1a9f9fc860416c8eb2e34c0404078155' })
-
 scriptencoding utf-8
 
-" custom status line
+call dein#add('itchyny/lightline.vim', { 'rev': 'e358557e1a9f9fc860416c8eb2e34c0404078155' })
+
 let g:lightline = {
       \ 'enable': {
       \    'tabline': 0
@@ -54,10 +53,7 @@ endfunction
 
 function! MyFilename()
   return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
-        \ (&ft == 'unite' ? unite#get_status_string() :
-        \  &ft == 'nerdtree' ? 'NERDTree':
-        \  &ft == 'vimshell' ? vimshell#get_status_string() :
-        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != expand('%:t') ? expand('%:t') : '[No Name]') .
         \ ('' != MyModified() ? ' ' . MyModified() : '')
 endfunction
 
@@ -99,11 +95,8 @@ function! MyMode()
   let fname = expand('%:t')
   let bn = bufnr('%')
   return fname == '__Tagbar__' ? 'Tagbar' :
-        \ fname == 'ControlP' ? 'CtrlP' :
         \ fname == '__Gundo__' ? 'Gundo' :
         \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-        \ fname =~ 'NERD_tree' ? '' :
-        \ &ft == 'unite' ? 'Unite' :
         \ &ft == 'defx' ? 'defx' :
         \ &ft == 'vimshell' ? 'VimShell' : bn
 endfunction

@@ -412,14 +412,16 @@ hi! link csharpSystemValueType Type
 hi! link sqlKeyword Keyword
 hi! link sqlSpecial Function
 
-" LanguageClient
-hi LanguageClientError ctermbg=52
-hi! link LanguageClientErrorSign Todo
-hi! link LanguageClientWarningSign Number
-hi! clear LanguageClientWarning
-
+" ALE
 hi ALEError ctermbg=52
 hi! link ALEErrorSign Todo
+
+" LSP
+hi! link LspDiagInlineError ALEError
+hi LspDiagInlineWarning ctermbg=235
+
+hi! link LspDiagSignErrorText Todo
+hi! link LspDiagSignWarningText Number
 
 " sneak
 hi! link Sneak Search
@@ -440,8 +442,5 @@ call s:hi('TagbarVisibilityPrivate', s:color.RED, '', '')
 
 " pandoc
 hi! link pandocStrong DiffChange
-
-" lsp
-highlight LspDiagInlineError ctermbg=88
 
 delfunction s:hi

@@ -6,10 +6,11 @@ set matchpairs+=<:>                         " match <> pairs
 set iskeyword+=-
 
 " use very magic regexp be default
-nnoremap <silent> / /\v
-vnoremap <silent> / /\v
-nnoremap <silent> ? ?\v
-vnoremap <silent> ? ?\v
+nnoremap / /\v
+nnoremap s /\v
+vnoremap / /\v
+nnoremap ? ?\v
+vnoremap ? ?\v
 
 " stop highlighting search results
 nnoremap <silent> <leader>, <cmd>nohlsearch<CR>

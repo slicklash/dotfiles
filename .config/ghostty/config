@@ -3,14 +3,18 @@
 # reload: (macOS: Command + Shift + comma
 #          other: Control + Shift + comma)
 
+#ghostty +list-themes
+theme = Nordfox
+
 background = #262626
 
-#ghostty +list-font
+#ghostty +list-fonts
 font-family = JetBrainsMono NFM Light
 font-size = 15
 font-feature = -dlig
 font-feature = -liga
 font-feature = -calt
+font-synthetic-style = false
 
 #ghostty +list-keybinds
 keybind = cmd+k=text:\x1b[A
@@ -19,3 +23,5 @@ keybind = cmd+shift+h=text:\x1b[D
 keybind = cmd+l=text:\x1b[C
 keybind = cmd+a=text:\x1ba
 keybind = cmd+d=text:\x1bd
+
+window-decoration = server

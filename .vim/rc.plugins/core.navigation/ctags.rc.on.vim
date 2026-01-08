@@ -1,5 +1,4 @@
 call dein#add('ludovicchabant/vim-gutentags', { 'rev': 'aa47c5e29c37c52176c44e61c780032dfacef3dd' })
-call dein#add('kristijanhusak/vim-js-file-import', { 'rev': '8ece76e668b9fa8ec2e1825cd78aa45c0b44cdad' })
 
 function! s:setup() abort
   let g:gutentags_cache_dir = _cache_dir('gutentags')

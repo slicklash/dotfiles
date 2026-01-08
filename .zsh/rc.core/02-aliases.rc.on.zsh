@@ -29,28 +29,26 @@ alias vx='vim -c Vinarise'
 
 alias tmux='tmux -2'
 
-alias notes='notebook.py'
-
 alias wrestart='watchmedo auto-restart'
-
-# alias pu='portsnap fetch update'
-# alias pv='portversion | grep "<"'
 
 case "$OSTYPE" in
   linux-android*)
     alias pbcopy='termux-clipboard-set'
     alias pbpaste='termux-clipboard-get'
+    alias pv='apt list --upgradable'
+    alias pu='pkg upgrade'
     ;;
   linux*)
     alias pbcopy='xclip -selection clipboard'
     alias pbpaste='xclip -selection clipboard -o'
     alias open='xdg-open'
+    alias lf='lfub'
+    alias pv='apt list --upgradable'
+    alias pu='apt upgrade'
     ;;
 esac
 
 alias o='open'
-
-alias exclude_jsconfig='echo "jsconfig.json" >> .git/info/exclude'
 
 alias ndebug-jest="node --inspect-brk node_modules/.bin/jest --runInBand"
 
@@ -61,4 +59,3 @@ alias klr='killall redis-server'
 alias kln='killall turbo || killall node'
 
 alias taoc='tmux-workspace code code/aoc22'
-alias lf='lfub'

@@ -9,18 +9,18 @@ function _sync() {
   rm -rf "$dir/*"
   for x in $white_list; do
     echo "[+] $x"
-    rsync -ar --exclude '*private*' ~/$from/$x $dir
+    rsync --delete -ar --exclude '*private*' ~/$from/$x $dir
   done
 }
 
 echo "syncing ..."
 
 from=''
-white_list=('README.md' '.tmux.conf' '.zshrc')
+white_list=('README.md' '.tmux.conf' '.zshrc' '.ctags')
 _sync
 
 from='bin/'
-white_list=('dotfiles' 'rebuild-edb' 'rebuild-opencv' 'rebuild-vim' 'rebuild-xterm' 'video-resize.sh' 'fix-washed-out-colors' 'fix-panel' 'sync-public' 'xscreen' 'tmux2' 'tvim' 'xsend-keys' 'setup-termux' 'google-java-format' 'mtime' 'pinfo' 'fix-chrome' 'card')
+white_list=('dotfiles' 'sync-public' 'rebuild-vim' 'video-resize.sh' 'fix-washed-out-colors' 'xscreen' 'tmux2' 'tvim' 'xsend-keys' 'setup-termux' 'google-java-format' 'mtime' 'pinfo' 'fix-chrome' 'card')
 _sync
 rsync -ar --exclude '*private*' "$HOME/bin/java-lsp/install-eclipse-jdt-ls.sh" "$DST/bin/java-lsp/"
 

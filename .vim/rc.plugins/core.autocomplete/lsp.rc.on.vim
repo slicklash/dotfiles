@@ -1,4 +1,4 @@
-call dein#add('yegappan/lsp', { 'rev': '93867ddb80fda49728a0899b78af7f49de28ffc2' })
+call dein#add('yegappan/lsp', { 'rev': '090cbc8bf8b9212aad8ff63af235bf72c059d441' })
 
 " \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
 " \ 'rust': ['rustup', 'run', 'stable', 'rls'],
@@ -7,6 +7,11 @@ call dein#add('yegappan/lsp', { 'rev': '93867ddb80fda49728a0899b78af7f49de28ffc2
 let lspOpts = #{
       \ autoHighlightDiags: v:true,
       \ usePopupInCodeAction: v:true,
+      \ diagSignErrorText: '✖',
+      \ diagSignWarningText: '⚠',
+      \ diagSignInfoText: 'ℹ',
+      \ diagSignHintText: '➤',
+      \ showDiagOnStatusLine: v:true,
       \ }
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
@@ -19,6 +24,11 @@ let lspServers = [
       \    'path': 'gopls',
       \    'args': ['serve'],
       \    'syncInit': v:true
+      \ },
+      \ {
+      \   'name': 'nimlang',
+      \   'filetype': ['nim'],
+      \   'path': 'nimlangserver',
       \ },
       \ {
       \   'name': 'pylsp',
@@ -47,8 +57,8 @@ function! s:setup() abort
   nnoremap <silent> <leader>fr <cmd>LspShowReferences<CR>
   nnoremap <silent> <leader>h <cmd>LspHover<CR>
   nnoremap <silent> <leader>q <cmd>LspCodeAction<CR>
-  nnoremap <silent> <leader>n <cmd>LspDiagNext<CR>
-  nnoremap <silent> <leader>N <cmd>LspDiagPrev<CR>
+  nnoremap <silent> <leader>n <cmd>LspDiagNextWrap<CR>
+  nnoremap <silent> <leader>N <cmd>LspDiagPrevWrap<CR>
 endfunction
 
 autocmd User InitPost ++once call s:setup()

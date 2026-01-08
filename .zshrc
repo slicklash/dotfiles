@@ -1,8 +1,12 @@
 # zmodload zsh/zprof
 
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-[ -d "$HOME/Library/Caches" ] && export XDG_CACHE_HOME="$HOME/Library/Caches"
+
+if [ -d "$HOME/Library/Caches" ]; then
+  export XDG_CACHE_HOME="$HOME/Library/Caches"
+else
+  export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+fi
 
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 
@@ -16,13 +20,12 @@ for d in \
   "$HOME/go/bin" \
   "$HOME/zig" \
   "$HOME/bin/pypy3/bin" \
-  "$HOME/bin/platform-tools"
+  "$HOME/bin/platform-tools" \
+  "/opt/homebrew/bin" \
+  "/opt/homebrew/opt/postgresql@17/bin"
 do
   [ -d "$d" ] && PATH="$d:$PATH"
 done
-
-[ -d /opt/homebrew/bin ] && PATH="/opt/homebrew/bin:$PATH"
-[ -d /opt/homebrew/opt/postgresql@17/bin ] && PATH="$PATH:/opt/homebrew/opt/postgresql@17/bin"
 
 if [ -d "$HOME/Library/Python" ]; then
   PY_PYLSP_BIN=""
@@ -34,7 +37,6 @@ if [ -d "$HOME/Library/Python" ]; then
   done <<EOF
 $(printf '%s\n' "$HOME/Library/Python"/*/bin 2>/dev/null | sort -V)
 EOF
-
   [ -n "$PY_PYLSP_BIN" ] && PATH="$PATH:$PY_PYLSP_BIN"
 fi
 
