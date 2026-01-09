@@ -46,6 +46,10 @@ case "$OSTYPE" in
     alias pv='apt list --upgradable'
     alias pu='apt upgrade'
     ;;
+  darwin*)
+    alias pv='brew outdated'
+    alias pu='brew upgrade'
+    ;;
 esac
 
 alias o='open'

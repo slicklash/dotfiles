@@ -1,32 +1,24 @@
-let s:BUNDLE_DIR = $HOME . '/.vim/bundle'
-let s:DEIN_DIR = s:BUNDLE_DIR . '/repos/github.com/Shougo/dein.vim'
+let g:vim_cache_dir = ($XDG_CACHE_HOME !=# '' ? $XDG_CACHE_HOME : expand('~/.cache')) . '/vim'
+let s:bundle_dir = g:vim_cache_dir .. '/bundle'
+let s:dein_dir = s:bundle_dir . '/repos/github.com/Shougo/dein.vim'
 
-if !isdirectory(s:DEIN_DIR)
-  if !executable('git')
-    echoerr 'missing git'
-    cquit
-  endif
-
+if !isdirectory(s:dein_dir)
+  if !executable('git') | echoerr 'missing git' | cquit | endif
   echomsg 'installing dein'
-  echomsg 'cloning https://github.com/Shougo/dein.vim.git into ' . s:DEIN_DIR . '...'
-  call system('git clone https://github.com/Shougo/dein.vim.git ' . s:DEIN_DIR)
+  call system('git clone https://github.com/Shougo/dein.vim.git ' . s:dein_dir)
 endif
 
 function! Missing(...) abort
   return join(filter(copy(a:000), {_, val -> !executable(val)}), ' ')
 endfunction
 
-filetype off
-
 set nocompatible
 
 if has('vim_starting')
-  set all&
-  set runtimepath+=~/.vim
-  set runtimepath+=~/.vim/bundle/repos/github.com/Shougo/dein.vim
+  execute 'set runtimepath^=' .. s:dein_dir
 endif
 
-call dein#begin(s:BUNDLE_DIR)
+call dein#begin(s:bundle_dir)
 call dein#add('Shougo/dein.vim')
 runtime! rc.plugins/*/*.rc.on.vim
 call dein#end()

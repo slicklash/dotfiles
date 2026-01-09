@@ -26,8 +26,9 @@ augroup filetype_vim
   autocmd FileType vim if @% =~ 'vimrc' | setlocal foldmethod=marker foldlevel=0 | else | setlocal foldmethod=indent | endif
 augroup END
 
-" move to bottom
 augroup special_windows
   autocmd!
   autocmd FileType qf,fugitive wincmd J
+  autocmd FileType help,fugitive,git
+        \ nnoremap <buffer> q <Cmd>close<CR>
 augroup END

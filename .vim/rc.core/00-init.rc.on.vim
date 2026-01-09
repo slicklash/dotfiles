@@ -24,10 +24,6 @@ set updatetime=300
 set lazyredraw                              " don't update screen while executing macros
 set synmaxcol=200                           " faster
 
-let g:vim_cache_dir = exists('$XDG_CACHE_HOME')
-      \ ? $XDG_CACHE_HOME . '/vim'
-      \ : expand('~/.vim/cache')
-
 function! _ensure_path(path, ...)
   let is_file = a:0 > 0 && a:1 == 1 ? 1 : 0
   let path = resolve(expand(a:path))
