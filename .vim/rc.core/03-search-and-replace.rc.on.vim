@@ -3,7 +3,6 @@ set incsearch                               " find as you type
 set ignorecase                              " case insensitive search
 set smartcase                               " case sensitive search if uppercase letters are used
 set matchpairs+=<:>                         " match <> pairs
-set iskeyword+=-
 
 " use very magic regexp be default
 nnoremap / /\v
