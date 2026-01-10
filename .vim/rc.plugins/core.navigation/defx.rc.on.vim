@@ -67,6 +67,32 @@ command! -nargs=* -range MyDefxOpen call OpenPath('edit', <q-args>)
 command! -nargs=* -range MyDefxPreview call OpenPath('edit_keep', <q-args>)
 command! -nargs=* -range MyDefxVsplit call OpenPath('vsplit', <q-args>)
 
+function! s:tmux_open_shell() abort
+  let cmd = fnamemodify(get(defx#get_candidate(), 'action__path'), ':p:h')
+  execute 'silent !tmux splitw -c ' . cmd
+endfunction
+
+function! s:tmux_open_codex() abort
+  if empty($TMUX) || empty($TMUX_PANE)
+    echoerr 'Not inside tmux (TMUX/TMUX_PANE not set)'
+    return
+  endif
+
+  let l:file = get(defx#get_candidate(), 'action__path')
+
+  let l:cwd = expand('%:p')
+  let l:newpane = system('tmux split-window -h -P -F "#{pane_id}"')
+  let l:newpane = trim(l:newpane)
+
+  if empty(l:newpane)
+    echoerr 'tmux split-window failed'
+    return
+  endif
+
+  call filter(getwininfo(), {i, v -> getbufvar(v.bufnr, '&filetype') ==# 'defx' ? execute(v.winnr . 'close') : 0})
+  call system('tmux send-keys -t ' . shellescape(l:newpane) . ' ' . shellescape('codex ' . l:file) . ' C-m')
+endfunction
+
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> ,k defx#do_action('cd', ['..'])
@@ -105,7 +131,9 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> N defx#do_action('new_file')
   nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
 
-  nnoremap <silent><buffer><expr> S defx#do_action('toggle_sort', 'time')
+  nnoremap <silent><buffer> S <cmd>call <SID>tmux_open_shell()<Bar>redraw!<CR>
+  nnoremap <silent><buffer> C <cmd>call <SID>tmux_open_codex()<CR>
+
   nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
 
   nnoremap <silent><buffer><expr> ; defx#do_action('repeat')

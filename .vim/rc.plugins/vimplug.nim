@@ -17,7 +17,7 @@ proc showHelp() =
   -u, --update <name> : update revision
   """
 
-proc byName(a, b: PluginInfo): int = cmp(a.name, b.name)
+proc byName(a, b: PluginInfo): int = cmp(a.name.toLower, b.name.toLower)
 proc padEnd(name: string, length: int): string = fmt"{name.alignString(length, '<', ' ')} "
 proc isOutdated(p: PluginInfo, latestRevision: string): bool = not p.locked and p.revision != "next" and p.revision != latestRevision
 
@@ -61,6 +61,7 @@ proc check(plugins: seq[PluginInfo]) =
   if hasError:
     quit(1)
   else:
+    echo "Total: ", plugins.len
     echo "No errors"
 
 proc createHttpClient(): HttpClient =

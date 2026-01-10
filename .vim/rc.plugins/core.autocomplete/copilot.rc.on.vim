@@ -1,4 +1,6 @@
-call dein#add('github/copilot.vim', { 'rev': '206011a8bc5078a02560d5c44177e9849e8f8d6c' })
+if !exists('$TERMUX_VERSION')
+  call dein#add('github/copilot.vim', { 'rev': 'a12fd5672110c8aa7e3c8419e28c96943ca179be' })
+endif
 
 let g:copilot_filetypes = {
 \ '*': v:false,
@@ -13,5 +15,5 @@ let g:copilot_filetypes = {
 \ 'robo1': v:false,
 \ 'shell': v:false,
 \ 'typescript': v:true,
-\ 'vim': v:false,
+\ 'vim': v:true,
 \}

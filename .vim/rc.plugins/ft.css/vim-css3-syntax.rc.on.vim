@@ -1,4 +1,4 @@
-call dein#add('hail2u/vim-css3-syntax', { 'rev': '3b2d6ef0b1c0548451cbc6ce7fcbd84f7031a4a4', 'on_ft': ['css','scss','sass'] })
+call dein#add('hail2u/vim-css3-syntax', { 'rev': 'd990a6731db56df60a69a61b3fc92ee9b7c6a683', 'on_ft': ['css','scss','sass'] })
 
 augroup filetype_css
   autocmd!

@@ -4,7 +4,7 @@ let s:dein_dir = s:bundle_dir . '/repos/github.com/Shougo/dein.vim'
 
 if !isdirectory(s:dein_dir)
   if !executable('git') | echoerr 'missing git' | cquit | endif
-  echomsg 'installing dein'
+  echomsg '[dein] installing'
   call system('git clone https://github.com/Shougo/dein.vim.git ' . s:dein_dir)
 endif
 

@@ -296,3 +296,27 @@ function! Max(...) abort
   call EchoHi(reverse(sort(s:bufnumbers(), 'f'))[0:n-1], 'DiffAdd')
 endfunction
 
+function! JsBeautify()
+  silent %!prettier --parser=babel-ts
+  echo ""
+endfunction
+
+function! JsonBeautify()
+  silent %!prettier --parser=json
+  echo ""
+endfunction
+
+function! HtmlBeautify()
+  silent %!prettier --parser=html
+  echo ""
+endfunction
+
+function! CssBeautify()
+  silent %!prettier --parser=css
+  echo ""
+endfunction
+
+command! JsBeautify call JsBeautify()
+command! JsonBeautify call JsonBeautify()
+command! HtmlBeautify call HtmlBeautify()
+command! CssBeautify call CssBeautify()

@@ -1,4 +1,4 @@
-call dein#add('preservim/tagbar', { 'rev': '7bfffca1f121afb7a9e38747500bf5270e006bb1', 'on_cmd' : 'TagbarToggle' })
+call dein#add('preservim/tagbar', { 'rev': '7bfffca1f121afb7a9e38747500bf5270e006bb1' })
 
 function! s:setup() abort
   let g:tagbar_compact = 1
