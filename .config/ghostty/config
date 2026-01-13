@@ -7,6 +7,7 @@
 theme = Nordfox
 
 background = #262626
+window-decoration = server
 
 #ghostty +list-fonts
 font-family = JetBrainsMono NFM Light
@@ -17,11 +18,21 @@ font-feature = -calt
 font-synthetic-style = false
 
 #ghostty +list-keybinds
+
+# <Up> <Down> <Left> <Right>
 keybind = cmd+k=text:\x1b[A
 keybind = cmd+j=text:\x1b[B
 keybind = cmd+shift+h=text:\x1b[D
 keybind = cmd+l=text:\x1b[C
+
+# <Alt-a> <Alt-d>
 keybind = cmd+a=text:\x1ba
 keybind = cmd+d=text:\x1bd
 
-window-decoration = server
+# <Ctrl-c> <Ctrl-x>
+keybind = cmd+c=text:\x03
+keybind = cmd+x=text:\x18
+
+# <Ctrl-f> <Ctrl-t>
+keybind = cmd+f=text:\x06
+keybind = cmd+t=text:\x14

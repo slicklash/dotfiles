@@ -1,4 +1,4 @@
-call dein#add('yegappan/lsp', { 'rev': '090cbc8bf8b9212aad8ff63af235bf72c059d441' })
+call dein#add('yegappan/lsp', { 'rev': '4e5c0877546a9e4f8e7a68e837cd30a90a2329ad' })
 
 " \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
 " \ 'rust': ['rustup', 'run', 'stable', 'rls'],

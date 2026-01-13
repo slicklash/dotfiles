@@ -74,9 +74,9 @@ function! s:tmux_exec() abort
   elseif &filetype == 'er'
     map <buffer> <Leader>e <cmd>call _tmux_send('docker run --rm -i ghcr.io/marzocchi/erd:latest -f png < %:p >\| /tmp/er.png && o /tmp/er.png')<Bar>redraw!<C-M>
   elseif &filetype == 'robo1'
-    map <buffer> <Leader>e <cmd>call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>m <cmd>call _tmux_send(' ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
-    map <buffer> <Leader>M <cmd>call _tmux_send(' mtime ts-node --skipProject $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>e <cmd>call _tmux_send('tsx $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>m <cmd>call _tmux_send('tsx $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
+    map <buffer> <Leader>M <cmd>call _tmux_send('mtime tsx $HOME/code/robo1/src/robo-lang/interpreter.ts %:p')<Bar>redraw!<C-M>
   endif
   map <buffer> <Leader>r :execute 'silent !tmux send-keys -t 1 Up Enter'<Bar>redraw!<C-M>
 endfunction

@@ -19,6 +19,7 @@ call s:CmdAbbrev('Wq',   'wq')
 call s:CmdAbbrev('Qa',   'qa')
 call s:CmdAbbrev('QA',   'qa')
 call s:CmdAbbrev('Qall', 'qall')
+call s:CmdAbbrev('So',   'so')
 
 call s:CmdAbbrev('SS', 'mksession!')
 call s:CmdAbbrev('SR', 'source Session.vim')

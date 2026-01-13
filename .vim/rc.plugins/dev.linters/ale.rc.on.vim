@@ -68,11 +68,19 @@ endfunction
 autocmd User InitPost ++once call s:setup()
 
 function! MyALEFix() abort
-  if &filetype =~? 'typescript\|javascript'
-    call OrganizeImports()
-  endif
-
   ALEFix
+
+  if &filetype =~? 'typescript\|javascript'
+    let l:view = winsaveview()
+    call OrganizeImports()
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    if l:counts.error == 0
+      silent! undojoin | silent keepjumps %!prettier --stdin-filepath %
+    endif
+    call winrestview(l:view)
+  endif
 endfunction
 
 function! OrganizeImports(...) abort

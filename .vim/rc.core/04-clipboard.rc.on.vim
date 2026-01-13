@@ -3,18 +3,18 @@ if has('clipboard') && !exists('$TMUX')
 endif
 
 if exists('$TERMUX_VERSION')
-  vnoremap <silent> <C-C> :w !termux-clipboard-set<CR><CR>
-  nnoremap <silent> <C-V> :r !termux-clipboard-get<CR>
+  vnoremap <silent> <C-c> :w !termux-clipboard-set<CR><CR>
+  nnoremap <silent> <C-v> :r !termux-clipboard-get<CR>
 else
-  vnoremap <silent> <C-X> "+x
-  vnoremap <silent> <C-C> "+y
-  nnoremap <silent> <C-V> "+p
-  inoremap <silent> <C-V> <C-r>+
+  vnoremap <silent> <C-x> "+x
+  vnoremap <silent> <C-c> "+y
+  nnoremap <silent> <C-v> "+p
+  inoremap <silent> <C-v> <C-r>+
 endif
 
-cnoremap <C-V> <C-R>+
-nnoremap <C-Q> <C-V>
-vnoremap <C-Q> <C-V>
+cnoremap <C-v> <C-R>+
+nnoremap <C-q> <C-V>
+vnoremap <C-q> <C-V>
 
 if exists('*paste#paste_cmd')
   execute 'inoremap <script> <C-V>' paste#paste_cmd['i']
