@@ -1,74 +1,130 @@
 {
-    "telemetry.enableTelemetry": false,
-    "telemetry.enableCrashReporter": false,
-    "telemetry.telemetryLevel": "off",
-    "redhat.telemetry.enabled": false,
+  "telemetry.enableTelemetry": false,
+  "telemetry.enableCrashReporter": false,
+  "telemetry.telemetryLevel": "off",
+  "redhat.telemetry.enabled": false,
 
-    "vim.leader": ",",
-    "vim.useSystemClipboard": true,
-    "vim.useCtrlKeys": false,
-    "vim.insertModeKeyBindings": [
-        { "before": ["j", "j"], "after": ["<Esc>"] }
-    ],
-    "vim.normalModeKeyBindingsNonRecursive": [
-        { "before": ["<space>", "/"],     "after ": [], "commands": [ { "command": "workbench.view.search", "args": [] } ] },
-        { "before": ["<space>", "f" ],    "after ": [], "commands": [ { "command": "workbench.action.quickOpen", "args": [] } ] },
-        { "before": ["<space>", "v"],     "after ": [], "commands": [ { "command": "workbench.view.explorer", "args": [] } ] },
-        { "before": ["<space>", "t"],     "after ": [], "commands": [ { "command": "workbench.action.tasks.runTask", "args": [] } ] },
-        { "before": ["leader", "v"],      "after ": [], "commands": [ { "command": "workbench.action.splitEditor", "args": [] } ] },
-        { "before": ["leader", "w"],      "after ": [], "commands": [ { "command": "workbench.action.files.save", "args": [] } ] },
-        { "before": ["leader", "k"],      "after ": [], "commands": [ { "command": "editor.action.commentLine", "args": [] } ] },
-        { "before": ["leader", "c", "c"], "after ": [], "commands": [ { "command": "workbench.action.closeActiveEditor", "args": [] } ] },
-        { "before": ["leader", "x"],      "after ": [], "commands": [ { "command": "editor.action.fixAll", "args": [] } ] },
-        { "before": ["leader", "g", "g"], "after ": [], "commands": [ { "command": "workbench.scm.focus", "args": [] } ] }
-    ],
-
-    "window.zoomLevel": 1,
-    "editor.fontFamily": "'JetBrains Mono NL Light', 'monospace', monospace",
-    "editor.lineNumbers": "relative",
-    "editor.codeLens": false,
-    "editor.inlineSuggest.enabled": true,
-    "editor.multiCursorModifier": "ctrlCmd",
-    "editor.renderControlCharacters": false,
-    "editor.renderWhitespace": "none",
-
-    "workbench.colorTheme": "Visual Studio Dark",
-    "workbench.editor.enablePreview": false,
-    "workbench.sideBar.location": "right",
-    "workbench.startupEditor": "newUntitledFile",
-    "workbench.statusBar.visible": true,
-
-    "git.openRepositoryInParentFolders": "always",
-    "gitlens.advanced.messages": { "suppressShowKeyBindingsNotice": true },
-    "gitlens.keymap": "chorded",
-
-    "python.defaultInterpreterPath": "/home/slicklash/.pyenv/versions/3.13.1/bin/python",
-    "go.toolsManagement.autoUpdate": true,
-    "gradle.debug": true,
-    "nim.lintOnSave": true,
-    "react-native-tools.showUserTips": false,
-    "scm.inputFontSize": 14,
-    "files.watcherExclude": {
-        "**/.bloop": true,
-        "**/.metals": true,
-        "**/.ammonite": true
+  "vim.leader": ",",
+  "vim.useSystemClipboard": true,
+  "vim.useCtrlKeys": false,
+  "vim.insertModeKeyBindings": [{ "before": ["j", "j"], "after": ["<Esc>"] }],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<space>", "/"],
+      "after ": [],
+      "commands": [{ "command": "workbench.view.search", "args": [] }]
     },
-    "makefile.configureOnOpen": false,
-    "github.copilot.enable": {
-      "*": false,
-      "typescript": true,
-      "javascript": true,
-      "plaintext": false,
-      "markdown": false,
-      "scminput": false
+    {
+      "before": ["<space>", "f"],
+      "after ": [],
+      "commands": [{ "command": "workbench.action.quickOpen", "args": [] }]
     },
-    "lldb.suppressUpdateNotifications": true,
-    "jest.runMode": "on-demand",
-    "python.analysis.aiCodeActions": {
+    {
+      "before": ["<space>", "v"],
+      "after ": [],
+      "commands": [{ "command": "workbench.view.explorer", "args": [] }]
+    },
+    {
+      "before": ["<space>", "t"],
+      "after ": [],
+      "commands": [{ "command": "workbench.action.tasks.runTask", "args": [] }]
+    },
+    {
+      "before": ["leader", "v"],
+      "after ": [],
+      "commands": [{ "command": "workbench.action.splitEditor", "args": [] }]
+    },
+    {
+      "before": ["leader", "w"],
+      "after ": [],
+      "commands": [{ "command": "workbench.action.files.save", "args": [] }]
+    },
+    {
+      "before": ["leader", "k"],
+      "after ": [],
+      "commands": [{ "command": "editor.action.commentLine", "args": [] }]
+    },
+    {
+      "before": ["leader", "c", "c"],
+      "after ": [],
+      "commands": [
+        { "command": "workbench.action.closeActiveEditor", "args": [] }
+      ]
+    },
+    {
+      "before": ["leader", "x"],
+      "after ": [],
+      "commands": [{ "command": "editor.action.fixAll", "args": [] }]
+    },
+    {
+      "before": ["leader", "g", "g"],
+      "after ": [],
+      "commands": [{ "command": "workbench.scm.focus", "args": [] }]
+    },
+    {
+     "before": ["leader", "l"],
+     "after": [],
+     "commands": [{ "command": "workbench.action.debug.stepOver", "args": [] }] 
+    },
+    {
+     "before": ["leader", "i"],
+     "after": [],
+     "commands": [{ "command": "workbench.action.debug.stepInto", "args": [] }] 
+    },
+    {
+     "before": ["leader", "o"],
+     "after": [],
+     "commands": [{ "command": "workbench.action.debug.stepOut", "args": [] }] 
+    },
+    {
+     "before": ["leader", ";"],
+     "after": [],
+     "commands": [{ "command": "workbench.action.debug.continue", "args": [] }] 
+    },
+  ],
 
-      "implementAbstractClasses": true
-    },
-    "github.copilot.advanced": {
+  "window.zoomLevel": 1,
+  "editor.fontFamily": "'JetBrainsMono NFM Light', 'monospace', monospace",
+  "editor.lineNumbers": "relative",
+  "editor.codeLens": false,
+  "editor.inlineSuggest.enabled": true,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.renderControlCharacters": false,
+  "editor.renderWhitespace": "none",
 
-    },
+  "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.editor.enablePreview": false,
+  "workbench.sideBar.location": "right",
+  "workbench.startupEditor": "newUntitledFile",
+  "workbench.statusBar.visible": true,
+
+  "git.openRepositoryInParentFolders": "always",
+  "gitlens.advanced.messages": { "suppressShowKeyBindingsNotice": true },
+  "gitlens.keymap": "chorded",
+
+  "go.toolsManagement.autoUpdate": true,
+  "gradle.debug": true,
+  "nim.lintOnSave": true,
+  "react-native-tools.showUserTips": false,
+  "scm.inputFontSize": 14,
+  "files.watcherExclude": {
+    "**/.bloop": true,
+    "**/.metals": true,
+    "**/.ammonite": true
+  },
+  "makefile.configureOnOpen": false,
+  "github.copilot.enable": {
+    "*": false,
+    "typescript": true,
+    "javascript": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  "lldb.suppressUpdateNotifications": true,
+  "jest.runMode": "on-demand",
+  "python.analysis.aiCodeActions": {
+    "implementAbstractClasses": true
+  },
+  "github.copilot.advanced": {},
 }

@@ -29,10 +29,15 @@ keybind = cmd+l=text:\x1b[C
 keybind = cmd+a=text:\x1ba
 keybind = cmd+d=text:\x1bd
 
-# <Ctrl-c> <Ctrl-x>
+# change cmd -> ctrl
 keybind = cmd+c=text:\x03
 keybind = cmd+x=text:\x18
 
-# <Ctrl-f> <Ctrl-t>
+keybind = cmd+/=text:\x1f
+
 keybind = cmd+f=text:\x06
+keybind = cmd+n=text:\x0e
+keybind = cmd+q=text:\x11
+keybind = cmd+r=text:\x12
 keybind = cmd+t=text:\x14
+keybind = cmd+y=text:\x19

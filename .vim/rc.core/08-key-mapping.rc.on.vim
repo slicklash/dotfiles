@@ -1,3 +1,7 @@
+" change leader key
+let mapleader = ","
+nnoremap <C-E> ,
+
 " escape to normal mode
 inoremap jj <ESC>l
 
@@ -14,16 +18,12 @@ nnoremap <leader>W <cmd>wa!<CR>
 nnoremap <leader>v <C-w>v<C-w>l
 nnoremap <leader>s <C-w>s<C-w>j
 
-" change cursor position in insert mode
-inoremap <C-h> <left>
-inoremap <C-l> <right>
-
 " start/end of line
 nnoremap H ^
 nnoremap L g_
 
 " open new tab
-nnoremap <silent> <C-N> :tabnew<CR>
+nnoremap <silent> <C-n> :tabnew<CR>
 
 " vertical auto center
 nnoremap <silent> n nzz
@@ -40,34 +40,35 @@ cnoremap <C-j> <down>
 cnoremap <C-k> <up>
 
 " navigate windows
-nnoremap <C-J> <C-W>j
-nnoremap <C-K> <C-W>k
-nnoremap <C-L> <C-W>l
-nnoremap <C-H> <C-W>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap <C-h> <C-w>h
 
 " manage windows
-nnoremap <silent> <leader>co <C-W>o
+nnoremap <silent> <leader>co <C-w>o
 nnoremap <silent> <leader>cc <cmd>close<CR>
 nnoremap <silent> <leader>cw <cmd>cclose<CR>
-nnoremap <silent> <leader>ml <C-W>L
-nnoremap <silent> <leader>mh <C-W>H
-nnoremap <silent> <leader>mk <C-W>K
-nnoremap <silent> <leader>mj <C-W>J
+nnoremap <silent> <leader>ml <C-w>L
+nnoremap <silent> <leader>mh <C-w>H
+nnoremap <silent> <leader>mk <C-w>K
+nnoremap <silent> <leader>mj <C-w>J
 
 " resize windows
-nnoremap <silent> <F9>  <cmd>vertical resize -10<CR>
-nnoremap <silent> <F10> <cmd>resize -10<CR>
-nnoremap <silent> <F11> <cmd>resize +10<CR>
-nnoremap <silent> <F12> <cmd>vertical resize +10<CR>
-
-noremap <S-Left> <C-w><
-noremap <S-Down> <C-w>-
-noremap <S-Up> <C-w>+
-nnoremap <C-Right> :vertical resize+10<CR>
+noremap <S-Left> <cmd>vertical resize -10<CR>
+noremap <S-Right> <cmd>vertical resize +10<CR>
+noremap <S-Down> <cmd>resize -10<CR>
+noremap <S-Up> <cmd>resize +10<CR>
 
 " don't exit visual mode while shifting blocks
 vnoremap < <gv
 vnoremap > >gv
+
+" vimdiff
+nnoremap <silent> gr <cmd>diffget REMOTE<CR>
+nnoremap <silent> gl <cmd>diffget LOCAL<CR>
+nnoremap <silent> <leader>do <cmd>windo diffthis<CR>
+nnoremap <silent> <leader>dc <cmd>diffoff<CR>
 
 " toggle problematic whitespace
 nnoremap <silent> <leader>tl <cmd>call Toggle_list()<CR>
@@ -80,8 +81,6 @@ endfunction
 nnoremap <silent> <leader>` <cmd>call Preserve("%s/\\s\\+$//e")<CR>
 
 " surround with quotes
-" nnoremap <leader>" ciw"<C-r>""<Esc>
-" vnoremap <leader>" c"<C-r>""<Esc>
 nnoremap <leader>' ciw'<C-r>"'<Esc>
 vnoremap <leader>' c'<C-r>"'<Esc>
 
@@ -116,3 +115,10 @@ nnoremap <silent> <space>k <cmd>call LookupKeyword()<CR><cmd>redraw!<CR>
 
 nnoremap <silent> XX <cmd>call DeleteFile()<cr>
 vnoremap <silent> XX <cmd>call DeleteFiles()<cr>
+
+augroup special_windows
+  autocmd!
+  autocmd FileType qf,fugitive wincmd J
+  autocmd FileType help,fugitive,git
+        \ nnoremap <buffer> q <Cmd>close<CR>
+augroup END

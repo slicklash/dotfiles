@@ -1,4 +1,3 @@
-" Vim color file
 " Maintainer: slicklash@gmail.com
 
 set background=dark
@@ -25,8 +24,6 @@ function! s:hi(group, fg, bg, gui)
     exec l:hi
 endfunction
 
-let s:candle_light = strftime('%H') > 23 || strftime('%H') < 8 ? 1 : 0
-
 let s:color = map({
     \ 'FG'           : '#949494 246',
     \ 'BG'           : '#262626 235',
@@ -47,38 +44,6 @@ let s:color = map({
     \ 'DARKPURPLE'   : '#8c3561 132',
     \ 'VIOLET'       : '#bd78af 141',
 \ }, {key, val -> split(val)})
-
-
-if s:candle_light == 1
-    " let s:FG = '#808080 245'
-    " let s:BG = '#121212 233'
-    " let s:BLUE = '#618eb0 67'
-    " let s:WHITE = '#bababa 251'
-    " let s:ORANGE = '#E3A230 179'
-    " let s:YELLOW = '#f8fa83 185'
-    " let s:PURPLE = '#896492 139'
-    " let s:GREEN = '#53723C 65'
-    " let s:RED = '#b14646 167'
-    " let s:DARKGREY = '#404040 238'
-    "
-    " let s:LINENO_FG = '#242424 237'
-    " let s:LINENO_BG = s:color.BG
-    " let s:STATUSLINE_FG = '#646464 244'
-    " let s:STATUSLINE_NC_FG = '#4a4a4a 239'
-    " let s:FOLD_FG = '#5e6b79 234'
-    " let s:FOLD_BG = '#384048 239'
-    " let s:MATCHPAREN_FG = '#bababa 253'
-    " let s:MATCHPAREN_BG = '#8c3561 132'
-    " let s:WINDOW_SEPARATOR_BG = '#262626 235'
-    " let s:CURSOR_LINE = '#2f2e2d 234'
-    "
-    " call s:hi('Error', '', '#962634 238', 'none')
-    " call s:hi('ErrorMsg', s:color.WHITE, '#962634 52', 'none')
-    " call s:hi('ModeMsg', 'red 1', '', '')
-    " call s:hi('MoreMsg', '#53723C 255', '', '')
-    " call s:hi('WarningMsg', '#E3A230 255', '', '')
-    " call s:hi('Question', '#53723C 255', '', '')
-endif
 
 let s:SELECTION_BG        = s:color.DARKGREY
 let s:LINENO_FG           = s:color.DARKGREY
@@ -123,7 +88,7 @@ call s:hi('Pmenu', s:STATUSLINE_FG, s:color.BLACK, '')
 call s:hi('PmenuSel', s:color.BLACK, s:color.WHITE, '')
 hi! link WildMenu PmenuSel
 hi! link QuickFixLine PmenuSel
-" call s:hi('WildMenu', s:color.BLACK, s:color.WHITE, '')
+
 call s:hi('MenuSel', '', s:color.BLACK, '')
 call s:hi('MenuMatch', s:color.DARKPURPLE, '', '')
 
@@ -258,7 +223,7 @@ let g:lightline#colorscheme#aloneinthedark#palette = s:p
 
 " }}}
 
-
+" less is more
 hi! link Identifier     Keyword
 hi! link Statement      Keyword
 hi! link Conditional    Keyword
@@ -424,10 +389,6 @@ hi LspDiagInlineInfo ctermbg=235
 
 hi! link LspDiagSignErrorText Todo
 hi! link LspDiagSignWarningText Number
-
-" sneak
-hi! link Sneak Search
-hi! link SneakCurrent CurSearch
 
 " defx
 call s:hi('Defx_filename_3_directory', s:color.BLUE, '', '')

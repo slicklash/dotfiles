@@ -2,6 +2,6 @@
 
 let g:termdebug_wide=163
 
-noremap <F5> <cmd>Continue<CR>
-noremap <F7> <cmd>:Step<CR>
-noremap <F8> <cmd>:Over<CR>
+noremap <leader>; <cmd>Continue<CR>
+noremap <leader>l <cmd>Step<CR>
+noremap <leader>o <cmd>Over<CR>

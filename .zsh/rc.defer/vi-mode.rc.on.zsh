@@ -1,6 +1,6 @@
 setopt vi
 
-jj-escape() {
+function jj-escape() {
   zle vi-cmd-mode
   zle forward-char
 }
