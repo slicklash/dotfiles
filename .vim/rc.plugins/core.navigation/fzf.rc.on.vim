@@ -21,7 +21,7 @@ function! s:setup() abort
 
   nnoremap <Space>f <cmd>call _fzf()<CR>
   nnoremap <Space>F <cmd>call _fzf({'ft': '?'})<CR>
-  nnoremap <Space>a <cmd>call _fzf({'dir': GetProjectDir()})<CR>
+  nnoremap <Space>p <cmd>call _fzf({'dir': GetProjectDir()})<CR>
   nnoremap <Space>m <cmd>call SearchModules()<CR>
   nnoremap <Space>A <cmd>call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
 
@@ -41,9 +41,9 @@ function! s:setup() abort
 
   nnoremap <Leader>fd <cmd>call _fzf({'grep': expand('<cword>')})<CR>
   nnoremap <Leader>fa <cmd>call _fzf({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
-  nnoremap <Space>p <cmd>call _fzf({'grep': expand('%:t:r')})<CR>
 
   nnoremap <Space>/ <cmd>call SearchIn('')<CR>
+  nnoremap <Space>s <cmd>call SearchIn('')<CR>
   nnoremap <Space>? <cmd>call SearchIn('', v:none, {'ft': '?'})<CR>
   nnoremap <Space>\ <cmd>call SearchIn(GetProjectDir())<CR>
   nnoremap <Space>\| <cmd>call SearchIn(GetProjectDir(), v:none, {'ft': '?'})<CR>

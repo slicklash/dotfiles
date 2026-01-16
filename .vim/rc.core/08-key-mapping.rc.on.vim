@@ -1,7 +1,3 @@
-" change leader key
-let mapleader = ","
-nnoremap <C-E> ,
-
 " escape to normal mode
 inoremap jj <ESC>l
 

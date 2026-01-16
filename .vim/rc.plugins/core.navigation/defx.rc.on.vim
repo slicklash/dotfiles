@@ -14,7 +14,7 @@ catch
   cquit
 endtry
 
-call dein#add('Shougo/defx.nvim', { 'rev': '8e53802a2691f8629ae08aca970595b6522aca46' }) "lock-rev
+call dein#add('Shougo/defx.nvim', { 'rev': '1b17dc334294ef0da74ffa5a05d425ffcaf39a3f' })
 if !has('nvim') && !dein#tap('nvim-yarp')
   call dein#add('roxma/nvim-yarp', { 'rev': 'bb5f5e038bfe119d3b777845a76b0b919b35ebc8' })
   call dein#add('roxma/vim-hug-neovim-rpc', { 'rev': '93ae38792bc197c3bdffa2716ae493c67a5e7957' })
@@ -93,15 +93,29 @@ function! s:tmux_open_codex() abort
   call system('tmux send-keys -t ' . shellescape(l:newpane) . ' ' . shellescape('codex ' . l:file) . ' C-m')
 endfunction
 
+function! s:yank_to_register(reg) abort
+  if a:reg ==# '"'
+    let l:path = get(defx#get_candidate(), 'action__path')
+    let l:cl = 'String'
+  else
+    let l:path = fnamemodify(get(defx#get_candidate(), 'action__path'), ':p:h')
+    let l:cl = 'Directory'
+  endif
+  call setreg(a:reg, l:path)
+  call EchoHi('Yanked: ' . l:path, l:cl)
+endfunction
+
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> ,k defx#do_action('cd', ['..'])
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
   nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
 
-  nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+  nnoremap <silent><buffer> y  <cmd>call <SID>yank_to_register('"')<CR>
+  nnoremap <silent><buffer> yy <cmd>call <SID>yank_to_register('g')<CR>
+
   nnoremap <silent><buffer><expr> gh defx#do_action('cd')
-  nnoremap <silent><buffer><expr> gy defx#do_action('cd', [fnameescape(getreg('"'))])
+  nnoremap <silent><buffer><expr> gy defx#do_action('cd', [fnameescape(getreg('g'))])
   nnoremap <silent><buffer><expr> gv defx#do_action('cd', [expand('~/.vim')])
   nnoremap <silent><buffer><expr> gc defx#do_action('cd', [expand('~/code')])
   nnoremap <silent><buffer><expr> gd defx#do_action('cd', [expand('~/Downloads')])
@@ -122,7 +136,9 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> r defx#do_action('rename')
 
   nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
+  nnoremap <silent><buffer><expr> H defx#do_action('close_tree')
   nnoremap <silent><buffer><expr> l defx#do_action('open_tree')
+  nnoremap <silent><buffer><expr> L defx#do_action('open_tree', 'recursive:5')
   nnoremap <silent><buffer><expr> E defx#do_action('open', 'MyDefxVsplit')
   nnoremap <silent><buffer><expr> J 'j' . defx#do_action('open', 'MyDefxPreview')
   nnoremap <silent><buffer><expr> K 'k' . defx#do_action('open', 'MyDefxPreview')

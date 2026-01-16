@@ -391,10 +391,8 @@ hi! link LspDiagSignErrorText Todo
 hi! link LspDiagSignWarningText Number
 
 " defx
-call s:hi('Defx_filename_3_directory', s:color.BLUE, '', '')
-call s:hi('Defx_filename_3_directory_icon', s:color.BLUE, '', '')
-call s:hi('Defx_mark_3_directory', s:color.BLUE, '', '')
-call s:hi('Defx_filename', s:color.BLUE, '', '')
+call s:hi('defx_filename_directory', s:color.BLUE, '', '')
+call s:hi('defx_icon_directory_icon', s:color.BLUE, '', '')
 
 " Tagbar
 call s:hi('TagbarSignature', s:color.GREY, '', '')

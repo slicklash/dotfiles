@@ -12,22 +12,22 @@ nnoremap ? ?\v
 vnoremap ? ?\v
 
 " stop highlighting search results
-nnoremap <silent> <leader>, <cmd>nohlsearch<CR>
+nnoremap <silent> <leader>, :nohlsearch<CR>
 
 " replace selection
-vnoremap <C-r> "hy<cmd>%s#\V<C-r>=escape(@h,'#\')<CR>##gc<left><left><left>
+vnoremap <C-r> "hy:%s#\V<C-r>=escape(@h,'#\')<CR>##gc<left><left><left>
 
 " replace last yanked
-nnoremap <C-y> <cmd>%s#\V<C-r>=escape(@0,'#\')<CR>##gc<left><left><left>
-vnoremap <C-y> <cmd>s#\V<C-r>=escape(@0,'#\')<CR>##gc<left><left><left>
+nnoremap <C-y> :%s#\V<C-r>=escape(@0,'#\')<CR>##gc<left><left><left>
+vnoremap <C-y> :s#\V<C-r>=escape(@0,'#\')<CR>##gc<left><left><left>
 
 " replace last searched
 if has('win32')
-  nnoremap <C-/> <cmd>%s#<C-r>/##gc<left><left><left>
-  vnoremap <C-/> <cmd>s#<C-r>/##gc<left><left><left>
+  nnoremap <C-/> :%s#<C-r>/##gc<left><left><left>
+  vnoremap <C-/> :s#<C-r>/##gc<left><left><left>
 else
-  nnoremap <C-_> <cmd>%s#<C-r>/##gc<left><left><left>
-  vnoremap <C-_> <cmd>s#<C-r>/##gc<left><left><left>
+  nnoremap <C-_> :%s#<C-r>/##gc<left><left><left>
+  vnoremap <C-_> :s#<C-r>/##gc<left><left><left>
 endif
 
 " use rg
@@ -55,9 +55,9 @@ function! GrepInProject(...) abort
 endfunction
 
 nnoremap <silent> <leader>fw <cmd>call Grep(expand('<cword>'))<CR>
-vnoremap <silent> <C-f> "hy<cmd>call Grep(@h)<CR>
+vnoremap <silent> <C-f> "hy:call Grep(@h)<CR>
 nnoremap <silent> <leader>fp <cmd>call GrepInProject(expand('<cword>'))<CR>
-vnoremap <silent> <leader>fp "hy<cmd>call GrepInProject(@h)<CR>
+vnoremap <silent> <leader>fp "hy:call GrepInProject(@h)<CR>
 
 command! -nargs=+ GR call Grep(<q-args>)
 command! -nargs=+ GP call GrepInProject(<q-args>)
@@ -67,5 +67,5 @@ function! Rep(search, target) abort
   execute 'cfdo %s#' . a:search . '#' . a:target . '#gec | update'
 endfunction
 
-vnoremap <C-t> "hy<cmd>cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
-nnoremap <leader>rf <cmd>cfdo %s#<C-r>/##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
+vnoremap <C-t> "hy:cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
+nnoremap <leader>rf :cfdo %s#<C-r>/##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>

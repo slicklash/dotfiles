@@ -1,5 +1,9 @@
 syntax enable
 
+" change leader key
+let mapleader = ","
+nnoremap <C-E> ,
+
 set encoding=utf-8
 set fileencodings=utf-8,ucs-bom,latin1
 set fileformats=unix,dos,mac

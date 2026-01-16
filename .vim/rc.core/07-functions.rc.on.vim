@@ -107,18 +107,13 @@ function! EchoHi(msg, ...) abort
   echohl None
 endfunction
 
-function! OpenUrl(url) abort
-  execute 'silent !firefox "' . a:url . '" > /dev/null 2>&1 &'
-  redraw!
-endfunction
-
 function! LookupKeyword() abort
   let url = get(b:, 'keyword_lookup_url')
   if empty(url)
     call EchoHi('b:keyword_lookup_url is not defined', 'ErrorMsg')
     return
   endif
-  call OpenUrl(printf(url, expand('<cword>')))
+  call dist#vim9#Open(printf(url, expand('<cword>')))
 endfunction
 
 function! ExpandSnippet(file, snip, params) abort

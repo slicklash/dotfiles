@@ -47,7 +47,7 @@ case "$OSTYPE" in
     alias pu='apt upgrade'
     ;;
   darwin*)
-    alias pv='brew outdated'
+    alias pv='brew update && brew outdated'
     alias pu='brew upgrade'
     ;;
 esac
