@@ -169,3 +169,5 @@ fzs() {
   IFS=$'\n' files=($(FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --glob "!.cache" ~/' && fzf-tmux --query="$1" --multi --select-1 --exit-0))
   [[ -n "$files" ]] && source "${files[@]}"
 }
+
+source <(fzf --zsh)

@@ -1,25 +1,3 @@
-function scp117 {
-  [[ "$#" != 1  ]] && return 1
-  scp -P 8022 $1 192.168.1.117:~/tmp/
-}
-
-function scpf117 {
-  [[ "$#" != 2  ]] && return 1
-  scp -P 8022 192.168.1.117:$1 $2
-}
-
-function scp109 {
-  [[ "$#" != 1  ]] && return 1
-  scp -P 8022 $1 192.168.1.109:~/tmp/
-}
-
-function scpf109 {
-  [[ "$#" != 2  ]] && return 1
-  scp -P 8022 192.168.1.109:$1 $2
-}
-
-function gi() { curl https://www.gitignore.io/api/$@ ; }
-
 function v_set_thumb() {
   if [ -z "$2" ]; then
     echo "Usage: $0 <time> <input>"
@@ -67,26 +45,6 @@ function v_replace_audio() {
         common_args=("${common_args[@]}" -i "$audio")
     fi
     common_args=("${common_args[@]}" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0)
-
-    ffmpeg "${common_args[@]}" "$output"
-  fi
-}
-
-function v_compress() {
-  if [ -z "$2" ]; then
-    echo "Usage: $0 <input> <out> <q> <fps> <duration>"
-  else
-    local input="$1"
-    local output="$2"
-    local quality="${3:-20}"
-    local fps="${4:-25}"
-    local duration="$5"
-
-    local common_args=(-i "$input" -c:v libx265 -preset veryslow -crf "$quality" \
-        -x265-params "fps=$fps:vbv-bufsize=12800:vbv-maxrate=6000:aq-mode=3" \
-        -c:a copy)
-
-    [[ -n "$duration" ]] && common_args=(-t "$duration" "${common_args[@]}")
 
     ffmpeg "${common_args[@]}" "$output"
   fi
@@ -250,17 +208,22 @@ function img2b64() {
   echo "\n}" >> "$tmp_json"
 
   mv "$tmp_json" "$output_file"
+
+  echo "[+] Done"
 }
 
-# Usage: tmux-run-all 'cmd1' 'cmd2' ... 'cmdN'
-function tmux-run-all() {
+function _tmux-run-all-in-win() {
+  local win="$1"; shift
+
   (( $# >= 2 )) || { print -u2 "error: need >= 2 commands"; return 2; }
   [[ -n ${TMUX-} ]] || { print -u2 "error: not in tmux"; return 2; }
+  [[ -n "$win" ]] || { print -u2 "error: missing window id"; return 2; }
 
-  local win target
-  win="$(tmux display-message -p '#{window_id}')" || return 1
+  # cleanup in the target window
+  tmux-run-clean -t "$win"
 
-  # left-most pane in this window
+  # pick left-most pane in target window
+  local target
   target="$(
     tmux list-panes -t "$win" -F '#{pane_id} #{pane_left}' \
     | sort -nk2,2 | head -n1 | awk '{print $1}'
@@ -285,6 +248,9 @@ function tmux-run-all() {
   pcts=("${(@s:,:)spec}")
   (( ${#pcts} == n-1 )) || { print -u2 "error: spec for n=$n must have $((n-1)) values"; return 1; }
 
+  local run_id
+  run_id="$(tmux display-message -p '#S')" || return 1
+
   panes=("$target")
   local last="$target" new i
   for i in {1..$((n-1))}; do
@@ -293,11 +259,141 @@ function tmux-run-all() {
     last="$new"
   done
 
-  # run commands top -> bottom
-  local i
+  for pane in "${panes[@]}"; do
+    tmux set-option -p -t "$pane" @run_all_managed 1
+    tmux set-option -p -t "$pane" @run_all_id "$run_id"
+  done
+
   for (( i=1; i<=${#cmds}; i++ )); do
     tmux send-keys -t "${panes[$i]}" -- "${cmds[$i]}" C-m
   done
+}
+
+function tmux-run-all() {
+  (( $# >= 2 )) || { print -u2 "error: need >= 2 commands"; return 2; }
+  [[ -n ${TMUX-} ]] || { print -u2 "error: not in tmux"; return 2; }
+
+  local win
+  win="$(tmux display-message -p '#{window_id}')" || return 1
+  _tmux-run-all-in-win "$win" "$@"
+}
+
+function tmux-run-all-in() {
+  (( $# >= 3 )) || { print -u2 "error: usage: tmux-run-all-in <window> <cmd1> <cmd2> ..."; return 2; }
+  [[ -n ${TMUX-} ]] || { print -u2 "error: not in tmux"; return 2; }
+
+  local win_target="$1"; shift
+  local win
+  win="$(tmux display-message -p -t "$win_target" '#{window_id}' 2>/dev/null)" \
+    || { print -u2 "error: unknown window target: $win_target"; return 2; }
+
+  _tmux-run-all-in-win "$win" "$@"
+}
+
+function _tmux-run-clean-in-win() {
+  local win="$1"
+
+  [[ -n $TMUX ]] || { print -u2 "not in tmux"; return 2 }
+  [[ -n "$win" ]] || { print -u2 "error: missing window id"; return 2 }
+
+  local run_id panes=() p left pid managed rid
+  run_id="$(tmux display-message -p '#S')" || return 1
+
+  # collect all managed panes for this run IN THIS WINDOW ONLY
+  while IFS=' ' read -r p left pid managed rid; do
+    [[ $managed == 1 && $rid == $run_id ]] || continue
+    panes+=("$p")
+  done < <(tmux list-panes -t "$win" -F '#{pane_id} #{pane_left} #{pane_pid} #{@run_all_managed} #{@run_all_id}')
+
+  (( ${#panes[@]} )) || return 0
+
+  # survivor = left-most pane (in this window)
+  local survivor="${panes[1]}"
+  local min_left=99999
+  while IFS=' ' read -r p left; do
+    # only consider panes that are in our managed list
+    if [[ " ${panes[*]} " == *" $p "* ]]; then
+      (( left < min_left )) && survivor="$p" min_left=$left
+    fi
+  done < <(tmux list-panes -t "$win" -F '#{pane_id} #{pane_left}')
+
+  local shell_pid
+  local -a child_pids
+
+  # kill **all child processes of panes**, including survivor, but not the shell itself
+  for p in "${panes[@]}"; do
+    shell_pid="$(tmux display-message -p -t "$p" '#{pane_pid}' 2>/dev/null)" || continue
+    child_pids=($(pgrep -P "$shell_pid"))
+    [[ ${#child_pids[@]} -gt 0 ]] && kill -TERM "${child_pids[@]}" 2>/dev/null
+  done
+
+  sleep 0.2
+
+  # ensure all children are dead
+  for p in "${panes[@]}"; do
+    shell_pid="$(tmux display-message -p -t "$p" '#{pane_pid}' 2>/dev/null)" || continue
+    child_pids=($(pgrep -P "$shell_pid"))
+    [[ ${#child_pids[@]} -gt 0 ]] && kill -KILL "${child_pids[@]}" 2>/dev/null
+  done
+
+  # kill panes (scoped to window; avoid touching other windows)
+  for p in "${panes[@]}"; do
+    [[ "$p" == "$survivor" ]] && continue
+    tmux list-panes -t "$win" -F '#{pane_id}' 2>/dev/null | grep -qx "$p" \
+      && tmux kill-pane -t "$p"
+  done
+
+  tmux send-keys -t "$survivor" clear C-m
+}
+
+function tmux-run-clean() {
+  [[ -n $TMUX ]] || { print -u2 "not in tmux"; return 2 }
+  local win
+  win="$(tmux display-message -p '#{window_id}')" || return 1
+  _tmux-run-clean-in-win "$win"
+}
+
+function tmux-run-clean-in() {
+  [[ -n $TMUX ]] || { print -u2 "not in tmux"; return 2 }
+  (( $# == 1 )) || { print -u2 "error: usage: tmux-run-clean-in <window>"; return 2 }
+
+  local win_target="$1"
+  local win
+  win="$(tmux display-message -p -t "$win_target" '#{window_id}' 2>/dev/null)" \
+    || { print -u2 "error: unknown window target: $win_target"; return 2; }
+
+  _tmux-run-clean-in-win "$win"
+}
+
+function tmux-mark-pane() {
+  [[ -n "$TMUX" ]] || return 0
+  local role="$1"
+  [[ -n "$role" ]] || return 1
+
+  local cur="${TMUX_PANE:-$(tmux display-message -p '#{pane_id}')}"
+
+  tmux list-panes -a -F '#{pane_id}|#{pane_option:@pane_role}' \
+    | awk -F'|' -v r="$role" '{
+        gsub(/\r/,"",$2);
+        gsub(/^[ \t]+|[ \t]+$/,"",$2);
+        if ($2 == r) print $1
+      }' \
+    | while IFS= read -r pid; do
+        [[ -n "$pid" ]] && tmux set-option -p -u -t "$pid" @pane_role
+      done
+
+  tmux set-option -p -t "$cur" @pane_role "$role"
+}
+
+function chat-here() { tmux-mark-pane "chat" }
+function work-here() {
+    tmux-mark-pane "work"
+    unsetopt CORRECT
+    unsetopt CORRECT_ALL
+}
+
+function gi() {
+  curl https://www.gitignore.io/api/$@ ;
 }
 
 _gitignireio_get_command_list() {

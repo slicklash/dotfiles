@@ -1,4 +1,4 @@
-call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'c45243dc1f32ac6bcf6068e5300f3b2b237e576a' })
+call dein#add('christoomey/vim-tmux-navigator', { 'rev': 'e41c431a0c7b7388ae7ba341f01a0d217eb3a432' })
 
 let g:tmux_navigator_disable_when_zoomed = 1
 

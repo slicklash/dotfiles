@@ -1,62 +1,51 @@
 compdef dotfiles=git
 
-alias dvim='GIT_DIR=$HOME/.git-dotfiles GIT_WORK_TREE=$HOME vim'
+alias dgit='git --git-dir=$HOME/.git-dotfiles/ --work-tree=$HOME'
+alias ds='dgit status'
+alias dss='dgit status -s'
 
-alias ds='dotfiles status'
-alias dss='dotfiles status -s'
+alias ddiff='dgit diff'
+alias ddiffc='dgit diff --cached'
+alias ddt='dgit difftool -y'
 
-alias dls='dotfiles ls-files'
-alias dlsm='dotfiles ls-files -r master'
-alias dlso='dotfiles ls-files --others --exclude-standard'
+alias dpl='dgit pull'
+alias dp='dgit push'
 
-alias ddiff='dotfiles diff'
-alias ddiffc='dotfiles diff --cached'
-alias ddt='dotfiles difftool -y'
-alias ddtvim='ddt --tool=vimdiff'
-alias ddtcode='ddt --tool=code'
+alias dad='dgit add'
+alias dau='dgit add -u'
 
-alias dch='dotfiles show --stat'
+alias dco='dgit checkout'
+alias dco_ma='dgit checkout master'
+alias dreset='dgit reset HEAD'
 
-alias dg='dotfiles pull --rebase'
-alias dpl='dotfiles pull'
-alias dp='dotfiles push'
+alias dk='dgit commit -v'
+alias dkm='dgit commit -v -m'
+alias dam='dgit commit --amend'
 
-alias dad='dotfiles add'
-alias dau='dotfiles add -u'
+alias dst='dgit stash'
+alias dpop='dgit stash pop'
 
-alias dco='dotfiles checkout'
-alias dco_ma='dotfiles checkout master'
-alias dreset='dotfiles reset HEAD'
+alias db='dgit branch'
+alias dbr='dgit branch'
 
-alias dk='dotfiles commit -v'
-alias dkm='dotfiles commit -v -m'
-alias dam='dotfiles commit --amend'
+alias dm='dgit merge'
+alias dmt='dgit mergetool'
+alias drbc='dgit rebase --continue'
+alias drba='dgit rebase --abort'
 
-alias dst='dotfiles stash'
-alias dpop='dotfiles stash pop'
+alias dbl='dgit blame -b -w'
 
-alias db='dotfiles branch'
-alias dbr='dotfiles branch'
+local format1='%C(yellow)%h %C(bold blue)%>(12,trunc)%cr%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
+local format2='%C(yellow)%h %C(bold blue)%cd%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
 
-alias dm='dotfiles merge'
-alias dmt='dotfiles mergetool'
-alias drbc='dotfiles rebase --continue'
-alias drba='dotfiles rebase --abort'
-
-alias dbl='dotfiles blame -b -w'
-
-format1='%C(yellow)%h %C(bold blue)%>(12,trunc)%cr%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
-format2='%C(yellow)%h %C(bold blue)%cd%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
-
-alias dlogg='dotfiles log --graph --abbrev-commit'
+alias dlogg='dgit log --graph --abbrev-commit'
 alias dlogf='dlogg --pretty=format:'\'$format1\'' '
-alias dlogd='dlogg --date=short --pretty=format:'\'$format2\'' '
+alias dlogd='glogg --date=short --pretty=format:'\'$format2\'' '
 alias dlog='dlogf'
 alias dloga='dlog --all'
-alias dlogs='dotfiles log --stat'
+alias dlogs='dgit log --stat'
 
-alias dconf='dotfiles config'
-alias dgconf='dotfiles config --global'
+alias dconf='dgit config'
 
 function dlsd() {
   dls | cut -d '/' -f 1 | uniq | xargs ls -dl --color=auto

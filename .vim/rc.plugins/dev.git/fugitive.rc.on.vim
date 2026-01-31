@@ -2,7 +2,8 @@ call dein#add('tpope/vim-fugitive', { 'rev': '61b51c09b7c9ce04e821f6cf76ea4f6f90
 
 function! s:setup() abort
   nnoremap <silent> <leader>gg <cmd>Git<cr>
-  nnoremap <silent> <leader>gb <cmd>Gblame<CR>
+  nnoremap <silent> <leader>gb <cmd>Gblame<cr>
+  nnoremap <silent> <leader>gm  <cmd>Gvdiffsplit main<cr>
 endfunction
 
 autocmd User InitPost ++once call s:setup()

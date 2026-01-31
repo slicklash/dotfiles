@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-call dein#add('dense-analysis/ale', { 'rev': '8eb4803da99a575bc827a6c814e63b1053b7002f' })
+call dein#add('dense-analysis/ale', { 'rev': '6d9962946172fda4f25f9f5773b601aa4b2bedaf' })
 
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'

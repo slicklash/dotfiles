@@ -25,7 +25,7 @@ _sync
 rsync -ar --exclude '*private*' "$HOME/bin/java-lsp/install-eclipse-jdt-ls.sh" "$DST/bin/java-lsp/"
 
 from='.config/'
-white_list=('ghostty' 'lf' 'keyboard-shortcuts.txt')
+white_list=('ghostty' 'lf' 'keyboard-shortcuts.txt' 'keyboard.vil' 'keyd.conf')
 _sync
 
 from='.vim/'

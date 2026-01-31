@@ -209,6 +209,13 @@ function! Turbo() abort
   let b:turbo = 1
 endfunction
 
+function! HardMode() abort
+  nnoremap <buffer> h <nop>
+  nnoremap <buffer> j <nop>
+  nnoremap <buffer> k <nop>
+  nnoremap <buffer> l <nop>
+endfunction
+
 function! Eslint() abort
   setlocal makeprg=npx\ eslint\ -f\ unix\ src
   make
@@ -315,3 +322,18 @@ command! JsBeautify call JsBeautify()
 command! JsonBeautify call JsonBeautify()
 command! HtmlBeautify call HtmlBeautify()
 command! CssBeautify call CssBeautify()
+
+
+command! Tail call s:Tail()
+
+function! s:Tail()
+  setlocal autoread
+  setlocal noswapfile
+  setlocal nowrap
+  normal! G
+
+  " Start timer to check file even when pane inactive
+  if has('timers')
+    call timer_start(500, {-> execute('checktime')}, {'repeat': -1})
+  endif
+endfunction

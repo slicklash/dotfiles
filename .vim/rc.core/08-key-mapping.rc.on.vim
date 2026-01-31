@@ -32,6 +32,7 @@ nnoremap <silent> <C-o> <C-o>zz
 nnoremap <silent> <C-i> <C-i>zz
 
 " navigate command history
+nnoremap ; :
 cnoremap <C-j> <down>
 cnoremap <C-k> <up>
 

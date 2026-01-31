@@ -3,13 +3,13 @@
 # reload: (macOS: Command + Shift + comma
 #          other: Control + Shift + comma)
 
-#ghostty +list-themes
+# ghostty +list-themes
 theme = Nordfox
 
 background = #262626
 window-decoration = server
 
-#ghostty +list-fonts
+# ghostty +list-fonts
 font-family = JetBrainsMono NFM Light
 font-size = 15
 font-feature = -dlig
@@ -17,34 +17,15 @@ font-feature = -liga
 font-feature = -calt
 font-synthetic-style = false
 
-#ghostty +list-keybinds
+# ghostty +list-keybinds
+keybind = super+a=unbind
+keybind = super+d=unbind
+keybind = super+h=unbind
 
-# <Up> <Down> <Left> <Right>
-keybind = cmd+k=text:\x1b[A
-keybind = cmd+j=text:\x1b[B
-keybind = cmd+shift+h=text:\x1b[D
-keybind = cmd+l=text:\x1b[C
+# change cmd -> ctrl v1.3.0 or 89e9562 commit
+key-remap = super=ctrl
 
 # <Alt-a> <Alt-d>
 keybind = opt+a=text:\x1ba
 keybind = opt+d=text:\x1bd
-
-# change cmd -> ctrl
-keybind = cmd+/=text:\x1f
-keybind = cmd+a=text:\x01
-keybind = cmd+b=text:\x02
-keybind = cmd+c=text:\x03
-keybind = cmd+d=text:\x03
-keybind = cmd+e=text:\x05
-keybind = cmd+f=text:\x06
-keybind = cmd+m=text:\x0d
-keybind = cmd+n=text:\x0e
-keybind = cmd+o=text:\x0f
-keybind = cmd+p=text:\x10
-keybind = cmd+q=text:\x11
-keybind = cmd+r=text:\x12
-keybind = cmd+s=text:\x13
-keybind = cmd+t=text:\x14
-keybind = cmd+u=text:\x15
-keybind = cmd+x=text:\x18
-keybind = cmd+y=text:\x19
+keybind = opt+s=text:\x1b[1;2P

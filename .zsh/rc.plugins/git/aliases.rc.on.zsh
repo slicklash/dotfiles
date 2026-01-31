@@ -13,8 +13,6 @@ alias gdiffnames='git diff --name-status'
 alias gdtvim='gdt --tool=vimdiff'
 alias gdtcode='gdt --tool=code'
 
-alias gch='git show --stat'
-
 alias gg='git pull --rebase'
 alias gpl='git pull'
 alias gp='git push'
@@ -42,8 +40,8 @@ alias grba='git rebase --abort'
 
 alias gbl='git blame -b -w'
 
-format1='%C(yellow)%h %C(bold blue)%>(12,trunc)%cr%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
-format2='%C(yellow)%h %C(bold blue)%cd%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
+local format1='%C(yellow)%h %C(bold blue)%>(12,trunc)%cr%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
+local format2='%C(yellow)%h %C(bold blue)%cd%Creset %C(red)%d%Creset %s %C(bold black)%an%Creset'
 
 alias glogg='git log --graph --abbrev-commit'
 alias glogf='glogg --pretty=format:'\'$format1\'' '
