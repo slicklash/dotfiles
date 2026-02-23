@@ -21,6 +21,7 @@ for d in \
   "$HOME/zig" \
   "$HOME/bin/pypy3/bin" \
   "$HOME/bin/platform-tools" \
+  "$HOME/bin/llama" \
   "/opt/homebrew/bin" \
   "/opt/homebrew/opt/postgresql@17/bin"
 do

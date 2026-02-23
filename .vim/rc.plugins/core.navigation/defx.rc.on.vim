@@ -32,6 +32,8 @@ function! s:setup() abort
         \ 'selected_icon': '✓',
         \ })
 
+  call defx#custom#option('_', { 'columns': 'mark:indent:icon:filename:type' })
+
   if !exists('$TERMUX_VERSION')
     nnoremap <space>v :Defx `expand('%:p:h')` -ignored-files='__pycache__,.*' -split=vertical -winwidth=50 -search=`expand('%:p')`<CR>
   else
@@ -113,11 +115,14 @@ function! s:defx_my_settings() abort
 
   nnoremap <silent><buffer> y  <cmd>call <SID>yank_to_register('"')<CR>
   nnoremap <silent><buffer> yy <cmd>call <SID>yank_to_register('g')<CR>
+  nnoremap <silent><buffer> yb <cmd>call <SID>yank_to_register('b')<CR>
 
   nnoremap <silent><buffer><expr> gh defx#do_action('cd')
   nnoremap <silent><buffer><expr> gy defx#do_action('cd', [fnameescape(getreg('g'))])
+  nnoremap <silent><buffer><expr> gb defx#do_action('cd', [fnameescape(getreg('b'))])
   nnoremap <silent><buffer><expr> gv defx#do_action('cd', [expand('~/.vim')])
   nnoremap <silent><buffer><expr> gc defx#do_action('cd', [expand('~/code')])
+  nnoremap <silent><buffer><expr> gt defx#do_action('cd', [expand('~/tmp')])
   nnoremap <silent><buffer><expr> gd defx#do_action('cd', [expand('~/Downloads')])
   nnoremap <silent><buffer><expr> ge defx#do_action('cd', [expand('~/Desktop')])
   nnoremap <silent><buffer><expr> gs defx#do_action('cd', [expand('~/Sync')])
@@ -151,6 +156,7 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer> C <cmd>call <SID>tmux_open_codex()<CR>
 
   nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+  nnoremap <silent><buffer><expr> T defx#do_action('toggle_columns', 'mark:indent:icon:filename:size')
 
   nnoremap <silent><buffer><expr> ; defx#do_action('repeat')
 

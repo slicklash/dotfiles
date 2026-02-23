@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-call dein#add('dense-analysis/ale', { 'rev': '6d9962946172fda4f25f9f5773b601aa4b2bedaf' })
+call dein#add('dense-analysis/ale', { 'rev': '69c945d5daecadf8e4c4c499d0a7babda748d603' })
 
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
@@ -52,7 +52,7 @@ let g:ale_java_javac_executable = 'javac -cp ~/bin/java-lsp/lombok.jar'
 
 let g:ale_python_pylint_options = '--disable=missing-docstring,invalid-name --ignore-long-lines --extension-pkg-whitelist=cv2'
 let g:ale_python_mypy_options = '--strict --follow-imports silent'
-let g:ale_python_ruff_options = '--preview --select E,Q,I,FURB'
+let g:ale_python_ruff_options = '--preview --select E,Q,I,FURB --ignore E501'
 
 let g:ale_nim_nimpretty_options = '--indent:2'
 

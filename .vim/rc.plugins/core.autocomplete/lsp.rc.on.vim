@@ -1,4 +1,4 @@
-call dein#add('yegappan/lsp', { 'rev': 'c1d31b141ac9f1af44e1271e2fba78991b4e6e2b' })
+call dein#add('yegappan/lsp', { 'rev': '0f7203e71680438056d3ba77c8c24b6fd36d8940' })
 
 " \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
 " \ 'rust': ['rustup', 'run', 'stable', 'rls'],
@@ -33,7 +33,8 @@ let lspServers = [
       \ {
       \   'name': 'pylsp',
       \   'filetype': ['python'],
-      \   'path': 'pylsp',
+      \   'path': exists('$PREFIX') ? ($PREFIX .. '/bin/pylsp') : 'pylsp',
+      \   'args': ['--log-file', $TMPDIR . '/pylsp.log'],
       \ },
       \ {
       \    'name': 'typescriptlang',

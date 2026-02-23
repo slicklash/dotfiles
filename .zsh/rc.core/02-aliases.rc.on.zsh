@@ -24,6 +24,7 @@ autoload -U zmv
 alias mmv='noglob zmv -W'
 
 alias vi='vim'
+alias vil='vim -w ~/vim_logs/log_$(date +%Y%m%d_%H%M).txt'
 alias vin='vim -u NONE'
 alias vx='vim -c Vinarise'
 

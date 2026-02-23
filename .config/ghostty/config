@@ -21,6 +21,8 @@ font-synthetic-style = false
 keybind = super+a=unbind
 keybind = super+d=unbind
 keybind = super+h=unbind
+keybind = super+n=unbind
+keybind = super+t=unbind
 
 # change cmd -> ctrl v1.3.0 or 89e9562 commit
 key-remap = super=ctrl
