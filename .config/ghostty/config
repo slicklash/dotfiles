@@ -5,6 +5,7 @@
 
 # ghostty +list-themes
 theme = Nordfox
+minimum-contrast = 1.0
 
 background = #262626
 window-decoration = server

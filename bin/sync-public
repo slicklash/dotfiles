@@ -48,5 +48,13 @@ from='.config/xfce4/xfconf/xfce-perchannel-xml/'
 white_list=('xfce4-keyboard-shortcuts.xml')
 _sync
 
+from='.claude'
+white_list=('settings.json')
+_sync
+
+from='.deepagents'
+white_list=('config.toml')
+_sync
+
 unfunction _sync
 echo "DONE"

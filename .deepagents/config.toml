@@ -1,0 +1,7 @@
+[models]
+default = "anthropic:local"
+
+[models.providers.anthropic]
+models = ["local"]
+api_key_env = "TERM"
+base_url = "http://localhost:8001"

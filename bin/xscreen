@@ -25,6 +25,8 @@ linux_detect() {
   if echo "$DEVICES" | grep -q "eDP-1-1"; then
     LAPTOP_PORT="eDP-1-1"
     MONITOR_PORT="DP-1-2"
+  elif echo "$DEVICES" | grep -q "1920x1080"; then
+    LAPTOP_MODE="1920x1080"
   elif echo "$DEVICES" | grep -q "DisplayPort-0"; then
     MONITOR_PORT="DisplayPort-0"
     LAPTOP_MODE="1920x1080"

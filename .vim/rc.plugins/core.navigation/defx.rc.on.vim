@@ -5,7 +5,6 @@ if !has('python3')
   echo 'Error: missing +python3'
   cquit
 endif
-
 try
   python3 import pynvim
 catch

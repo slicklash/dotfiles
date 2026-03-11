@@ -60,8 +60,10 @@ function v_encode() {
     ffmpeg -init_hw_device vaapi=va:/dev/dri/renderD128 -filter_hw_device va \
            -i "$input" -vf 'format=nv12,hwupload' \
            -c:v hevc_vaapi -rc_mode CQP -qp "$quality" -profile:v main \
-           -c:a aac -b:a 256k -movflags +faststart "$output"
+           -map 0:v:0 -map 0:a:0 -c:a copy \
+           -movflags +faststart "$output"
   fi
+           # -c:a aac -b:a 256k -movflags +faststart "$output"
 }
 
 function v_encode_all() {
