@@ -27,6 +27,7 @@ keybind = super+t=unbind
 
 # change cmd -> ctrl v1.3.0 or 89e9562 commit
 key-remap = super=ctrl
+keybind = ctrl+v=paste_from_clipboard
 
 # <Alt-a> <Alt-d>
 keybind = opt+a=text:\x1ba

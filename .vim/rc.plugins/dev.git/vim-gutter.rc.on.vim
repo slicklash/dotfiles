@@ -1,1 +1,1 @@
-call dein#add('airblade/vim-gitgutter', { 'rev': '0acb772e76064cc406664ab595b58b3fac76488a' })
+call dein#add('airblade/vim-gitgutter', { 'rev': '55b368d4c68541775b4b253d3c98d3145b695c24' })

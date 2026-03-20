@@ -1,0 +1,44 @@
+#!/bin/sh
+set -euo
+
+SRC=~/code/llama.cpp
+
+FEAT="-DCMAKE_BUILD_TYPE=Release"
+FEAT="$FEAT -DGGML_NATIVE=ON"
+FEAT="$FEAT -DLLAMA_BUILD_TESTS=OFF"
+FEAT="$FEAT -DBUILD_SHARED_LIBS=OFF"
+
+CFLAGS="-O3 -mtune=native"
+
+OS=$(uname 2>/dev/null || echo unknown)
+
+if [ -n "${TERMUX_VERSION:-}" ]; then
+  CFLAGS="$CFLAGS -march=armv8.4-a+dotprod"
+  FEAT="$FEAT -DGGML_OPENMP=ON"
+elif [ "$OS" = "Darwin" ]; then
+  FEAT="$FEAT -DGGML_METAL=ON"
+  FEAT="$FEAT -DGGML_METAL_EMBED_LIBRARY=ON"
+elif [ "$OS" = "Linux" ]; then
+  FEAT="$FEAT -DGGML_VULKAN=ON"
+  FEAT="$FEAT -DGGML_BLAS=ON"
+  FEAT="$FEAT -DGGML_BLAS_VENDOR=OpenBLAS"
+  FEAT="$FEAT -DGGML_AVX2=ON"
+else
+  echo "Unsupported OS: $(uname)" >&2
+  exit 1
+fi
+
+test -d $SRC || {
+  echo "No llama.cpp sources found. Cloning ..." 1>&2
+  git clone https://github.com/ggml-org/llama.cpp $SRC 1>&2
+}
+
+cd $SRC
+git checkout -- .
+git checkout master
+git pull
+cmake -B build \
+  "$FEAT" \
+  -DCMAKE_C_FLAGS="$CFLAGS" \
+  -DCMAKE_CXX_FLAGS="$CFLAGS"
+cmake --build build --config Release

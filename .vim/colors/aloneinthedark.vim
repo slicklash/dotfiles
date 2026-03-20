@@ -27,22 +27,22 @@ endfunction
 let s:color = map({
     \ 'FG'           : '#949494 246',
     \ 'BG'           : '#262626 235',
-    \ 'BG_HIGHLIGHT' : '#2f2e2d 236',
-    \ 'WHITE'        : '#bababa 252',
+    \ 'BG_HIGHLIGHT' : '#303030 236',
+    \ 'WHITE'        : '#cdcecf 252',
     \ 'BLACK'        : '#3a3a3a 237',
-    \ 'GREY'         : '#606060 241',
-    \ 'DARKGREY'     : '#383E42 239',
-    \ 'RED'          : '#d75f5f 167',
+    \ 'GREY'         : '#626262 241',
+    \ 'DARKGREY'     : '#4e4e4e 239',
+    \ 'RED'          : '#bf616a 167',
     \ 'DARKRED'      : '#af5f5f 131',
-    \ 'GREEN'        : '#99ad6a 107',
-    \ 'BLUE'         : '#77add2 110',
-    \ 'DARKBLUE'     : '#005F87 25',
-    \ 'ORANGE'       : '#e09146 215',
-    \ 'DARKORANGE'   : '#af5f00 130',
-    \ 'YELLOW'       : '#f8fa83 227',
-    \ 'PURPLE'       : '#ca729e 175',
-    \ 'DARKPURPLE'   : '#8c3561 132',
-    \ 'VIOLET'       : '#bd78af 141',
+    \ 'GREEN'        : '#a3be8c 107',
+    \ 'BLUE'         : '#80a1c1 110',
+    \ 'DARKBLUE'     : '#015faf 25',
+    \ 'ORANGE'       : '#d79a5b 215',
+    \ 'DARKORANGE'   : '#ac5e03 130',
+    \ 'YELLOW'       : '#ebcb8b 227',
+    \ 'PURPLE'       : '#b48dad 175',
+    \ 'DARKPURPLE'   : '#af5f86 132',
+    \ 'VIOLET'       : '#af87ff 141',
 \ }, {key, val -> split(val)})
 
 let s:SELECTION_BG        = s:color.DARKGREY
@@ -404,4 +404,139 @@ call s:hi('TagbarVisibilityPrivate', s:color.RED, '', '')
 " pandoc
 hi! link pandocStrong DiffChange
 
-delfunction s:hi
+" fugitive
+
+call s:hi('FugitivePath1', s:color.FG, '', '')
+call s:hi('FugitivePath2', s:color.WHITE, '', '')
+call s:hi('FugitivePath3', s:color.PURPLE, '', '')
+call s:hi('FugitivePath4', s:color.BLUE, '', '')
+call s:hi('FugitivePath5', s:color.ORANGE, '', '')
+call s:hi('FugitivePath6', s:color.GREEN, '', '')
+call s:hi('FugitivePath7', s:color.YELLOW, '', '')
+call s:hi('FugitivePath8', s:color.VIOLET, '', '')
+call s:hi('FugitivePath9', s:color.RED, '', '')
+
+" delfunction s:hi
+
+function! MyColorTest() abort
+  " Open scratch buffer
+  vnew
+  setlocal buftype=nofile bufhidden=wipe noswapfile
+  setlocal filetype=mycolortest
+  setlocal modifiable
+
+  " Define test highlight groups
+  call s:hi('TestFg',           s:color.FG,           s:color.BG, 'none')
+  call s:hi('TestBg',           s:color.BG,           s:color.WHITE, 'none')
+  call s:hi('TestBgHighlight',  s:color.BG_HIGHLIGHT, s:color.BG, 'none')
+  call s:hi('TestWhite',        s:color.WHITE,        '', 'none')
+  call s:hi('TestBlack',        s:color.BLACK,        '', 'none')
+  call s:hi('TestGrey',         s:color.GREY,         '', 'none')
+  call s:hi('TestDarkGrey',     s:color.DARKGREY,     '', 'none')
+  call s:hi('TestRed',          s:color.RED,          '', 'none')
+  call s:hi('TestDarkRed',      s:color.DARKRED,      '', 'none')
+  call s:hi('TestGreen',        s:color.GREEN,        '', 'none')
+  call s:hi('TestBlue',         s:color.BLUE,         '', 'none')
+  call s:hi('TestDarkBlue',     s:color.DARKBLUE,     '', 'none')
+  call s:hi('TestOrange',       s:color.ORANGE,       '', 'none')
+  call s:hi('TestDarkOrange',   s:color.DARKORANGE,   '', 'none')
+  call s:hi('TestYellow',       s:color.YELLOW,       '', 'none')
+  call s:hi('TestPurple',       s:color.PURPLE,       '', 'none')
+  call s:hi('TestDarkPurple',   s:color.DARKPURPLE,   '', 'none')
+  call s:hi('TestViolet',       s:color.VIOLET,       '', 'none')
+
+  call s:hi('TestKeyword',      s:KEYWORD,            '', 'none')
+  call s:hi('TestFunction',     s:FUNCTION,           '', 'none')
+  call s:hi('TestArg',          s:ARG,                '', 'none')
+  call s:hi('TestOperator',     s:OPERATOR,           '', 'none')
+  call s:hi('TestString',       s:STRING,             '', 'none')
+  call s:hi('TestConstant',     s:CONSTANT,           '', 'none')
+  call s:hi('TestComment',      s:COMMENT,            '', 'italic')
+  call s:hi('TestPreProc',      s:PREPROC,            '', 'none')
+  call s:hi('TestTodo',         s:TODO,               '', 'bold')
+
+  " Clear and define syntax for this buffer
+  syntax clear
+
+  " Literal color names
+  syntax keyword TestFg          FG
+  syntax keyword TestBg          BG
+  syntax keyword TestBgHighlight BG_HIGHLIGHT
+  syntax keyword TestWhite       WHITE
+  syntax keyword TestBlack       BLACK
+  syntax keyword TestGrey        GREY
+  syntax keyword TestDarkGrey    DARKGREY
+  syntax keyword TestRed         RED
+  syntax keyword TestDarkRed     DARKRED
+  syntax keyword TestGreen       GREEN
+  syntax keyword TestBlue        BLUE
+  syntax keyword TestDarkBlue    DARKBLUE
+  syntax keyword TestOrange      ORANGE
+  syntax keyword TestDarkOrange  DARKORANGE
+  syntax keyword TestYellow      YELLOW
+  syntax keyword TestPurple      PURPLE
+  syntax keyword TestDarkPurple  DARKPURPLE
+  syntax keyword TestViolet      VIOLET
+
+  " Semantic examples
+  syntax keyword TestKeyword  let const if else return func
+  syntax match   TestFunction /\<[A-Z][A-Za-z0-9_]*\ze(/
+  syntax match   TestArg      /\<arg[0-9_]*\>/
+  syntax match   TestOperator /[-+*=<>!|&\/]\+/
+  syntax region  TestString   start=/"/ skip=/\\"/ end=/"/
+  syntax match   TestConstant /\<\d\+\>\|\<true\|false\|nil\>/
+  syntax match   TestComment  /#.*/
+  syntax match   TestPreProc  /^\s*#\w\+/
+  syntax keyword TestTodo     TODO FIXME XXX
+
+  call setline(1, [
+        \ '=== palette ===',
+        \ 'FG',
+        \ 'BG',
+        \ 'BG_HIGHLIGHT',
+        \ 'WHITE',
+        \ 'BLACK',
+        \ 'GREY',
+        \ 'DARKGREY',
+        \ 'RED',
+        \ 'DARKRED',
+        \ 'GREEN',
+        \ 'BLUE',
+        \ 'DARKBLUE',
+        \ 'ORANGE',
+        \ 'DARKORANGE',
+        \ 'YELLOW',
+        \ 'PURPLE',
+        \ 'DARKPURPLE',
+        \ 'VIOLET',
+        \ '',
+        \ '=== semantic ===',
+        \ '#define MAX 10',
+        \ 'func MyFunc(arg1, arg2) {',
+        \ '  # comment',
+        \ '  let x = 42',
+        \ '  let s = "hello"',
+        \ '  if x > 0 && true {',
+        \ '    TODO fix this',
+        \ '    return MyFunc(arg1 + arg2)',
+        \ '  }',
+        \ '}',
+        \ '',
+        \ '=== raw semantic names ===',
+        \ 'KEYWORD FUNCTION ARG OPERATOR STRING CONSTANT COMMENT PREPROC TODO',
+        \ ])
+
+  " Highlight raw semantic names too
+  syntax keyword TestKeyword  KEYWORD
+  syntax keyword TestFunction FUNCTION
+  syntax keyword TestArg      ARG
+  syntax keyword TestOperator OPERATOR
+  syntax keyword TestString   STRING
+  syntax keyword TestConstant CONSTANT
+  syntax keyword TestComment  COMMENT
+  syntax keyword TestPreProc  PREPROC
+  syntax keyword TestTodo     TODO
+
+  setlocal nomodifiable
+  normal! gg
+endfunction

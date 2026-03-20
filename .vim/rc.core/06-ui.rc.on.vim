@@ -1,6 +1,7 @@
 if !has('termguicolors')
   set t_Co=256
-" else
+else
+  " TODO: fix hex colors
   " set termguicolors
 endif
 

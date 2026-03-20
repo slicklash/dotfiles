@@ -243,6 +243,7 @@ function _tmux-run-all-in-win() {
   SPLITS[6]="85,80,75,65,45"
   SPLITS[7]="85,85,80,75,65,45"
   SPLITS[8]="88,86,85,80,75,70,50"
+  SPLITS[9]="88,86,85,80,75,70,65,50"
 
   local spec="${SPLITS[$n]}"
   [[ -n "$spec" ]] || { print -u2 "error: no split spec for n=$n"; return 1; }

@@ -6,6 +6,7 @@ alias ..='cd ..'
 
 alias ls='ls -FG --color'
 alias l='ls'
+alias l1='l -1'
 alias ll='l -l'
 alias l.='l -a'
 alias la='l -al'
@@ -34,6 +35,11 @@ alias wrestart='watchmedo auto-restart'
 
 case "$OSTYPE" in
   linux-android*)
+    export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
+    export CC=clang
+    export CXX=clang++
+    export CARGO_BUILD_TARGET=aarch64-linux-android
+
     alias pbcopy='termux-clipboard-set'
     alias pbpaste='termux-clipboard-get'
     alias pv='apt list --upgradable'

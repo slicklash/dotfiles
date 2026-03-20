@@ -20,7 +20,7 @@ white_list=('README.md' '.tmux.conf' '.zshrc' '.ctags')
 _sync
 
 from='bin/'
-white_list=('dotfiles' 'sync-public' 'rebuild-vim' 'video-resize.sh' 'fix-washed-out-colors' 'xscreen' 'tmux2' 'tvim' 'xsend-keys' 'setup-termux' 'google-java-format' 'mtime' 'pinfo' 'fix-chrome' 'card')
+white_list=('dotfiles' 'sync-public' 'rebuild-llama' 'rebuild-vim' 'video-resize.sh' 'fix-washed-out-colors' 'xscreen' 'tmux2' 'tvim' 'xsend-keys' 'setup-termux' 'google-java-format' 'mtime' 'pinfo' 'fix-chrome' 'card')
 _sync
 rsync -ar --exclude '*private*' "$HOME/bin/java-lsp/install-eclipse-jdt-ls.sh" "$DST/bin/java-lsp/"
 
