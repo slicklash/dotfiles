@@ -42,7 +42,7 @@ case "$OSTYPE" in
 
     alias pbcopy='termux-clipboard-set'
     alias pbpaste='termux-clipboard-get'
-    alias pv='apt list --upgradable'
+    alias pv='pkg update && apt list --upgradable'
     alias pu='pkg upgrade'
     ;;
   linux*)

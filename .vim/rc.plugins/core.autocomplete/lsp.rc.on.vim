@@ -1,10 +1,12 @@
-call dein#add('yegappan/lsp', { 'rev': 'b64d92288db0099c4704be62f28bf476dce9f169' })
+call dein#add('yegappan/lsp', { 'rev': '58720a3a106ad0f78b05d97da67639288af30ebf' })
 
 " \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
 " \ 'rust': ['rustup', 'run', 'stable', 'rls'],
 " \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
 
 let lspOpts = #{
+      \ autoComplete: v:false,
+      \ omniComplete: v:true,
       \ autoHighlightDiags: v:true,
       \ usePopupInCodeAction: v:true,
       \ diagSignErrorText: '✖',
@@ -41,6 +43,10 @@ let lspServers = [
       \    'filetype': ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx'],
       \    'path': 'typescript-language-server',
       \    'args': ['--stdio'],
+      \    'workspaceConfig': {
+      \        'javascript': { 'format': { 'indentSize': 2, 'tabSize': 2 } },
+      \        'typescript': { 'format': { 'indentSize': 2, 'tabSize': 2 } }
+      \     },
       \ },
       \ {
       \   'name': 'vimls',

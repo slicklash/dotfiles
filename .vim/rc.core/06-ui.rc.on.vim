@@ -11,8 +11,11 @@ set noshowmode                              " don't show mode
 set showcmd                                 " in visual mode show size of selection
 set showmatch matchtime=2                   " show matching parentheses/brackets
 set laststatus=2                            " always show statusline
-" set completeopt-=preview                    " disable snippet/complete preview window
+
+" set completeopt=menu,menuone,popup,noselect
 set completeopt=menu,menuone,noselect
+set completeitemalign=abbr,kind,menu
+set pumheight=12
 
 set cursorline
 if !has('nvim')

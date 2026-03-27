@@ -49,6 +49,7 @@ nnoremap <silent> <leader>ml <C-w>L
 nnoremap <silent> <leader>mh <C-w>H
 nnoremap <silent> <leader>mk <C-w>K
 nnoremap <silent> <leader>mj <C-w>J
+nnoremap <silent> <leader>ff <cmd>call Zoom()<CR>
 
 " resize windows
 noremap <S-Left> <cmd>vertical resize -10<CR>
@@ -65,6 +66,11 @@ nnoremap <silent> gr <cmd>diffget REMOTE<CR>
 nnoremap <silent> gl <cmd>diffget LOCAL<CR>
 nnoremap <silent> <leader>do <cmd>windo diffthis<CR>
 nnoremap <silent> <leader>dc <cmd>diffoff<CR>
+
+" comments
+packadd! comment
+nmap <leader>k gcc
+vmap <leader>k gc
 
 " toggle problematic whitespace
 nnoremap <silent> <leader>tl <cmd>call Toggle_list()<CR>

@@ -53,6 +53,20 @@ function! FindNearestFile(filename) abort
   return !empty(relative_path) ? fnamemodify(relative_path, ':p') : ''
 endfunction
 
+function! Zoom() abort
+  if get(t:, 'native_zoom_active', 0)
+    tabclose
+    return
+  endif
+
+  if winnr('$') == 1
+    return
+  endif
+
+  tab split
+  let t:native_zoom_active = 1
+endfunction
+
 function! s:is_ignore_special_windows(winnr) abort
   return index(['diff', 'qf', 'gitcommit', 'defx', 'help'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
 endfunction

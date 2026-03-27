@@ -5,7 +5,7 @@ if !empty(missing)
   cquit
 endif
 
-call dein#add('junegunn/fzf', { 'rev': 'f0a2f5ef145e9ea30596d52c7b7a814f6babf8fb', 'build': './install --bin', 'merged': 0 })
+call dein#add('junegunn/fzf', { 'rev': '55d5b153e627784fa43982fa3c01d0ab86ef0224', 'build': './install --bin', 'merged': 0 })
 call dein#add('junegunn/fzf.vim', { 'rev': '34a564c81f36047f50e593c1656f4580ff75ccca', 'depends': 'fzf' })
 
 function! s:setup() abort
