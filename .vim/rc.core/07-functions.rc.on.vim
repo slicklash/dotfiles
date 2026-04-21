@@ -68,7 +68,7 @@ function! Zoom() abort
 endfunction
 
 function! s:is_ignore_special_windows(winnr) abort
-  return index(['diff', 'qf', 'gitcommit', 'defx', 'help'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
+  return index(['diff', 'qf', 'gitcommit', 'fern', 'help'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
 endfunction
 
 function! OpenPath(cmd, path) abort

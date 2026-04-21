@@ -20,7 +20,7 @@ function! s:clear_trailing_whitespace_match() abort
 endfunction
 
 function! s:highlight_trailing_whitespace() abort
-  if index(['diff', 'qf', 'gitcommit', 'defx', 'help'], &filetype) >= 0
+  if index(['diff', 'qf', 'gitcommit', 'fern', 'help'], &filetype) >= 0
     call s:clear_trailing_whitespace_match()
     return
   endif

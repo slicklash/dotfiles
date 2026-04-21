@@ -1,4 +1,4 @@
-call dein#add('yegappan/lsp', { 'rev': '58720a3a106ad0f78b05d97da67639288af30ebf' })
+call dein#add('yegappan/lsp', { 'rev': '417ac93eac02db976cde75e0bd46af451071a479' })
 
 " \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
 " \ 'rust': ['rustup', 'run', 'stable', 'rls'],
@@ -51,7 +51,7 @@ let lspServers = [
       \ {
       \   'name': 'vimls',
       \   'filetype': 'vim',
-      \   'path': 'vim-language-server',
+      \   'path': exists('$PREFIX') ? ($PREFIX .. '/bin/vim-language-server') : 'vim-language-server',
       \   'args': ['--stdio']
       \ }]
 autocmd User LspSetup call LspAddServer(lspServers)

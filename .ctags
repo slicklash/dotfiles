@@ -78,3 +78,8 @@
 --langdef=apl
 --langmap=apl:.apl
 --regex-apl=/^\w+←(\w+\s+([^\s]+))/\2/f,function,functions/
+
+--langdef=zsh_hyphen
+--langmap=zsh_hyphen:.zsh.sh
+--regex-zsh_hyphen=/^function[ \t]+([a-zA-Z0-9_-]+)[ \t]*\(\)/\1/f,function/
+--regex-zsh_hyphen=/^([a-zA-Z0-9_-]+)[ \t]*\(\)/\1/f,function/

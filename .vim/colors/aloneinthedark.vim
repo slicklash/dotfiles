@@ -390,9 +390,8 @@ hi LspDiagInlineInfo ctermbg=235
 hi! link LspDiagSignErrorText Todo
 hi! link LspDiagSignWarningText Number
 
-" defx
-call s:hi('defx_filename_directory', s:color.BLUE, '', '')
-call s:hi('defx_icon_directory_icon', s:color.BLUE, '', '')
+" Fern
+call s:hi('FernRootSymbol', s:color.YELLOW, '', '')
 
 " Tagbar
 call s:hi('TagbarSignature', s:color.GREY, '', '')

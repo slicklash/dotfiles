@@ -80,9 +80,9 @@ command! -nargs=1 -complete=file QFSave call QFSave(<f-args>)
 command! -nargs=1 -complete=file QFLoad call QFLoad(<f-args>)
 
 augroup my_qf
-  autocmd! my_qf
-  autocmd FileType qf nnoremap <silent> <buffer> E <cmd>vertical cc<cr>
-  autocmd FileType qf nnoremap <silent> <buffer> dd <cmd>call RemoveQFItem()<cr>
-  autocmd FileType qf vnoremap <silent> <buffer> dd <cmd>call RemoveQFItems()<cr>
-  autocmd! QuickfixCmdPost * call QFSort()
-augroup end
+  autocmd!
+  autocmd FileType qf nnoremap <silent><buffer> E <C-w><CR><C-w>L
+  autocmd FileType qf nnoremap <silent><buffer> dd <Cmd>call RemoveQFItem()<CR>
+  autocmd FileType qf xnoremap <silent><buffer> dd :<C-u>call RemoveQFItems()<CR>
+  autocmd QuickfixCmdPost * call QFSort()
+augroup END

@@ -1,5 +1,3 @@
-call dein#add('tpope/vim-markdown', { 'rev': 'f9f845f28f4da33a7655accb22f4ad21f7d9fb66', 'on_ft': ['markdown', 'pandoc'] })
-
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'typescript']
 
 function! s:sed_inplace(cmd, file) abort

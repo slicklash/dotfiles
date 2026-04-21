@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-call dein#add('itchyny/lightline.vim', { 'rev': 'e358557e1a9f9fc860416c8eb2e34c0404078155' })
+call dein#add('itchyny/lightline.vim', { 'rev': '6c283f8df85aa7219fa4096a6ed4ff45d48aa9e1' })
 
 let g:lightline = {
       \ 'enable': {
@@ -44,11 +44,11 @@ let g:lightline = {
       \ }
 
 function! MyModified()
-  return &ft =~ 'help\|defx\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+  return &ft =~ 'help\|fern\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
 
 function! MyReadonly()
-  return &ft !~? 'help\|defx\|gundo' && &readonly ? 'x' : ''
+  return &ft !~? 'help\|fern\|gundo' && &readonly ? 'x' : ''
 endfunction
 
 function! MyFilename()
@@ -58,7 +58,7 @@ function! MyFilename()
 endfunction
 
 function! MyFugitive()
-  if &ft !~? 'defx\|gundo' && exists("*fugitive#statusline")
+  if &ft !~? 'fern\|gundo' && exists("*fugitive#statusline")
     let g = fugitive#statusline()
     if !strlen(g)
       return ''
@@ -97,7 +97,7 @@ function! MyMode()
   return fname == '__Tagbar__' ? 'Tagbar' :
         \ fname == '__Gundo__' ? 'Gundo' :
         \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-        \ &ft == 'defx' ? 'defx' :
+        \ &ft == 'fern' ? 'fern' :
         \ &ft == 'vimshell' ? 'VimShell' : bn
 endfunction
 

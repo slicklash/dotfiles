@@ -1,3 +1,18 @@
+function _wait4port() {
+  if [ -z "$1" ]; then
+    echo "Wait for port to listen"
+    echo "Usage: _wait4port <port>"
+    return 1
+  fi
+
+  local port="$1"
+  echo "Waiting for ${port}..."
+  until nc -z localhost "$port" >/dev/null 2>&1; do
+    sleep 1
+  done
+  echo "Port is up!"
+}
+
 function v_set_thumb() {
   if [ -z "$2" ]; then
     echo "Usage: $0 <time> <input>"
