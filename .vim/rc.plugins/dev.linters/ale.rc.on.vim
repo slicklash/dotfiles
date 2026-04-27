@@ -77,7 +77,8 @@ function! MyALEFix() abort
 
     let l:all_errors = l:counts.error + l:counts.style_error
     if l:counts.error == 0
-      silent! undojoin | silent keepjumps %!prettier --stdin-filepath %
+      silent! undojoin
+      execute 'silent keepjumps %!prettier --stdin-filepath ' . shellescape(expand('%:p'))
     endif
     call winrestview(l:view)
   endif

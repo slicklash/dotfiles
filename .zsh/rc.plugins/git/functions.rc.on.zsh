@@ -1,3 +1,55 @@
+function _fzf-xargs() {
+  fzf -m --reverse --print0 | xargs -0 -o -t "$@"
+}
+
+function ga() {
+  if [ -z "$1" ]; then
+    git ls-files -m -o --exclude-standard | _fzf-xargs git add
+  else
+    git add "$@"
+  fi
+}
+
+function gun() {
+  if [ -z "$1" ]; then
+    git diff --cached --name-only | _fzf-xargs git restore --staged
+  else
+    git restore --staged "$@"
+  fi
+}
+
+function gr() {
+  if [ -z "$1" ]; then
+    git ls-files -m | _fzf-xargs git restore
+  else
+    git restore "$@"
+  fi
+}
+
+function da() {
+  if [ -z "$1" ]; then
+    dotfiles diff --name-only --diff-filter=M | sed "s#^#$HOME/#" | _fzf-xargs dotfiles add
+  else
+    dotfiles add "$@"
+  fi
+}
+
+function dun() {
+  if [ -z "$1" ]; then
+    dotfiles diff --cached --name-only | sed "s#^#$HOME/#" | _fzf-xargs dotfiles restore --staged
+  else
+    dotfiles restore --staged "$@"
+  fi
+}
+
+function dr() {
+  if [ -z "$1" ]; then
+    dotfiles ls-files -m | _fzf-xargs dotfiles restore
+  else
+    dotfiles restore "$@"
+  fi
+}
+
 function greset() {
   if [ -z "$1" ]; then
     echo "Usage: $0 <file_path>"
@@ -6,6 +58,8 @@ function greset() {
   git reset HEAD $1
   git checkout -- $1
 }
+
+# --- stash
 
 function _git_stash_select() {
   echo $(git stash list | fzf --ansi --no-sort --reverse --preview="echo {} | cut -d':' -f1 | xargs git stash show -p | bat --color=always -p"  | cut -d ':' -f1)
@@ -40,43 +94,13 @@ function gstp(){
   fi
 }
 
+# --- branches
+
 function gco(){
   if [ -z "$1" ]; then
     git checkout "$(git branch | fzf | tr -d '[:space:]')"
   else
     git checkout $@
-  fi
-}
-
-function ga(){
-  if [ -z "$1" ]; then
-    git ls-files -m -o --exclude-standard | fzf -m --reverse --print0 | xargs -0 -o -t git add
-  else
-    git add $@
-  fi
-}
-
-function da(){
-  if [ -z "$1" ]; then
-    dotfiles diff --name-only --diff-filter=M | sed s#^#$HOME/# | fzf -m --reverse --print0 | xargs -0 -o -t dotfiles add
-  else
-    dotfiles add $@
-  fi
-}
-
-function gr(){
-  if [ -z "$1" ]; then
-    git ls-files -m | fzf -m --reverse --print0 | xargs -0 -o -t git restore
-  else
-    git restore $@
-  fi
-}
-
-function dr(){
-  if [ -z "$1" ]; then
-    dotfiles ls-files -m | fzf -m --reverse --print0 | xargs -0 -o -t dotfiles restore
-  else
-    dotfiles restore $@
   fi
 }
 
