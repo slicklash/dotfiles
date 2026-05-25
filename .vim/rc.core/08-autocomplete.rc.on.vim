@@ -49,6 +49,9 @@ endfunction
 function! s:native_path_match(input) abort
   let l:parts = split(a:input)
   let l:token = empty(l:parts) ? '' : l:parts[-1]
+  if l:token =~# '[*?[]'
+    return ''
+  endif
   if stridx(l:token, '/') >= 0
     return l:token
   endif
@@ -69,6 +72,9 @@ function! s:native_path_candidates(input) abort
   let l:slash = strridx(l:path, '/')
   let l:raw_dir = l:slash >= 0 ? strpart(l:path, 0, l:slash + 1) : ''
   let l:raw_tail = strpart(l:path, len(l:raw_dir))
+  if empty(l:raw_tail)
+    return []
+  endif
   let l:hidden = strpart(l:raw_tail, 0, 1) ==# '.'
 
   if strpart(l:raw_dir, 0, 2) ==# '~/'
@@ -137,11 +143,15 @@ endfunction
 
 function! NativeComplete(findstart, base) abort
   let l:input = getline('.')[: col('.') - 2]
+  let l:path_start = s:native_path_start(l:input)
 
   if a:findstart
-    let l:starts = [match(l:input, '\k*$')]
+    let l:starts = []
 
-    let l:path_start = s:native_path_start(l:input)
+    if l:input =~# '\k$'
+      call add(l:starts, match(l:input, '\k*$'))
+    endif
+
     if l:path_start >= 0
       call add(l:starts, l:path_start)
     endif
@@ -153,25 +163,27 @@ function! NativeComplete(findstart, base) abort
       endif
     endif
 
-    return min(filter(l:starts, 'v:val >= 0'))
+    let l:starts = filter(l:starts, 'v:val >= 0')
+    return empty(l:starts) ? -3 : min(l:starts)
   endif
 
   let l:candidates = []
+  let l:base_len = strlen(a:base)
 
-  if s:native_path_start(l:input) >= 0
+  if l:path_start >= 0
     call extend(l:candidates, s:native_path_candidates(l:input))
   endif
 
-  if strlen(a:base) >= 1
+  if l:base_len >= 1
     call extend(l:candidates, s:native_snippet_candidates(a:base))
   endif
 
-  if strlen(a:base) >= 2
+  if l:base_len >= 2
     call extend(l:candidates, s:native_syntax_candidates(a:base))
     call extend(l:candidates, s:native_tmux_candidates(a:base))
   endif
 
-  if &filetype ==# 'vim'
+  if &filetype ==# 'vim' && l:base_len >= 1
     call extend(l:candidates, s:native_vim_candidates(l:input, a:base))
   endif
 

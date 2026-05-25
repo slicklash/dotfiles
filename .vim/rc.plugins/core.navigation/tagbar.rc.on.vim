@@ -1,4 +1,4 @@
-call dein#add('preservim/tagbar', { 'rev': '7bfffca1f121afb7a9e38747500bf5270e006bb1' })
+call dein#add('preservim/tagbar', { 'rev': 'b37b05ff1925b0b3931f031ebf88690aa0974375' })
 
 let g:tagbar_type_zsh = {
     \ 'ctagstype' : 'zsh_hyphen',

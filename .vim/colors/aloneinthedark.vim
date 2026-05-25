@@ -152,77 +152,6 @@ let g:choosewin_color_overlay_current = {
 
 " }}}
 
-" lightline {{{
-
-let s:status_fg = s:STATUSLINE_FG
-let s:status_bg = s:WINDOW_SEPARATOR_BG
-
-let s:dark_on_light = [s:status_bg[0], s:status_fg[0], s:status_bg[1], s:status_fg[1]]
-let s:light_on_dark = [s:status_fg[0], s:status_bg[0], s:status_fg[1], s:status_bg[1]]
-
-let s:mode_insert_bg = s:color.DARKBLUE
-let s:mode_visual_bg = s:color.DARKORANGE
-let s:mode_replace_bg = s:color.DARKRED
-
-" [[guifg, guibg, ctermfg, ctermbg], ...]
-let s:p = {
-            \'normal':   {
-                \'left':  [
-                    \ s:light_on_dark,
-                    \ s:dark_on_light],
-                \'middle': [
-                    \ s:light_on_dark],
-                \'right': [
-                    \ s:dark_on_light,
-                    \ s:dark_on_light]
-            \},
-            \'inactive': {
-                \'left': [
-                    \ s:light_on_dark,
-                    \ s:light_on_dark],
-                \'middle': [
-                    \ s:light_on_dark],
-                \'right': [
-                    \ s:light_on_dark,
-                    \ s:light_on_dark],
-            \},
-            \ 'insert':   {
-                \ 'left': [
-                    \ [s:status_fg[0], s:mode_insert_bg[0], s:status_fg[1], s:mode_insert_bg[1]],
-                    \ s:dark_on_light],
-                \ 'middle': [
-                    \ [s:status_fg[0], s:mode_insert_bg[0], s:status_fg[1], s:mode_insert_bg[1]]]
-            \},
-            \ 'replace':  {
-                \ 'left': [
-                    \ [s:status_bg[0], s:mode_replace_bg[0], s:status_bg[1], s:mode_replace_bg[1]],
-                    \ s:dark_on_light],
-                \ 'middle': [
-                    \ [s:status_bg[0], s:mode_replace_bg[0], s:status_bg[1], s:mode_replace_bg[1]]]
-            \},
-            \ 'visual':   {
-                \ 'left': [
-                    \ [s:status_bg[0], s:mode_visual_bg[0], s:status_bg[1], s:mode_visual_bg[1]],
-                    \ s:dark_on_light],
-                \ 'middle': [
-                    \ [s:status_bg[0], s:mode_visual_bg[0], s:status_bg[1], s:mode_visual_bg[1]]]
-            \},
-            \ 'tabline':  {
-                \ 'left': [
-                    \ s:light_on_dark],
-                \ 'middle': [
-                    \ s:light_on_dark],
-                \ 'right': [
-                    \ s:light_on_dark,
-                    \ s:light_on_dark],
-                \ 'tabsel': [
-                    \ s:dark_on_light]
-            \}}
-
-let g:lightline#colorscheme#aloneinthedark#palette = s:p
-
-" }}}
-
 " less is more
 hi! link Identifier     Keyword
 hi! link Statement      Keyword
@@ -403,8 +332,11 @@ call s:hi('TagbarVisibilityPrivate', s:color.RED, '', '')
 " pandoc
 hi! link pandocStrong DiffChange
 
-" fugitive
+" fuzzbox
+hi! link fuzzboxMatching Search
+hi! link fuzzboxBorder LineNr
 
+" fugitive
 call s:hi('FugitivePath1', s:color.FG, '', '')
 call s:hi('FugitivePath2', s:color.WHITE, '', '')
 call s:hi('FugitivePath3', s:color.PURPLE, '', '')

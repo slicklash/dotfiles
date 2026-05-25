@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-call dein#add('lambdalisue/fern.vim', { 'rev': 'a96f8c6c52746346fe568e3711792c1e9268cf91' })
+call dein#add('lambdalisue/fern.vim', { 'rev': 'b4520a50d8df51969838d35eb07f797e2785b234' })
 
 let g:fern#default_hidden = 1
 let g:fern#drawer_side = 'right'
@@ -64,7 +64,7 @@ function! s:tmux_open_shell() abort
   execute 'silent !tmux splitw -c ' . shellescape(l:cmd)
 endfunction
 
-function! s:tmux_open_codex() abort
+function! s:tmux_open_code_agent(cli) abort
   if empty($TMUX) || empty($TMUX_PANE)
     echoerr 'Not inside tmux (TMUX/TMUX_PANE not set)'
     return
@@ -81,7 +81,7 @@ function! s:tmux_open_codex() abort
   endif
 
   call filter(getwininfo(), {i, v -> getbufvar(v.bufnr, '&filetype') ==# 'fern' ? execute(v.winnr . 'close') : 0})
-  call system('tmux send-keys -t ' . shellescape(l:newpane) . ' ' . shellescape('codex ' . l:file) . ' C-m')
+  call system('tmux send-keys -t ' . shellescape(l:newpane) . ' ' . a:cli .'\ "' . shellescape(l:file) . '" C-m')
 endfunction
 
 function! s:get_node_path() abort
@@ -129,7 +129,7 @@ function! s:search_last() abort
 endfunction
 
 function! s:search_files() abort
-  call _fzf({'dir': s:search_target_dir()})
+  call FuzzyFind({'dir': s:search_target_dir()})
 endfunction
 
 function! s:yank_to_register(reg) abort
@@ -190,7 +190,7 @@ function! s:init_fern() abort
   nnoremap <buffer> L <Plug>(fern-action-expand-tree:stay)
 
   nnoremap <buffer><silent> S :call <SID>tmux_open_shell()<Bar>redraw!<CR>
-  nnoremap <buffer><silent> C :call <SID>tmux_open_codex()<Bar>redraw!<CR>
+  nnoremap <buffer><silent> C :call <SID>tmux_open_code_agent('claude')<Bar>redraw!<CR>
 
   nnoremap <buffer> .    <Plug>(fern-action-hidden:toggle)
   nnoremap <buffer> <C-l> <Plug>(fern-action-reload)

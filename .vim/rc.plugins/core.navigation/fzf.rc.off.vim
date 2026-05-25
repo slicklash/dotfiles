@@ -1,3 +1,7 @@
+if get(g:, 'fuzzy_search_backend', 'fuzzbox') !=# 'fzf'
+  finish
+endif
+
 let missing = Missing('rg', 'bat', 'delta')
 if !empty(missing)
   echo 'Error while processing ' . resolve(expand('<sfile>:p'))
@@ -5,8 +9,8 @@ if !empty(missing)
   cquit
 endif
 
-call dein#add('junegunn/fzf', { 'rev': '6fefe025461b168eac2546ccba3403b70eb5da16', 'build': './install --bin', 'merged': 0 })
-call dein#add('junegunn/fzf.vim', { 'rev': 'b9624aa012ddcbae9e79964bfd30cc1fbe3cf263', 'depends': 'fzf' })
+call dein#add('junegunn/fzf', { 'rev': '67319aed0bfc732ad194fd0291f11ce260822b5a', 'build': './install --bin', 'merged': 0 })
+call dein#add('junegunn/fzf.vim', { 'rev': 'b9b98ac5741afd2d0aa1e09f24b1614d4c91f15a', 'depends': 'fzf' })
 
 function! s:setup() abort
   let g:fzf_options = ['--style=minimal', '--layout=reverse', '--info=inline', '--preview-window=right:70%']
@@ -19,28 +23,28 @@ function! s:setup() abort
     \ 'ctrl-l': 'vsplit',
     \ 'ctrl-n': 'tabedit' }
 
-  nnoremap <Space>f <cmd>call _fzf()<CR>
-  nnoremap <Space>F <cmd>call _fzf({'ft': '?'})<CR>
-  nnoremap <Space>p <cmd>call _fzf({'dir': GetProjectDir()})<CR>
+  nnoremap <Space>f <cmd>call FuzzyFind()<CR>
+  nnoremap <Space>F <cmd>call FuzzyFind({'ft': '?'})<CR>
+  nnoremap <Space>p <cmd>call FuzzyFind({'dir': GetProjectDir()})<CR>
   nnoremap <Space>m <cmd>call SearchModules()<CR>
-  nnoremap <Space>A <cmd>call _fzf({'dir': GetProjectDir(), 'ft': '?'})<CR>
+  nnoremap <Space>A <cmd>call FuzzyFind({'dir': GetProjectDir(), 'ft': '?'})<CR>
 
   nnoremap <Space>g <cmd>call SearchGit({'source': 'git log'})<CR>
   nnoremap <Space>o <cmd>call SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
 
-  nnoremap <Space>c <cmd>call _fzf({'dir': '~/.vim/', 'ignore':['.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
-  nnoremap <Space>z <cmd>call _fzf({'dir': '~/.zsh/'})<CR>
-  nnoremap <Space>` <cmd>call _fzf({'dir': '~/'})<CR>
+  nnoremap <Space>c <cmd>call FuzzyFind({'dir': '~/.vim/', 'ignore':['.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
+  nnoremap <Space>z <cmd>call FuzzyFind({'dir': '~/.zsh/'})<CR>
+  nnoremap <Space>` <cmd>call FuzzyFind({'dir': '~/'})<CR>
 
-  nnoremap <Space>b <cmd>call fzf#vim#buffers('', fzf#vim#with_preview({'placeholder': "{1}", 'options': g:fzf_options}))<CR>
+  nnoremap <Space>b <cmd>call FuzzyBufferList()<CR>
 
-  nnoremap <Space>d <cmd>call _fzf({'dir': expand('%:p:h')})<CR>
-  nnoremap <Space>h <cmd>Helptags<CR>
-  nnoremap <Space>r <cmd>call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))<CR>
-  nnoremap <Space>; <cmd>History:<CR>
+  nnoremap <Space>d <cmd>call FuzzyFind({'dir': expand('%:p:h')})<CR>
+  nnoremap <Space>h <cmd>call FuzzyHelpTags()<CR>
+  nnoremap <Space>r <cmd>call FuzzyRecent()<CR>
+  nnoremap <Space>; <cmd>call FuzzyCommandHistory()<CR>
 
-  nnoremap <Leader>fd <cmd>call _fzf({'grep': expand('<cword>')})<CR>
-  nnoremap <Leader>fa <cmd>call _fzf({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
+  nnoremap <Leader>fd <cmd>call FuzzyFind({'grep': expand('<cword>')})<CR>
+  nnoremap <Leader>fa <cmd>call FuzzyFind({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
 
   nnoremap <Space>/ <cmd>call SearchIn('')<CR>
   nnoremap <Space>s <cmd>call SearchIn('')<CR>
@@ -61,7 +65,7 @@ endfunction
 
 function! _fzf(...) abort
   let params = get(a:000, 0, {})
-  let dir = get(params, 'dir')
+  let dir = get(params, 'dir', '')
   let source = get(params, 'source', '')
   let grep = get(params, 'grep', '')
   let ft = get(params, 'ft')
@@ -92,6 +96,7 @@ function! _fzf(...) abort
           \ 'htmlcov/',
           \ 'Library/',
           \ '.Trash/',
+          \ '*.tsbuildinfo',
           \ ])
     let source = empty(grep) ? _rg(ignore, '--files') : _rg(ignore)
     if !empty(ft)
@@ -114,17 +119,37 @@ function! _fzf(...) abort
   endif
 endfunction
 
+function! FuzzyFind(...) abort
+  call call('_fzf', a:000)
+endfunction
+
 function! SearchIn(dir, ...) abort
   let pattern = a:0 > 0 && a:1 != v:none ? a:1 : input('Pattern: ')
   let options = get(a:000, 1, {})
   if empty(pattern)
     return
   endif
-  call _fzf(extend({'grep': pattern, 'dir': a:dir}, options))
+  call FuzzyFind(extend({'grep': pattern, 'dir': a:dir}, options))
 endfunction
 
 function! SearchModules() abort
-  call _fzf({'dir': GetProjectDir() . '/node_modules'})
+  call FuzzyFind({'dir': GetProjectDir() . '/node_modules'})
+endfunction
+
+function! FuzzyBufferList() abort
+  call fzf#vim#buffers('', fzf#vim#with_preview({'placeholder': "{1}", 'options': g:fzf_options}))
+endfunction
+
+function! FuzzyRecent(...) abort
+  call fzf#vim#history(fzf#vim#with_preview({'options': g:fzf_options}))
+endfunction
+
+function! FuzzyHelpTags() abort
+  Helptags
+endfunction
+
+function! FuzzyCommandHistory() abort
+  History:
 endfunction
 
 function! SearchGit(...) abort
