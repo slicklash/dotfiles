@@ -10,7 +10,7 @@ if g:fuzzy_search_backend !=# 'fuzzbox'
   finish
 endif
 
-call dein#add('vim-fuzzbox/fuzzbox.vim', { 'rev': '406163e1463d12287a23a21f4134c3b3258cd846' })
+call dein#add('vim-fuzzbox/fuzzbox.vim', { 'rev': 'aac0a132386a8da7f8f026ecd60e21372dd11315' })
 
 let g:fuzzbox_mappings = 0
 let g:fuzzbox_dropdown = 1
@@ -67,6 +67,7 @@ function! s:default_ignores() abort
         \ '.turbo',
         \ '.mypy_cache',
         \ '.pytest_cache',
+        \ '.DS_Store',
         \ 'node_modules',
         \ 'target',
         \ 'dist',
