@@ -1,5 +1,45 @@
+set preview true
 set previewer ~/.config/lf/lf-preview
 set cleaner ~/.config/lf/lf-cleaner
+set drawbox
+set ratios 1:5:4
+
+cmd bulk-rename ${{
+    # Create temporary files to store the original and modified list
+    index=$(mktemp /tmp/lf-bulk-rename-index.XXXXXXXXXX)
+    index_edit=$(mktemp /tmp/lf-bulk-rename.XXXXXXXXXX)
+
+    # Populate original list with marked files or all files in directory
+    if [ -n "$fs" ]; then
+        echo "$fs" > "$index"
+    else
+        echo "$(ls "$(dirname "$f")" | tr ' ' "\n")" > "$index"
+    fi
+
+    # Copy to the list that you will edit
+    cat "$index" > "$index_edit"
+    $EDITOR "$index_edit"
+
+    # Execute renaming if line count matches
+    if [ $(cat "$index" | wc -l) -eq $(cat "$index_edit" | wc -l) ]; then
+        max=$(($(cat "$index" | wc -l)+1))
+        counter=1
+        while [ "$counter" -le "$max" ]; do
+            a="$(cat "$index" | sed "${counter}q;d")"
+            b="$(cat "$index_edit" | sed "${counter}q;d")"
+            counter=$(($counter+1))
+            [ "$a" = "$b" ] && continue
+            [ -z "$b" ] && continue
+            [ -e "$b" ] && echo "File exists: $b" && continue
+            mv "$a" "$b"
+        done
+    else
+        echo "Error: Number of lines must stay the same."
+    fi
+
+    # Clean up temporary storage
+    rm "$index" "$index_edit"
+}}
 
 cmd mkdir ${{
   printf "Directory Name: "
@@ -27,10 +67,30 @@ cmd thunar ${{
   thunar "$f"
 }}
 
+cmd togglepreview ${{
+  state="/tmp/lf-preview-state"
+
+  if [ -f "$state" ]; then
+    rm "$state"
+    lf -remote "send $id set previewer ~/.config/lf/lf-preview"
+  else
+    touch "$state"
+    lf -remote "send $id set previewer ~/.config/lf/lf-preview-empty"
+  fi
+}}
+
 # unmap
 map d
 
-# map
+map . set hidden!
+
+map zp togglepreview
+
+map sn :set sortby natural; set reverse false
+map st :set sortby time; set reverse true
+map ss :set sortby size; set reverse true
+
+map R bulk-rename
 map M m1
 map <c-h> tmuxp
 map <c-l> tmuxp
@@ -38,10 +98,8 @@ map dd delete
 map x cut
 map y copy
 map <enter> open
-map R reload
 map D mkdir
 map N mkfile
-map . set hidden!
 map E thunar
 
 map gh cd ~

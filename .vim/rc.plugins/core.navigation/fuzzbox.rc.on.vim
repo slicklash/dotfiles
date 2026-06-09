@@ -10,11 +10,12 @@ if g:fuzzy_search_backend !=# 'fuzzbox'
   finish
 endif
 
-call dein#add('vim-fuzzbox/fuzzbox.vim', { 'rev': 'aac0a132386a8da7f8f026ecd60e21372dd11315' })
+call dein#add('vim-fuzzbox/fuzzbox.vim', { 'rev': 'b0f0fd3b947e57143fa8a2634418bd9a689c58f8' })
 
 let g:fuzzbox_mappings = 0
 let g:fuzzbox_dropdown = 1
 let g:fuzzbox_preview = 1
+let g:fuzzbox_preview_cutoff = 90
 let g:fuzzbox_compact = 1
 
 let g:fuzzbox_keymaps = {
@@ -22,9 +23,13 @@ let g:fuzzbox_keymaps = {
       \ 'menu_down': ["\<C-n>", "\<Down>", "\<C-j>"],
       \ }
 
-let g:fuzzbox_window_defaults = { 'width': 0.9, 'height': 0.8, 'preview_ratio': 0.7 }
+let g:fuzzbox_window_defaults = { 'width': 0.9, 'height': 0.8, 'preview_ratio': 0.5 }
 
 let s:quickfix_on_enter = v:false
+
+" rows marked with <Tab> in the current picker
+let s:marks = []
+let s:menu_wid = -1
 
 function! s:setup() abort
   nnoremap <Space>f <cmd>call FuzzyFind()<CR>
@@ -185,16 +190,62 @@ function! s:action_path(cmd, wid, result, opts) abort
   call s:open_path_result(a:cmd, a:result, get(a:opts, 'cwd', ''))
 endfunction
 
-function! s:quickfix_from_menu(wid, result, opts) abort
-  let s:quickfix_on_enter = v:false
-  let l:cwd = get(a:opts, 'cwd', '')
-  let l:lines = getbufline(winbufnr(a:wid), 1, '$')
-  let l:qf = []
+function! s:reset_marks() abort
+  let s:marks = []
+  let s:menu_wid = -1
+endfunction
+
+function! s:refresh_marks() abort
+  if s:menu_wid <= 0 || empty(getwininfo(s:menu_wid))
+    return
+  endif
+  " drop only our own highlights, keep fuzzbox's fuzzy-match highlighting.
+  call setmatches(filter(getmatches(s:menu_wid),
+        \ {_, m -> get(m, 'group', '') !=# 'fuzzboxMarked'}), s:menu_wid)
+  if empty(s:marks)
+    call fuzzbox#popup#SetTitle(s:menu_wid, '')
+    return
+  endif
+
+  let l:lines = getbufline(winbufnr(s:menu_wid), 1, '$')
+  let l:positions = []
+  let l:lnum = 0
   for l:line in l:lines
+    let l:lnum += 1
+    if index(s:marks, l:line) >= 0
+      call add(l:positions, [l:lnum])
+    endif
+  endfor
+  " matchaddpos() accepts at most 8 positions per call before patch-9.0.0622.
+  let l:idx = 0
+  while l:idx < len(l:positions)
+    call matchaddpos('fuzzboxMarked', l:positions[l:idx : l:idx + 7], 10, -1, {'window': s:menu_wid})
+    let l:idx += 8
+  endwhile
+  call fuzzbox#popup#SetTitle(s:menu_wid, len(s:marks) . ' selected')
+endfunction
+
+function! s:toggle_mark(wid, result, opts) abort
+  let s:menu_wid = a:wid
+  if !empty(a:result)
+    let l:i = index(s:marks, a:result)
+    if l:i >= 0
+      call remove(s:marks, l:i)
+    else
+      call add(s:marks, a:result)
+    endif
+  endif
+  call s:refresh_marks()
+  call win_execute(a:wid, 'normal! j')
+endfunction
+
+function! s:build_quickfix(lines, cwd) abort
+  let l:qf = []
+  for l:line in a:lines
     if empty(l:line)
       continue
     endif
-    let [l:path, l:lnum, l:col, l:text] = s:parse_path_result(l:line, l:cwd)
+    let [l:path, l:lnum, l:col, l:text] = s:parse_path_result(l:line, a:cwd)
     call add(l:qf, {
           \ 'filename': l:path,
           \ 'lnum': max([l:lnum, 1]),
@@ -203,24 +254,29 @@ function! s:quickfix_from_menu(wid, result, opts) abort
           \ })
   endfor
   call setqflist(l:qf)
+endfunction
+
+function! s:quickfix_from_menu(wid, result, opts) abort
+  let s:quickfix_on_enter = v:false
+  let l:cwd = get(a:opts, 'cwd', '')
+  " prefer the rows marked with <Tab>; fall back to the full filtered list.
+  let l:lines = empty(s:marks) ? getbufline(winbufnr(a:wid), 1, '$') : copy(s:marks)
+  let l:title = empty(s:marks) ? 'Fuzzbox (all)' : 'Fuzzbox (' . len(s:marks) . ' selected)'
+  call s:build_quickfix(l:lines, l:cwd)
+  call setqflist([], 'a', {'title': l:title})
   silent! call popup_close(a:wid)
   copen
 endfunction
 
-function! s:quickfix_next_enter(wid, result, opts) abort
-  let s:quickfix_on_enter = v:true
-  call fuzzbox#popup#SetTitle(a:wid, 'Quickfix on Enter')
-endfunction
-
 function! s:reset_quickfix_on_enter(wid) abort
   let s:quickfix_on_enter = v:false
+  call s:reset_marks()
 endfunction
 
 function! s:path_actions() abort
   return {
+        \ "\<Tab>": function('s:toggle_mark'),
         \ "\<c-q>": function('s:quickfix_from_menu'),
-        \ "\<M-q>": function('s:quickfix_next_enter'),
-        \ "\eq": function('s:quickfix_next_enter'),
         \ "\<c-s>": function('s:action_path', ['split']),
         \ "\<c-l>": function('s:action_path', ['vsplit']),
         \ "\<c-v>": function('s:action_path', ['vsplit']),
@@ -239,6 +295,7 @@ function! s:preview_file(wid, path, line, ...) abort
 endfunction
 
 function! s:preview_path(wid, result, opts) abort
+  call s:refresh_marks()
   if empty(a:result)
     call popup_settext(a:wid, [''])
     return
@@ -250,6 +307,7 @@ endfunction
 
 function! s:select_paths(items, opts) abort
   let s:quickfix_on_enter = v:false
+  call s:reset_marks()
   let l:opts = extend({
         \ 'title': 'Find Files',
         \ 'cwd': '',

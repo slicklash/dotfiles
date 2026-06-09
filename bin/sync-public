@@ -16,7 +16,7 @@ function _sync() {
 echo "syncing ..."
 
 from=''
-white_list=('README.md' '.tmux.conf' '.zshrc' '.ctags')
+white_list=('README.md' '.tmux.conf' '.zshenv' '.zshrc' '.ctags')
 _sync
 
 from='bin/'
@@ -49,6 +49,10 @@ white_list=('xfce4-keyboard-shortcuts.xml')
 _sync
 
 from='.claude'
+white_list=('settings.json')
+_sync
+
+from='.claude-llama'
 white_list=('settings.json')
 _sync
 

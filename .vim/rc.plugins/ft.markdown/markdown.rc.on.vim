@@ -34,5 +34,6 @@ endfunction
 
 augroup filetype_pandoc
   autocmd!
-  autocmd FileType pandoc,markdown noremap <buffer> <F5> <cmd>call PMarkdown()<CR>
+  autocmd FileType pandoc,markdown nnoremap <silent><buffer> <F5> <Cmd>call PMarkdown()<CR>
+  autocmd FileType pandoc,markdown setlocal nospell
 augroup END

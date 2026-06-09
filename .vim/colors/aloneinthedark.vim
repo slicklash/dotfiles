@@ -335,6 +335,7 @@ hi! link pandocStrong DiffChange
 " fuzzbox
 hi! link fuzzboxMatching Search
 hi! link fuzzboxBorder LineNr
+hi! link fuzzboxMarked PmenuSel
 
 " fugitive
 call s:hi('FugitivePath1', s:color.FG, '', '')

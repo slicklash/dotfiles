@@ -1,11 +1,12 @@
 {
+  "syntaxHighlightingDisabled": true,
+  "autoUpdatesChannel": "latest",
+  "theme": "dark",
+  "autoCompactEnabled": false,
   "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:8001",
-    "ANTHROPIC_AUTH_TOKEN": "apikey",
-    "ANTHROPIC_MODEL": "local",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_ATTRIBUTION_HEADER" : "0",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
-  "model": "local",
-  "syntaxHighlightingDisabled": true,
-  "theme": "dark"
+  "effortLevel": "xhigh"
 }

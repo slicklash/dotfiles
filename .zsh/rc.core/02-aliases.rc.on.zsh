@@ -29,6 +29,8 @@ alias vil='vim -w ~/vim_logs/log_$(date +%Y%m%d_%H%M).txt'
 alias vin='vim -u NONE'
 alias vx='vim -c Vinarise'
 
+alias pi='pip3 install --user --break-system-packages'
+
 alias tmux='tmux -2'
 
 alias wrestart='watchmedo auto-restart'
@@ -49,7 +51,6 @@ case "$OSTYPE" in
     alias pbcopy='xclip -selection clipboard'
     alias pbpaste='xclip -selection clipboard -o'
     alias open='xdg-open'
-    alias lf='lfub'
     alias pv='apt list --upgradable'
     alias pu='apt upgrade'
     ;;

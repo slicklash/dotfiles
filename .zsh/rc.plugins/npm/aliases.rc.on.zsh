@@ -22,4 +22,7 @@ export TURBO_CONCURRENCY=2
 alias y='yarn'
 alias ys='y start'
 alias yb='y build'
+alias yf='y format'
+alias yl='y lint'
+alias ya='y audit'
 alias ytu='y run test:unit'

@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-call dein#add('lambdalisue/fern.vim', { 'rev': 'b4520a50d8df51969838d35eb07f797e2785b234' })
+call dein#add('lambdalisue/fern.vim', { 'rev': '3d580357c09e199b0fa7d560b2db1ad05de02b9c' })
 
 let g:fern#default_hidden = 1
 let g:fern#drawer_side = 'right'

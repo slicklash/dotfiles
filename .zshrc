@@ -1,13 +1,5 @@
 # zmodload zsh/zprof
 
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-
-if [ -d "$HOME/Library/Caches" ]; then
-  export XDG_CACHE_HOME="$HOME/Library/Caches"
-else
-  export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-fi
-
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 
 for d in \
@@ -44,7 +36,6 @@ fi
 export PATH
 export GRAALVM_HOME=$HOME/bin/graalvm-ce-java
 export BAT_THEME="aloneinthedark"
-export LF_UEBERZUG_TEMPDIR="/tmp/lf-ueberzug-tmp"
 export HOMEBREW_NO_AUTO_UPDATE=1
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 export DOTNET_CLI_TELEMETRY_OPTOUT=1

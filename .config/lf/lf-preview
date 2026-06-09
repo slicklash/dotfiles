@@ -1,76 +1,135 @@
 #!/bin/sh
+
+file="$1"
+w="$2"
+h="$3"
+x="$4"
+y="$5"
+mode="$6"
+
+mime_type=$(file -Lb --mime-type -- "$file" 2>/dev/null)
+
+clear_images() {
+    if [ -n "$TMUX" ]; then
+        # Inside tmux, kitten icat draws via Unicode-placeholder placements: the
+        # image is shown through placeholder characters written as plain text into
+        # the pane cells. The kitty "delete placements" escape (a=d,d=a) cannot
+        # remove virtual placements, so we (1) free the image data by id, then
+        # (2) erase the placeholder characters by clearing the pane's cells --
+        # lf doesn't know they are there, so it never overwrites them itself.
+        printf '\033Ptmux;\033\033_Ga=d,d=I,i=1\033\033\134\033\134' >/dev/tty
+        if [ -n "$x" ] && [ -n "$y" ] && [ -n "$h" ]; then
+            row="$y"
+            end=$((y + h))
+            while [ "$row" -lt "$end" ]; do
+                # Move to the pane's left column on this row, erase to line end
+                # (the preview pane runs to the right edge of the screen).
+                printf '\033[%d;%dH\033[K' "$row" "$x" >/dev/tty
+                row=$((row + 1))
+            done
+        fi
+    else
+        # Outside tmux kitten uses classic placements, removed by the standard
+        # delete-all escape (d=A also frees the image data).
+        printf '\033_Ga=d,d=A\033\134' >/dev/tty
+    fi
+}
+
 draw() {
-  path="$(readlink -f -- "$1" | sed 's/\\/\\\\/g;s/"/\\"/g')"
-  printf '{"action":"add","identifier":"preview","x":%d,"y":%d,"width":%d,"height":%d,"scaler":"contain","scaling_position_x":0.5,"scaling_position_y":0.5,"path":"%s"}\n' \
-    "$x" "$y" "$width" "$height" "$path" >"$FIFO_UEBERZUG"
-  exit 1
+    # Don't draw to the terminal while lf is preloading previews in the background.
+    [ "$mode" = "preload" ] && exit 1
+    # kitten icat places the image at an explicit cell rectangle (it does NOT
+    # rely on the cursor position, and it handles tmux passthrough itself), so
+    # the image lands in the preview pane in both tmux and plain Ghostty.
+    kitten icat --stdin no --transfer-mode memory --image-id 1 \
+        --place "${w}x${h}@${x}x${y}" "$1" </dev/null >/dev/tty
+    # exit 1 disables lf's preview cache for this file. That is also what makes
+    # lf invoke the cleaner (which removes the image) when we move to another file.
+    exit 1
 }
 
 hash() {
-  cache="$HOME/.cache/lf/$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f -- "$1")" | sha256sum | cut -d' ' -f1).jpg"
-}
-
-cache() {
-  if ! [ -f "$cache" ]; then
-    dir="$(dirname -- "$cache")"
-    [ -d "$dir" ] || mkdir -p -- "$dir"
-    "$@"
-  fi
-  draw "$cache"
-}
-
-file="$1"
-width="$2"
-height="$3"
-x="$4"
-y="$5"
-
-case "$(file -Lb --mime-type -- "$file")" in
-  image/*)
-    if [ -p "$FIFO_UEBERZUG" ]; then
-      # ueberzug doesn't handle image orientation correctly
-      orientation="$(magick identify -format '%[orientation]\n' -- "$file[0]")"
-      if [ -n "$orientation" ] \
-          && [ "$orientation" != Undefined ] \
-          && [ "$orientation" != TopLeft ]; then
-        hash "$file"
-        cache magick -- "$file[0]" -auto-orient "$cache"
-      else
-        draw "$file"
-      fi
-    fi
-    ;;
-  video/*)
-    if [ -p "$FIFO_UEBERZUG" ]; then
-      hash "$file"
-      cache ffmpegthumbnailer -i "$file" -o "$cache" -s 0
-    fi
-    ;;
-  application/pdf)
-    if [ -p "$FIFO_UEBERZUG" ]; then
-      hash "$file"
-      cache pdftoppm -f 1 -singlefile -jpeg -- "$file" "${cache%.*}"
-    fi
-    ;;
-  application/zip|application/x-tar|application/gzip|application/x-bzip2|application/x-xz|application/x-rar|application/x-7z-compressed)
-    if command -v atool >/dev/null 2>&1; then
-      exec atool -l -- "$file"
-    elif command -v bsdtar >/dev/null 2>&1; then
-      exec bsdtar -tf "$file"
-    elif command -v unzip >/dev/null 2>&1 && file "$file" | grep -qi zip; then
-      exec unzip -l "$file"
-    elif command -v unrar >/dev/null 2>&1; then
-      exec unrar l "$file"
-    elif command -v 7z >/dev/null 2>&1; then
-      exec 7z l "$file"
+    if command -v realpath >/dev/null 2>&1; then
+        real_path=$(realpath "$1")
     else
-      echo "No archive listing tool found"
+        real_path="$1"
     fi
-    ;;
-  *)
-    exec bat --style=plain --color=always --paging=never "$file"
-    ;;
+
+    if [ "$(uname)" = "Darwin" ]; then
+        stat_str=$(stat -f "%N%i%z%m" "$real_path")
+    else
+        stat_str=$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' "$real_path")
+    fi
+
+    if command -v sha256sum >/dev/null 2>&1; then
+        hashed_name=$(printf "%s" "$stat_str" | sha256sum | awk '{print $1}')
+    else
+        hashed_name=$(printf "%s" "$stat_str" | shasum -a 256 | awk '{print $1}')
+    fi
+
+    cache="$HOME/.cache/lf/${hashed_name}.jpg"
+}
+
+cache_preview() {
+    if [ ! -f "$cache" ]; then
+        mkdir -p "$(dirname "$cache")"
+        "$@"
+    fi
+    # Only draw if the thumbnail was actually produced; otherwise fall through
+    # to the file-metadata line below.
+    [ -s "$cache" ] && draw "$cache"
+}
+
+ffmpeg_thumb() {
+    # $1 = video file, $2 = output jpg. Seek to 10% of the duration (skips black
+    # intro frames) and grab a single frame. ffmpeg decodes the frame directly
+    # via its libraries -- it never launches QuickTime or any player.
+    dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$1" 2>/dev/null)
+    ss=$(awk -v d="$dur" 'BEGIN { s = (d > 0) ? d * 0.1 : 0; printf "%.2f", s }')
+    ffmpeg -y -ss "$ss" -i "$1" -frames:v 1 -q:v 3 "$2" >/dev/null 2>&1
+}
+
+# Clear the previous image before rendering this preview, but not while lf is
+# preloading in the background (that would wipe the preview currently on screen).
+[ "$mode" != "preload" ] && clear_images
+
+case "$mime_type" in
+    image/*)
+        draw "$file"
+        ;;
+    video/*)
+        # Extract a thumbnail frame with ffmpeg (never launches a player) and
+        # draw it. Falls through to file metadata if ffmpeg is unavailable.
+        if command -v ffmpeg >/dev/null 2>&1; then
+            hash "$file"
+            cache_preview ffmpeg_thumb "$file" "$cache"
+        fi
+        ;;
+    application/pdf)
+        if command -v pdftoppm >/dev/null 2>&1; then
+            hash "$file"
+            cache_preview pdftoppm -f 1 -singlefile -jpeg "$file" "${cache%.*}"
+        fi
+        ;;
+    application/zip|application/x-tar|application/gzip|application/x-bzip2|application/x-xz|application/x-rar|application/x-7z-compressed)
+        if command -v atool >/dev/null 2>&1; then
+            exec atool -l "$file"
+        elif command -v bsdtar >/dev/null 2>&1; then
+            exec bsdtar -tf "$file"
+        elif command -v unzip >/dev/null 2>&1; then
+            exec unzip -l "$file"
+        elif command -v 7z >/dev/null 2>&1; then
+            exec 7z l "$file"
+        fi
+        ;;
+    *)
+        if command -v bat >/dev/null 2>&1; then
+            exec bat --style=plain --color=always --paging=never "$file"
+        else
+            exec cat "$file"
+        fi
+        ;;
 esac
 
-file -Lb -- "$file" | fold -s -w "$width"
+file -Lb -- "$file" 2>/dev/null | fold -s -w "$w"
 exit 0

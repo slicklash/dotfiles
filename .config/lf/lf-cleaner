@@ -1,3 +1,27 @@
 #!/bin/sh
 
-[ -p "$FIFO_UEBERZUG" ] && printf '{"action":"remove","identifier":"preview"}\n' >"$FIFO_UEBERZUG"
+# lf calls this before drawing each new preview (and when leaving a file whose
+# preview cache was disabled, e.g. an image). The previewer bypasses lf to draw
+# images, so we remove them here. Args: 1=file 2=width 3=height 4=x 5=y 6=next.
+w="$2"
+h="$3"
+x="$4"
+y="$5"
+
+if [ -n "$TMUX" ]; then
+    # Inside tmux kitten icat uses Unicode-placeholder placements (placeholder
+    # characters written as text into the pane cells). The kitty delete escape
+    # cannot remove virtual placements, so free the image data by id and erase
+    # the placeholder characters from the pane cells. See lf-preview for details.
+    printf '\033Ptmux;\033\033_Ga=d,d=I,i=1\033\033\134\033\134' >/dev/tty
+    if [ -n "$x" ] && [ -n "$y" ] && [ -n "$h" ]; then
+        row="$y"
+        end=$((y + h))
+        while [ "$row" -lt "$end" ]; do
+            printf '\033[%d;%dH\033[K' "$row" "$x" >/dev/tty
+            row=$((row + 1))
+        done
+    fi
+else
+    printf '\033_Ga=d,d=A\033\134' >/dev/tty
+fi

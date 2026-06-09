@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-call dein#add('vim-airline/vim-airline', { 'rev': 'd842cfb9dd38ccf1e0385989d405b79b4f4bca8e' })
+call dein#add('vim-airline/vim-airline', { 'rev': '9e0beefd6e28c92d876559f07d8595f454c08cb7' })
 
 let g:airline_theme = 'dark'
 let g:airline_theme_patch_func = 'MyAirlineThemePatch'
