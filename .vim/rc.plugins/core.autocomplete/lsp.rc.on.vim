@@ -1,62 +1,69 @@
-call dein#add('yegappan/lsp', { 'rev': '21c24f83a5a8b3d88c19ea23b49565abe2ddb3d5' })
+vim9script
 
-" \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
-" \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-" \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
+dein#add('yegappan/lsp', {'rev': '21c24f83a5a8b3d88c19ea23b49565abe2ddb3d5'})
 
-let lspOpts = #{
-      \ autoComplete: v:false,
-      \ omniComplete: v:true,
-      \ autoHighlightDiags: v:true,
-      \ usePopupInCodeAction: v:true,
+# \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
+# \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+# \ 'java': ['/home/slicklash/bin/java-lsp/eclipse-jdt-ls'],
+
+var lspOpts = {
+      \ autoComplete: false,
+      \ omniComplete: true,
+      \ autoHighlightDiags: true,
+      \ usePopupInCodeAction: true,
       \ diagSignErrorText: '✖',
       \ diagSignWarningText: '⚠',
       \ diagSignInfoText: 'ℹ',
       \ diagSignHintText: '➤',
-      \ showDiagOnStatusLine: v:true,
+      \ showDiagOnStatusLine: true,
       \ }
-autocmd User LspSetup call LspOptionsSet(lspOpts)
 
-" pynvim python-lsp-server python-lsp-ruff
+# pynvim python-lsp-server python-lsp-ruff
 
-let lspServers = [
+var lspServers = [
       \ {
-      \    'name': 'golang',
-      \    'filetype': ['go', 'gomod'],
-      \    'path': 'gopls',
-      \    'args': ['serve'],
-      \    'syncInit': v:true
+      \ 'name': 'golang',
+      \ 'filetype': ['go', 'gomod'],
+      \ 'path': 'gopls',
+      \ 'args': ['serve'],
+      \ 'syncInit': true,
       \ },
       \ {
-      \   'name': 'nimlang',
-      \   'filetype': ['nim'],
-      \   'path': 'nimlangserver',
+      \ 'name': 'nimlang',
+      \ 'filetype': ['nim'],
+      \ 'path': 'nimlangserver',
       \ },
       \ {
-      \   'name': 'pylsp',
-      \   'filetype': ['python'],
-      \   'path': exists('$PREFIX') ? ($PREFIX .. '/bin/pylsp') : 'pylsp',
-      \   'args': ['--log-file', $TMPDIR . '/pylsp.log'],
+      \ 'name': 'pylsp',
+      \ 'filetype': ['python'],
+      \ 'path': exists('$PREFIX') ? ($PREFIX .. '/bin/pylsp') : 'pylsp',
+      \ 'args': ['--log-file', $TMPDIR .. '/pylsp.log'],
       \ },
       \ {
-      \    'name': 'typescriptlang',
-      \    'filetype': ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx'],
-      \    'path': 'typescript-language-server',
-      \    'args': ['--stdio'],
-      \    'workspaceConfig': {
-      \        'javascript': { 'format': { 'indentSize': 2, 'tabSize': 2 } },
-      \        'typescript': { 'format': { 'indentSize': 2, 'tabSize': 2 } }
-      \     },
+      \ 'name': 'typescriptlang',
+      \ 'filetype': ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx'],
+      \ 'path': 'typescript-language-server',
+      \ 'args': ['--stdio'],
+      \ 'workspaceConfig': {
+      \ 'javascript': {'format': {'indentSize': 2, 'tabSize': 2}},
+      \ 'typescript': {'format': {'indentSize': 2, 'tabSize': 2}},
+      \ },
       \ },
       \ {
-      \   'name': 'vimls',
-      \   'filetype': 'vim',
-      \   'path': exists('$PREFIX') ? ($PREFIX .. '/bin/vim-language-server') : 'vim-language-server',
-      \   'args': ['--stdio']
+      \ 'name': 'vimls',
+      \ 'filetype': 'vim',
+      \ 'path': exists('$PREFIX') ? ($PREFIX .. '/bin/vim-language-server') : 'vim-language-server',
+      \ 'args': ['--stdio'],
       \ }]
-autocmd User LspSetup call LspAddServer(lspServers)
 
-function! s:setup() abort
+def OnLspSetup()
+  g:LspOptionsSet(lspOpts)
+  g:LspAddServer(lspServers)
+enddef
+
+autocmd User LspSetup OnLspSetup()
+
+def Setup()
   nnoremap <silent> gd <cmd>LspGotoDefinition<CR>
   nnoremap <silent> <leader>b <C-o>
 
@@ -66,6 +73,6 @@ function! s:setup() abort
   nnoremap <silent> <leader>q <cmd>LspCodeAction<CR>
   nnoremap <silent> <leader>n <cmd>LspDiagNextWrap<CR>
   nnoremap <silent> <leader>N <cmd>LspDiagPrevWrap<CR>
-endfunction
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()

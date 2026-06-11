@@ -1,25 +1,27 @@
-" Command-line abbreviations (command-position only)
-function! s:CmdAbbrev(lhs, rhs) abort
+vim9script
+
+# Command-line abbreviations (command-position only)
+def CmdAbbrev(lhs: string, rhs: string)
   execute printf(
         \ 'cnoremap <expr> %s getcmdtype() == ":" && getcmdpos() == 1 ? "%s" : "%s"',
-        \ a:lhs, a:rhs, a:lhs
+        \ lhs, rhs, lhs
         \ )
-endfunction
+enddef
 
-call s:CmdAbbrev('git', 'Git ')
-call s:CmdAbbrev('Cd',  'cd')
-call s:CmdAbbrev('ww',  'w !sudo tee > /dev/null %')
-call s:CmdAbbrev('cf',   'Cfilter ')
-call s:CmdAbbrev('nf',  'Cfilter! ')
+CmdAbbrev('git', 'Git ')
+CmdAbbrev('Cd',  'cd')
+CmdAbbrev('ww',  'w !sudo tee > /dev/null %')
+CmdAbbrev('cf',   'Cfilter ')
+CmdAbbrev('nf',  'Cfilter! ')
 
-call s:CmdAbbrev('W',    'w')
-call s:CmdAbbrev('Q',    'q')
-call s:CmdAbbrev('WQ',   'wq')
-call s:CmdAbbrev('Wq',   'wq')
-call s:CmdAbbrev('Qa',   'qa')
-call s:CmdAbbrev('QA',   'qa')
-call s:CmdAbbrev('Qall', 'qall')
-call s:CmdAbbrev('So',   'so')
+CmdAbbrev('W',    'w')
+CmdAbbrev('Q',    'q')
+CmdAbbrev('WQ',   'wq')
+CmdAbbrev('Wq',   'wq')
+CmdAbbrev('Qa',   'qa')
+CmdAbbrev('QA',   'qa')
+CmdAbbrev('Qall', 'qall')
+CmdAbbrev('So',   'so')
 
-call s:CmdAbbrev('SS', 'mksession!')
-call s:CmdAbbrev('SR', 'source Session.vim')
+CmdAbbrev('SS', 'mksession!')
+CmdAbbrev('SR', 'source Session.vim')

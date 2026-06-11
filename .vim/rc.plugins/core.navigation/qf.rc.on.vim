@@ -1,80 +1,82 @@
+vim9script
+
 packadd cfilter
 
-function! RemoveQFItems() range
-  let start = line("'<") - 1
-  let end = line("'>") - 1
-  let qfall = getqflist()
-  let pos = getpos('.')
-  call remove(qfall, start, end)
-  call setqflist(qfall, 'r')
-  call setpos('.', pos)
-endfunction
+def g:RemoveQFItems()
+  var startln = line("'<") - 1
+  var endln = line("'>") - 1
+  var qfall = getqflist()
+  var pos = getpos('.')
+  remove(qfall, startln, endln)
+  setqflist(qfall, 'r')
+  setpos('.', pos)
+enddef
 
-function! RemoveQFItem()
-  let start = line('.') - 1
-  let qfall = getqflist()
-  let pos = getpos('.')
-  call remove(qfall, start)
-  call setqflist(qfall, 'r')
-  call setpos('.', pos)
-endfunction
+def g:RemoveQFItem()
+  var startln = line('.') - 1
+  var qfall = getqflist()
+  var pos = getpos('.')
+  remove(qfall, startln)
+  setqflist(qfall, 'r')
+  setpos('.', pos)
+enddef
 
-function! QFUnique()
-  let seen = {}
-  let [n, last] = [1, line('$')]
+def g:QFUnique()
+  var seen: dict<number> = {}
+  var n = 1
+  var last = line('$')
   while n <= last
-    let file = split(getline(n), '|')[0]
+    var file = split(getline(n), '|')[0]
     if !has_key(seen, file)
-      let seen[file] = n - 1
+      seen[file] = n - 1
     endif
-    let n += 1
+    n += 1
   endwhile
-  let take = sort(values(seen))
-  let qfall = filter(getqflist(), {i -> index(take, i) > -1})
-  call setqflist(qfall, 'r')
-endfunction
+  var take = sort(values(seen))
+  var qfall = filter(getqflist(), (i, _) => index(take, i) > -1)
+  setqflist(qfall, 'r')
+enddef
 
-function! s:cmp(x, y)
-  if bufname(a:x.bufnr) == bufname(a:y.bufnr)
-    return a:x.lnum == a:y.lnum ? 0 : (a:x.lnum < a:y.lnum ? -1 : 1)
+def Cmp(x: dict<any>, y: dict<any>): number
+  if bufname(x.bufnr) == bufname(y.bufnr)
+    return x.lnum == y.lnum ? 0 : (x.lnum < y.lnum ? -1 : 1)
   endif
-  return bufname(a:x.bufnr) < bufname(a:y.bufnr) ? -1 : 1
-endfunction
+  return bufname(x.bufnr) < bufname(y.bufnr) ? -1 : 1
+enddef
 
-function! s:cmp_text(x, y)
-  let x = split(a:x.text, '/')[-1]
-  let y = split(a:y.text, '/')[-1]
-  let x = trim(x, "';")
-  let y = trim(y, "';")
-  return x < y ? -1 : 1
-endfunction
+def CmpText(x: dict<any>, y: dict<any>): number
+  var xt = trim(split(x.text, '/')[-1], "';")
+  var yt = trim(split(y.text, '/')[-1], "';")
+  return xt < yt ? -1 : 1
+enddef
 
-function! QFSort(...)
-  let sortBy = get(a:, 1, 'file')
+def g:QFSort(...rest: list<any>)
+  var sortBy: string = get(rest, 0, 'file')
   if sortBy ==# 'text'
-    call setqflist(sort(getqflist(), 's:cmp_text'))
+    setqflist(sort(getqflist(), CmpText))
   else
-    call setqflist(sort(getqflist(), 's:cmp'))
+    setqflist(sort(getqflist(), Cmp))
   endif
-endfunction
+enddef
 
-function! QFSave(file) abort
-  let qf = getqflist({'all': 1})
-  for i in range(len(qf.items))
-    let d = qf.items[i]
+def g:QFSave(file: string)
+  var qf = getqflist({'all': 1})
+  var items: list<dict<any>> = qf.items
+  for i in range(len(items))
+    var d = items[i]
     if bufexists(d.bufnr)
-      let d.filename = fnamemodify(bufname(d.bufnr), ':p')
+      d.filename = fnamemodify(bufname(d.bufnr), ':p')
     endif
-    silent! call remove(d, 'bufnr')
-    let qf.items[i] = d
+    silent! remove(d, 'bufnr')
+    items[i] = d
   endfor
-  call writefile([js_encode(qf.items)], a:file)
-endfunction
+  writefile([js_encode(items)], file)
+enddef
 
-function! QFLoad(file) abort
-  call setqflist(js_decode(get(readfile(a:file), 0)))
+def g:QFLoad(file: string)
+  setqflist(js_decode(get(readfile(file), 0)))
   copen
-endfunction
+enddef
 
 command! -nargs=1 -complete=file QFSave call QFSave(<f-args>)
 command! -nargs=1 -complete=file QFLoad call QFLoad(<f-args>)
@@ -84,5 +86,5 @@ augroup my_qf
   autocmd FileType qf nnoremap <silent><buffer> E <C-w><CR><C-w>L
   autocmd FileType qf nnoremap <silent><buffer> dd <Cmd>call RemoveQFItem()<CR>
   autocmd FileType qf xnoremap <silent><buffer> dd :<C-u>call RemoveQFItems()<CR>
-  autocmd QuickfixCmdPost * call QFSort()
+  autocmd QuickfixCmdPost * g:QFSort()
 augroup END

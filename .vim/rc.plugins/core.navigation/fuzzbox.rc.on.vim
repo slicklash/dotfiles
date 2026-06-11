@@ -1,70 +1,67 @@
-let missing = Missing('rg')
+vim9script
+
+var missing = g:Missing('rg')
 if !empty(missing)
-  echo 'Error while processing ' . resolve(expand('<sfile>:p'))
-  echo 'Error: missing '.missing
+  echo 'Error while processing ' .. resolve(expand('<sfile>:p'))
+  echo 'Error: missing ' .. missing
   cquit
 endif
 
-let g:fuzzy_search_backend = get(g:, 'fuzzy_search_backend', 'fuzzbox')
-if g:fuzzy_search_backend !=# 'fuzzbox'
-  finish
-endif
+dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': '7f77fc1b813fa7555c05775bf7fd0f12d4499880'})
 
-call dein#add('vim-fuzzbox/fuzzbox.vim', { 'rev': 'b0f0fd3b947e57143fa8a2634418bd9a689c58f8' })
+g:fuzzbox_mappings = 0
+g:fuzzbox_dropdown = 1
+g:fuzzbox_preview = 1
+g:fuzzbox_preview_cutoff = 90
+g:fuzzbox_compact = 1
 
-let g:fuzzbox_mappings = 0
-let g:fuzzbox_dropdown = 1
-let g:fuzzbox_preview = 1
-let g:fuzzbox_preview_cutoff = 90
-let g:fuzzbox_compact = 1
-
-let g:fuzzbox_keymaps = {
+g:fuzzbox_keymaps = {
       \ 'menu_up': ["\<C-p>", "\<Up>", "\<C-k>"],
       \ 'menu_down': ["\<C-n>", "\<Down>", "\<C-j>"],
       \ }
 
-let g:fuzzbox_window_defaults = { 'width': 0.9, 'height': 0.8, 'preview_ratio': 0.5 }
+g:fuzzbox_window_defaults = {'width': 0.9, 'height': 0.8, 'preview_ratio': 0.5}
 
-let s:quickfix_on_enter = v:false
+var quickfix_on_enter = false
 
-" rows marked with <Tab> in the current picker
-let s:marks = []
-let s:menu_wid = -1
+# rows marked with <Tab> in the current picker
+var marks: list<string> = []
+var menu_wid = -1
 
-function! s:setup() abort
-  nnoremap <Space>f <cmd>call FuzzyFind()<CR>
-  nnoremap <Space>F <cmd>call FuzzyFind({'ft': '?'})<CR>
-  nnoremap <Space>p <cmd>call FuzzyFind({'dir': GetProjectDir()})<CR>
-  nnoremap <Space>m <cmd>call SearchModules()<CR>
-  nnoremap <Space>A <cmd>call FuzzyFind({'dir': GetProjectDir(), 'ft': '?'})<CR>
+def Setup()
+  nnoremap <Space>f <ScriptCmd>g:FuzzyFind()<CR>
+  nnoremap <Space>F <ScriptCmd>g:FuzzyFind({'ft': '?'})<CR>
+  nnoremap <Space>p <ScriptCmd>g:FuzzyFind({'dir': g:GetProjectDir()})<CR>
+  nnoremap <Space>m <ScriptCmd>SearchModules()<CR>
+  nnoremap <Space>A <ScriptCmd>g:FuzzyFind({'dir': g:GetProjectDir(), 'ft': '?'})<CR>
 
-  nnoremap <Space>g <cmd>call SearchGit({'source': 'git log'})<CR>
-  nnoremap <Space>o <cmd>call SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
+  nnoremap <Space>g <ScriptCmd>SearchGit({'source': 'git log'})<CR>
+  nnoremap <Space>o <ScriptCmd>SearchGit({'source': 'git log', 'preview_args': '--name-only'})<CR>
 
-  nnoremap <Space>c <cmd>call FuzzyFind({'dir': '~/.vim/', 'ignore':['.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
-  nnoremap <Space>z <cmd>call FuzzyFind({'dir': '~/.zsh/'})<CR>
-  nnoremap <Space>` <cmd>call FuzzyFind({'dir': '~/'})<CR>
+  nnoremap <Space>c <ScriptCmd>g:FuzzyFind({'dir': '~/.vim/', 'ignore': ['.cache', 'cache', 'bundle*', '.dein', 'tmp']})<CR>
+  nnoremap <Space>z <ScriptCmd>g:FuzzyFind({'dir': '~/.zsh/'})<CR>
+  nnoremap <Space>` <ScriptCmd>g:FuzzyFind({'dir': '~/'})<CR>
 
-  nnoremap <Space>b <cmd>call FuzzyBufferList()<CR>
+  nnoremap <Space>b <ScriptCmd>FuzzyBufferList()<CR>
 
-  nnoremap <Space>d <cmd>call FuzzyFind({'dir': expand('%:p:h')})<CR>
-  nnoremap <Space>h <cmd>call FuzzyHelpTags()<CR>
-  nnoremap <Space>r <cmd>call FuzzyRecent()<CR>
-  nnoremap <Space>; <cmd>call FuzzyCommandHistory()<CR>
+  nnoremap <Space>d <ScriptCmd>g:FuzzyFind({'dir': expand('%:p:h')})<CR>
+  nnoremap <Space>h <ScriptCmd>FuzzyHelpTags()<CR>
+  nnoremap <Space>r <ScriptCmd>FuzzyRecent()<CR>
+  nnoremap <Space>; <ScriptCmd>FuzzyCommandHistory()<CR>
 
-  nnoremap <Leader>fd <cmd>call FuzzyFind({'grep': expand('<cword>')})<CR>
-  nnoremap <Leader>fa <cmd>call FuzzyFind({'grep': expand('<cword>'), 'dir': GetProjectDir()})<CR>
+  nnoremap <Leader>fd <ScriptCmd>g:FuzzyFind({'grep': expand('<cword>')})<CR>
+  nnoremap <Leader>fa <ScriptCmd>g:FuzzyFind({'grep': expand('<cword>'), 'dir': g:GetProjectDir()})<CR>
 
-  nnoremap <Space>/ <cmd>call SearchIn('')<CR>
-  nnoremap <Space>s <cmd>call SearchIn('')<CR>
-  nnoremap <Space>? <cmd>call SearchIn('', v:none, {'ft': '?'})<CR>
-  nnoremap <Space>\ <cmd>call SearchIn(GetProjectDir())<CR>
-  nnoremap <Space>\| <cmd>call SearchIn(GetProjectDir(), v:none, {'ft': '?'})<CR>
-endfunction
+  nnoremap <Space>/ <ScriptCmd>g:SearchIn('')<CR>
+  nnoremap <Space>s <ScriptCmd>g:SearchIn('')<CR>
+  nnoremap <Space>? <ScriptCmd>g:SearchIn('', null_string, {'ft': '?'})<CR>
+  nnoremap <Space>\ <ScriptCmd>g:SearchIn(g:GetProjectDir())<CR>
+  nnoremap <Space>\| <ScriptCmd>g:SearchIn(g:GetProjectDir(), null_string, {'ft': '?'})<CR>
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()
 
-function! s:default_ignores() abort
+def GetDefaultIgnores(): list<string>
   return [
         \ '.git',
         \ '__pycache__',
@@ -86,493 +83,531 @@ function! s:default_ignores() abort
         \ 'Library/',
         \ '.Trash/',
         \ '*.tsbuildinfo',
+        \ '.cache',
+        \ '.npm',
+        \ '.cargo',
+        \ '.rustup',
+        \ '.choosenim',
+        \ '.nimble',
+        \ 'go/pkg',
         \ ]
-endfunction
+enddef
 
-function! _rg(ignores, ...) abort
-  let l:rg_options = extend(['rg', '--hidden', '--no-ignore-vcs', '--column', '--line-number', '--no-heading', '--smart-case'], a:000)
-  for l:item in a:ignores
-    call extend(l:rg_options, ['--glob', "'!" . l:item . "'"])
+def GetRgCommand(ignores: list<string>, ...extra: list<string>): string
+  var rg_options = extend(['rg', '--hidden', '--no-ignore-vcs', '--column', '--line-number', '--no-heading', '--smart-case'], extra)
+  for item in ignores
+    extend(rg_options, ['--glob', "'!" .. item .. "'"])
   endfor
-  return join(l:rg_options, ' ')
-endfunction
+  return join(rg_options, ' ')
+enddef
 
-function! s:strip_ansi(line) abort
-  return substitute(a:line, '\%x1b\[[0-9;?]*[ -/]*[@-~]', '', 'g')
-endfunction
+def StripAnsi(line: string): string
+  return substitute(line, '\%x1b\[[0-9;?]*[ -/]*[@-~]', '', 'g')
+enddef
 
-function! s:normalize_dir(dir) abort
-  return empty(a:dir) ? '' : fnamemodify(expand(a:dir), ':p')
-endfunction
+def NormalizeDir(dir: string): string
+  return empty(dir) ? '' : fnamemodify(expand(dir), ':p')
+enddef
 
-function! s:run_lines(command, dir) abort
-  let l:dir = s:normalize_dir(a:dir)
-  let l:command = empty(l:dir) ? a:command : 'cd ' . shellescape(l:dir) . ' && ' . a:command
-  let l:lines = systemlist(l:command)
-  if v:shell_error
-    call EchoHi(join(l:lines, "\n"), 'ErrorMsg')
+def RunLines(command: string, dir: string): list<string>
+  var ndir = NormalizeDir(dir)
+  var cmd = empty(ndir) ? command : 'cd ' .. shellescape(ndir) .. ' && ' .. command
+  var lines = systemlist(cmd)
+  if v:shell_error != 0
+    g:EchoHi(join(lines, "\n"), 'ErrorMsg')
     return []
   endif
-  return filter(map(l:lines, 's:strip_ansi(v:val)'), '!empty(v:val)')
-endfunction
+  return filter(map(lines, (_, v) => StripAnsi(v)), (_, v) => !empty(v))
+enddef
 
-function! s:absolute_path(path, cwd) abort
-  let l:path = expand(a:path)
-  if l:path =~# '^\(/\|[A-Za-z]:[\/\\]\)'
-    return fnamemodify(l:path, ':p')
+def GetAbsolutePath(path: string, cwd: string): string
+  var p = expand(path)
+  if p =~# '^\(/\|[A-Za-z]:[\/\\]\)'
+    return fnamemodify(p, ':p')
   endif
-  let l:cwd = empty(a:cwd) ? getcwd() : a:cwd
-  return fnamemodify(l:cwd . '/' . l:path, ':p')
-endfunction
+  var base = empty(cwd) ? getcwd() : cwd
+  return fnamemodify(base .. '/' .. p, ':p')
+enddef
 
-function! s:parse_path_result(result, cwd) abort
-  let l:result = s:strip_ansi(a:result)
-  let l:match = matchlist(l:result, '^\(.\{-}\):\(\d\+\):\(\d\+\):')
-  if empty(l:match)
-    let l:path = s:absolute_path(l:result, a:cwd)
-    return [l:path, 0, 0, fnamemodify(l:path, ':t')]
+def ParsePathResult(result: string, cwd: string): list<any>
+  var res = StripAnsi(result)
+  var m = matchlist(res, '^\(.\{-}\):\(\d\+\):\(\d\+\):')
+  if empty(m)
+    var fp = GetAbsolutePath(res, cwd)
+    return [fp, 0, 0, fnamemodify(fp, ':t')]
   endif
 
-  let l:path = s:absolute_path(l:match[1], a:cwd)
-  let l:line = str2nr(l:match[2])
-  let l:col = str2nr(l:match[3])
-  let l:text = strpart(l:result, len(l:match[0]))
-  return [l:path, l:line, l:col, l:text]
-endfunction
+  var p = GetAbsolutePath(m[1], cwd)
+  var lnum = str2nr(m[2])
+  var lcol = str2nr(m[3])
+  var text = strpart(res, len(m[0]))
+  return [p, lnum, lcol, text]
+enddef
 
-function! s:jump_to(line, col) abort
-  if a:line <= 0
+def JumpTo(lnum: number, lcol: number)
+  if lnum <= 0
     return
   endif
-  if a:col > 0
-    call cursor(a:line, a:col)
+  if lcol > 0
+    cursor(lnum, lcol)
   else
-    execute 'normal! ' . a:line . 'G'
+    execute 'normal! ' .. lnum .. 'G'
   endif
   normal! zz
-endfunction
+enddef
 
-function! s:is_initial_empty_buffer() abort
+def IsInitialEmptyBuffer(): bool
   return winnr('$') == 1
         \ && empty(bufname('%'))
         \ && &buftype ==# ''
         \ && !&modified
         \ && line('$') == 1
         \ && getline(1) ==# ''
-endfunction
+enddef
 
-function! s:default_open_cmd() abort
-  return s:is_initial_empty_buffer() ? 'edit' : 'split'
-endfunction
+def GetDefaultOpenCmd(): string
+  return IsInitialEmptyBuffer() ? 'edit' : 'split'
+enddef
 
-function! s:open_path_result(cmd, result, cwd) abort
-  if empty(a:result)
+def OpenPathResult(cmd: string, result: string, cwd: string)
+  if empty(result)
     return
   endif
 
-  let [l:path, l:line, l:col, l:text] = s:parse_path_result(a:result, a:cwd)
-  let l:cmd = a:cmd ==# 'default' ? s:default_open_cmd() : a:cmd
-  call OpenPath(l:cmd, fnameescape(l:path))
-  call s:jump_to(l:line, l:col)
-endfunction
+  var [p, lnum, lcol, text] = ParsePathResult(result, cwd)
+  var ocmd = cmd ==# 'default' ? GetDefaultOpenCmd() : cmd
+  g:OpenPath(ocmd, fnameescape(p))
+  JumpTo(lnum, lcol)
+enddef
 
-function! s:select_path(cmd, wid, result, opts) abort
-  if s:quickfix_on_enter
-    call s:quickfix_from_menu(a:wid, a:result, a:opts)
+def SelectPath(cmd: string, wid: number, result: string, opts: dict<any>)
+  if quickfix_on_enter
+    QuickfixFromMenu(wid, result, opts)
     return
   endif
 
-  call s:open_path_result(a:cmd, a:result, get(a:opts, 'cwd', ''))
-endfunction
+  OpenPathResult(cmd, result, get(opts, 'cwd', ''))
+enddef
 
-function! s:action_path(cmd, wid, result, opts) abort
-  silent! call popup_close(a:wid)
-  call s:open_path_result(a:cmd, a:result, get(a:opts, 'cwd', ''))
-endfunction
+def ActionPath(cmd: string, wid: number, result: string, opts: dict<any>)
+  silent! popup_close(wid)
+  OpenPathResult(cmd, result, get(opts, 'cwd', ''))
+enddef
 
-function! s:reset_marks() abort
-  let s:marks = []
-  let s:menu_wid = -1
-endfunction
+# Wrappers so fuzzbox's inspect.Signature() can detect callback arg counts.
+# def functions don't support function('s:name', [args]) partial application,
+# so each bound variant gets its own wrapper with the (wid, result, opts) signature.
+def SelectPathDefault(wid: number, result: string, opts: dict<any>)
+  SelectPath('default', wid, result, opts)
+enddef
 
-function! s:refresh_marks() abort
-  if s:menu_wid <= 0 || empty(getwininfo(s:menu_wid))
+def ActionPathSplit(wid: number, result: string, opts: dict<any>)
+  ActionPath('split', wid, result, opts)
+enddef
+
+def ActionPathVsplit(wid: number, result: string, opts: dict<any>)
+  ActionPath('vsplit', wid, result, opts)
+enddef
+
+def ActionPathTabedit(wid: number, result: string, opts: dict<any>)
+  ActionPath('tabedit', wid, result, opts)
+enddef
+
+def ResetMarks()
+  marks = []
+  menu_wid = -1
+enddef
+
+def RefreshMarks()
+  if menu_wid <= 0 || empty(getwininfo(menu_wid))
     return
   endif
-  " drop only our own highlights, keep fuzzbox's fuzzy-match highlighting.
-  call setmatches(filter(getmatches(s:menu_wid),
-        \ {_, m -> get(m, 'group', '') !=# 'fuzzboxMarked'}), s:menu_wid)
-  if empty(s:marks)
-    call fuzzbox#popup#SetTitle(s:menu_wid, '')
+  # drop only our own highlights, keep fuzzbox's fuzzy-match highlighting.
+  setmatches(filter(getmatches(menu_wid),
+        \ (_, m) => get(m, 'group', '') !=# 'fuzzboxMarked'), menu_wid)
+  if empty(marks)
+    fuzzbox#popup#SetTitle(menu_wid, '')
     return
   endif
 
-  let l:lines = getbufline(winbufnr(s:menu_wid), 1, '$')
-  let l:positions = []
-  let l:lnum = 0
-  for l:line in l:lines
-    let l:lnum += 1
-    if index(s:marks, l:line) >= 0
-      call add(l:positions, [l:lnum])
+  var lines = getbufline(winbufnr(menu_wid), 1, '$')
+  var positions: list<list<number>> = []
+  var lnum = 0
+  for line in lines
+    lnum += 1
+    if index(marks, line) >= 0
+      add(positions, [lnum])
     endif
   endfor
-  " matchaddpos() accepts at most 8 positions per call before patch-9.0.0622.
-  let l:idx = 0
-  while l:idx < len(l:positions)
-    call matchaddpos('fuzzboxMarked', l:positions[l:idx : l:idx + 7], 10, -1, {'window': s:menu_wid})
-    let l:idx += 8
+  # matchaddpos() accepts at most 8 positions per call before patch-9.0.0622.
+  var idx = 0
+  while idx < len(positions)
+    matchaddpos('fuzzboxMarked', positions[idx : idx + 7], 10, -1, {'window': menu_wid})
+    idx += 8
   endwhile
-  call fuzzbox#popup#SetTitle(s:menu_wid, len(s:marks) . ' selected')
-endfunction
+  fuzzbox#popup#SetTitle(menu_wid, len(marks) .. ' selected')
+enddef
 
-function! s:toggle_mark(wid, result, opts) abort
-  let s:menu_wid = a:wid
-  if !empty(a:result)
-    let l:i = index(s:marks, a:result)
-    if l:i >= 0
-      call remove(s:marks, l:i)
+def ToggleMark(wid: number, result: string, opts: dict<any>)
+  menu_wid = wid
+  if !empty(result)
+    var i = index(marks, result)
+    if i >= 0
+      remove(marks, i)
     else
-      call add(s:marks, a:result)
+      add(marks, result)
     endif
   endif
-  call s:refresh_marks()
-  call win_execute(a:wid, 'normal! j')
-endfunction
+  RefreshMarks()
+  win_execute(wid, 'normal! j')
+enddef
 
-function! s:build_quickfix(lines, cwd) abort
-  let l:qf = []
-  for l:line in a:lines
-    if empty(l:line)
+def BuildQuickfix(lines: list<string>, cwd: string)
+  var qf: list<dict<any>> = []
+  for line in lines
+    if empty(line)
       continue
     endif
-    let [l:path, l:lnum, l:col, l:text] = s:parse_path_result(l:line, a:cwd)
-    call add(l:qf, {
-          \ 'filename': l:path,
-          \ 'lnum': max([l:lnum, 1]),
-          \ 'col': max([l:col, 1]),
-          \ 'text': l:text,
+    var [p, lnum, lcol, text] = ParsePathResult(line, cwd)
+    add(qf, {
+          \ 'filename': p,
+          \ 'lnum': max([lnum, 1]),
+          \ 'col': max([lcol, 1]),
+          \ 'text': text,
           \ })
   endfor
-  call setqflist(l:qf)
-endfunction
+  setqflist(qf)
+enddef
 
-function! s:quickfix_from_menu(wid, result, opts) abort
-  let s:quickfix_on_enter = v:false
-  let l:cwd = get(a:opts, 'cwd', '')
-  " prefer the rows marked with <Tab>; fall back to the full filtered list.
-  let l:lines = empty(s:marks) ? getbufline(winbufnr(a:wid), 1, '$') : copy(s:marks)
-  let l:title = empty(s:marks) ? 'Fuzzbox (all)' : 'Fuzzbox (' . len(s:marks) . ' selected)'
-  call s:build_quickfix(l:lines, l:cwd)
-  call setqflist([], 'a', {'title': l:title})
-  silent! call popup_close(a:wid)
+def QuickfixFromMenu(wid: number, result: string, opts: dict<any>)
+  quickfix_on_enter = false
+  var cwd: string = get(opts, 'cwd', '')
+  # prefer the rows marked with <Tab>; fall back to the full filtered list.
+  var lines = empty(marks) ? getbufline(winbufnr(wid), 1, '$') : copy(marks)
+  var title = empty(marks) ? 'Fuzzbox (all)' : 'Fuzzbox (' .. len(marks) .. ' selected)'
+  BuildQuickfix(lines, cwd)
+  setqflist([], 'a', {'title': title})
+  silent! popup_close(wid)
   copen
-endfunction
+enddef
 
-function! s:reset_quickfix_on_enter(wid) abort
-  let s:quickfix_on_enter = v:false
-  call s:reset_marks()
-endfunction
+def ResetQuickfixOnEnter(wid: number)
+  quickfix_on_enter = false
+  ResetMarks()
+enddef
 
-function! s:path_actions() abort
+def GetPathActions(): dict<func>
   return {
-        \ "\<Tab>": function('s:toggle_mark'),
-        \ "\<c-q>": function('s:quickfix_from_menu'),
-        \ "\<c-s>": function('s:action_path', ['split']),
-        \ "\<c-l>": function('s:action_path', ['vsplit']),
-        \ "\<c-v>": function('s:action_path', ['vsplit']),
-        \ "\<c-n>": function('s:action_path', ['tabedit']),
-        \ "\<c-t>": function('s:action_path', ['tabedit']),
+        \ "\<Tab>": ToggleMark,
+        \ "\<c-q>": QuickfixFromMenu,
+        \ "\<c-s>": ActionPathSplit,
+        \ "\<c-l>": ActionPathVsplit,
+        \ "\<c-v>": ActionPathVsplit,
+        \ "\<c-n>": ActionPathTabedit,
+        \ "\<c-t>": ActionPathTabedit,
         \ }
-endfunction
+enddef
 
-function! s:preview_file(wid, path, line, ...) abort
-  if a:wid == -1
+def PreviewFile(wid: number, path: string, lnum: number, ...rest: list<any>)
+  if wid == -1
     return
   endif
 
-  let l:col = get(a:000, 0, 0)
-  call fuzzbox#internal#previewer#PreviewFile(a:wid, fnamemodify(a:path, ':p'), a:line, l:col)
-endfunction
+  var lcol = get(rest, 0, 0)
+  fuzzbox#internal#previewer#PreviewFile(wid, fnamemodify(path, ':p'), lnum, lcol)
+enddef
 
-function! s:preview_path(wid, result, opts) abort
-  call s:refresh_marks()
-  if empty(a:result)
-    call popup_settext(a:wid, [''])
+def PreviewPath(wid: number, result: string, opts: dict<any>)
+  RefreshMarks()
+  if empty(result)
+    popup_settext(wid, [''])
     return
   endif
 
-  let [l:path, l:line, l:col, l:text] = s:parse_path_result(a:result, get(a:opts, 'cwd', ''))
-  call s:preview_file(a:wid, l:path, l:line, l:col)
-endfunction
+  var [p, lnum, lcol, text] = ParsePathResult(result, get(opts, 'cwd', ''))
+  PreviewFile(wid, p, lnum, lcol)
+enddef
 
-function! s:select_paths(items, opts) abort
-  let s:quickfix_on_enter = v:false
-  call s:reset_marks()
-  let l:opts = extend({
+def SelectPaths(items: list<string>, opts: dict<any>)
+  quickfix_on_enter = false
+  ResetMarks()
+  var merged = extend({
         \ 'title': 'Find Files',
         \ 'cwd': '',
         \ 'preview': 1,
         \ 'compact': 0,
         \ 'async': 1,
-        \ 'select_cb': function('s:select_path', ['default']),
-        \ 'preview_cb': function('s:preview_path'),
-        \ 'close_cb': function('s:reset_quickfix_on_enter'),
-        \ 'actions': s:path_actions(),
-        \ }, a:opts)
-  call fuzzbox#Select(a:items, l:opts)
-endfunction
+        \ 'select_cb': SelectPathDefault,
+        \ 'preview_cb': PreviewPath,
+        \ 'close_cb': ResetQuickfixOnEnter,
+        \ 'actions': GetPathActions(),
+        \ }, opts)
+  fuzzbox#Select(items, merged)
+enddef
 
-function! s:find_spec(...) abort
-  let l:params = get(a:000, 0, {})
-  let l:dir = get(l:params, 'dir', '')
-  let l:source = get(l:params, 'source', '')
-  let l:grep = get(l:params, 'grep', '')
-  let l:ft = get(l:params, 'ft', '')
+def FindSpec(params: dict<any> = {}): dict<any>
+  var dir: string = get(params, 'dir', '')
+  var source: string = get(params, 'source', '')
+  var grep: string = get(params, 'grep', '')
+  var ft: string = get(params, 'ft', '')
 
-  if empty(l:ft)
-    let l:tmp = matchstr(l:grep, '--ft=\S\+')
-    if !empty(l:tmp)
-      let l:ft = substitute(l:tmp, '^--ft=', '', '')
-      let l:grep = trim(substitute(l:grep, '\V' . escape(l:tmp, '\'), '', ''))
+  if empty(ft)
+    var tmp = matchstr(grep, '--ft=\S\+')
+    if !empty(tmp)
+      ft = substitute(tmp, '^--ft=', '', '')
+      grep = trim(substitute(grep, '\V' .. escape(tmp, '\'), '', ''))
     endif
   endif
 
-  if empty(l:source)
-    let l:ignore = get(l:params, 'ignore', s:default_ignores())
-    let l:source = empty(l:grep) ? _rg(l:ignore, '--files') : _rg(l:ignore)
-    if !empty(l:ft)
-      if l:ft ==# '?'
-        let l:ft = input('Type: ')
+  if empty(source)
+    var ignore: list<string> = get(params, 'ignore', GetDefaultIgnores())
+    source = empty(grep) ? GetRgCommand(ignore, '--files') : GetRgCommand(ignore)
+    if !empty(ft)
+      if ft ==# '?'
+        ft = input('Type: ')
       endif
-      if !empty(l:ft)
-        let l:source .= ' -t ' . shellescape(l:ft)
+      if !empty(ft)
+        source ..= ' -t ' .. shellescape(ft)
       endif
     endif
   endif
 
-  if !empty(l:grep)
-    let l:source .= ' -- ' . shellescape(l:grep)
+  if !empty(grep)
+    source ..= ' -- ' .. shellescape(grep)
   endif
 
   return {
-        \ 'dir': s:normalize_dir(l:dir),
-        \ 'source': l:source,
-        \ 'grep': l:grep,
+        \ 'dir': NormalizeDir(dir),
+        \ 'source': source,
+        \ 'grep': grep,
         \ }
-endfunction
+enddef
 
-function! FuzzyFind(...) abort
-  let l:spec = call('s:find_spec', a:000)
-  let l:items = s:run_lines(l:spec.source, l:spec.dir)
-  let l:title = empty(l:spec.grep) ? 'Find Files' : 'Search: ' . l:spec.grep
-  call s:select_paths(l:items, { 'title': l:title, 'cwd': l:spec.dir })
-endfunction
+# Public entry points (also called from other scripts, e.g. fern), so global.
+def g:FuzzyFind(params: dict<any> = {})
+  var spec = FindSpec(params)
+  var items = RunLines(spec.source, spec.dir)
+  var title = empty(spec.grep) ? 'Find Files' : 'Search: ' .. spec.grep
+  SelectPaths(items, {'title': title, 'cwd': spec.dir})
+enddef
 
-function! SearchIn(dir, ...) abort
-  let l:pattern = a:0 > 0 && a:1 != v:none ? a:1 : input('Pattern: ')
-  let l:options = get(a:000, 1, {})
-  if empty(l:pattern)
+def g:SearchIn(dir: string, pattern: string = null_string, options: dict<any> = {})
+  var pat = pattern == null_string ? input('Pattern: ') : pattern
+  if empty(pat)
     return
   endif
-  call FuzzyFind(extend({'grep': l:pattern, 'dir': a:dir}, l:options))
-endfunction
+  g:FuzzyFind(extend({'grep': pat, 'dir': dir}, options))
+enddef
 
-function! SearchModules() abort
-  call FuzzyFind({'dir': GetProjectDir() . '/node_modules'})
-endfunction
+def SearchModules()
+  g:FuzzyFind({'dir': g:GetProjectDir() .. '/node_modules'})
+enddef
 
-function! s:buffer_items() abort
-  let l:buffers = getbufinfo({'buflisted': 1})
-  call sort(l:buffers, {a, b -> a.lastused == b.lastused ? 0 : a.lastused < b.lastused ? 1 : -1})
-  let l:width = len(string(bufnr('$')))
-  return map(l:buffers, {
-        \ _, val -> printf(' %' . l:width . 'd %s %s',
+def GetBufferItems(): list<string>
+  var buffers = getbufinfo({'buflisted': 1})
+  sort(buffers, (a, b) => a.lastused == b.lastused ? 0 : a.lastused < b.lastused ? 1 : -1)
+  var width = len(string(bufnr('$')))
+  return mapnew(buffers, (_, val) => printf(' %' .. width .. 'd %s %s',
         \ val.bufnr,
-        \ (val.bufnr == bufnr('') ? '%' : val.bufnr == bufnr('#') ? '#' : ' ') . (val.changed ? '+' : ' '),
-        \ empty(val.name) ? '[No Name]' : fnamemodify(val.name, ':~:.'))
-        \ })
-endfunction
+        \ (val.bufnr == bufnr('') ? '%' : val.bufnr == bufnr('#') ? '#' : ' ') .. (val.changed ? '+' : ' '),
+        \ empty(val.name) ? '[No Name]' : fnamemodify(val.name, ':~:.')))
+enddef
 
-function! s:buffer_number(result) abort
-  return str2nr(matchstr(a:result, '^\s*\zs\d\+'))
-endfunction
+def GetBufferNumber(result: string): number
+  return str2nr(matchstr(result, '^\s*\zs\d\+'))
+enddef
 
-function! s:open_buffer(cmd, result) abort
-  let l:bufnr = s:buffer_number(a:result)
-  if l:bufnr <= 0
+def OpenBuffer(cmd: string, result: string)
+  var bnr = GetBufferNumber(result)
+  if bnr <= 0
     return
   endif
 
-  let l:cmd = a:cmd ==# 'default' ? s:default_open_cmd() : a:cmd
-  if l:cmd ==# 'tabedit'
+  var ocmd = cmd ==# 'default' ? GetDefaultOpenCmd() : cmd
+  if ocmd ==# 'tabedit'
     tabnew
-  elseif l:cmd ==# 'vsplit'
+  elseif ocmd ==# 'vsplit'
     vsplit
-  elseif l:cmd ==# 'split'
+  elseif ocmd ==# 'split'
     split
   endif
-  execute 'buffer ' . l:bufnr
-endfunction
+  execute 'buffer ' .. bnr
+enddef
 
-function! s:select_buffer(cmd, wid, result, opts) abort
-  call s:open_buffer(a:cmd, a:result)
-endfunction
+def SelectBuffer(cmd: string, wid: number, result: string, opts: dict<any>)
+  OpenBuffer(cmd, result)
+enddef
 
-function! s:action_buffer(cmd, wid, result, opts) abort
-  silent! call popup_close(a:wid)
-  call s:open_buffer(a:cmd, a:result)
-endfunction
+def ActionBuffer(cmd: string, wid: number, result: string, opts: dict<any>)
+  silent! popup_close(wid)
+  OpenBuffer(cmd, result)
+enddef
 
-function! s:preview_buffer(wid, result, opts) abort
-  let l:bufnr = s:buffer_number(a:result)
-  if a:wid == -1 || l:bufnr <= 0
+# Buffer action wrappers (same reason as path wrappers above).
+def SelectBufferDefault(wid: number, result: string, opts: dict<any>)
+  SelectBuffer('default', wid, result, opts)
+enddef
+
+def ActionBufferSplit(wid: number, result: string, opts: dict<any>)
+  ActionBuffer('split', wid, result, opts)
+enddef
+
+def ActionBufferVsplit(wid: number, result: string, opts: dict<any>)
+  ActionBuffer('vsplit', wid, result, opts)
+enddef
+
+def ActionBufferTabedit(wid: number, result: string, opts: dict<any>)
+  ActionBuffer('tabedit', wid, result, opts)
+enddef
+
+def PreviewBuffer(wid: number, result: string, opts: dict<any>)
+  var bnr = GetBufferNumber(result)
+  if wid == -1 || bnr <= 0
     return
   endif
 
-  let l:name = bufname(l:bufnr)
-  call fuzzbox#popup#SetTitle(a:wid, empty(l:name) ? '[No Name]' : fnamemodify(l:name, ':t'))
-  if !empty(l:name) && filereadable(l:name)
-    call s:preview_file(a:wid, fnamemodify(l:name, ':p'), getbufinfo(l:bufnr)[0].lnum)
+  var name = bufname(bnr)
+  fuzzbox#popup#SetTitle(wid, empty(name) ? '[No Name]' : fnamemodify(name, ':t'))
+  if !empty(name) && filereadable(name)
+    PreviewFile(wid, fnamemodify(name, ':p'), getbufinfo(bnr)[0].lnum)
   else
-    call popup_settext(a:wid, getbufline(l:bufnr, 1, '$'))
+    popup_settext(wid, getbufline(bnr, 1, '$'))
   endif
-endfunction
+enddef
 
-function! s:buffer_actions() abort
+def GetBufferActions(): dict<func>
   return {
-        \ "\<c-s>": function('s:action_buffer', ['split']),
-        \ "\<c-l>": function('s:action_buffer', ['vsplit']),
-        \ "\<c-v>": function('s:action_buffer', ['vsplit']),
-        \ "\<c-n>": function('s:action_buffer', ['tabedit']),
-        \ "\<c-t>": function('s:action_buffer', ['tabedit']),
+        \ "\<c-s>": ActionBufferSplit,
+        \ "\<c-l>": ActionBufferVsplit,
+        \ "\<c-v>": ActionBufferVsplit,
+        \ "\<c-n>": ActionBufferTabedit,
+        \ "\<c-t>": ActionBufferTabedit,
         \ }
-endfunction
+enddef
 
-function! FuzzyBufferList() abort
-  call fuzzbox#Select(s:buffer_items(), {
+def FuzzyBufferList()
+  fuzzbox#Select(GetBufferItems(), {
         \ 'title': 'Buffers',
         \ 'preview': 1,
         \ 'compact': 0,
         \ 'async': 1,
-        \ 'select_cb': function('s:select_buffer', ['default']),
-        \ 'preview_cb': function('s:preview_buffer'),
-        \ 'actions': s:buffer_actions(),
+        \ 'select_cb': SelectBufferDefault,
+        \ 'preview_cb': PreviewBuffer,
+        \ 'actions': GetBufferActions(),
         \ })
-endfunction
+enddef
 
-function! s:recent_items(dir) abort
-  let l:dir = s:normalize_dir(a:dir)
-  let l:seen = {}
-  let l:paths = []
-  for l:buf in getbufinfo({'buflisted': 1})
-    if filereadable(l:buf.name)
-      let l:path = fnamemodify(l:buf.name, ':p')
-      let l:seen[l:path] = 1
-      call add(l:paths, l:path)
+def GetRecentItems(dir: string): list<string>
+  var ndir = NormalizeDir(dir)
+  var seen: dict<number> = {}
+  var paths: list<string> = []
+  for buf in getbufinfo({'buflisted': 1})
+    if filereadable(buf.name)
+      var p = fnamemodify(buf.name, ':p')
+      seen[p] = 1
+      add(paths, p)
     endif
   endfor
-  for l:file in v:oldfiles
-    let l:path = fnamemodify(l:file, ':p')
-    if filereadable(l:path) && !has_key(l:seen, l:path)
-      let l:seen[l:path] = 1
-      call add(l:paths, l:path)
+  for file in v:oldfiles
+    var p = fnamemodify(file, ':p')
+    if filereadable(p) && !has_key(seen, p)
+      seen[p] = 1
+      add(paths, p)
     endif
   endfor
-  if !empty(l:dir)
-    call filter(l:paths, 'stridx(v:val, l:dir) == 0')
+  if !empty(ndir)
+    filter(paths, (_, v) => stridx(v, ndir) == 0)
   endif
-  return map(l:paths, 'fnamemodify(v:val, ":~")')
-endfunction
+  return map(paths, (_, v) => fnamemodify(v, ':~'))
+enddef
 
-function! FuzzyRecent(...) abort
-  let l:params = get(a:000, 0, {})
-  call s:select_paths(s:recent_items(get(l:params, 'dir', '')), {
+def FuzzyRecent(params: dict<any> = {})
+  SelectPaths(GetRecentItems(get(params, 'dir', '')), {
         \ 'title': 'Recent Files',
         \ 'cwd': '',
         \ })
-endfunction
+enddef
 
-function! FuzzyHelpTags() abort
+def FuzzyHelpTags()
   execute 'FuzzyHelp'
-endfunction
+enddef
 
-function! FuzzyCommandHistory() abort
+def FuzzyCommandHistory()
   execute 'FuzzyCmdHistory'
-endfunction
+enddef
 
-function! s:git_hash(result) abort
-  return matchstr(a:result, '[a-f0-9]\{7,\}')
-endfunction
+def GetGitHash(result: string): string
+  return matchstr(result, '[a-f0-9]\{7,\}')
+enddef
 
-function! s:preview_git(wid, result, opts) abort
-  if a:wid == -1
+def PreviewGit(wid: number, result: string, opts: dict<any>)
+  if wid == -1
     return
   endif
-  let l:hash = s:git_hash(a:result)
-  if empty(l:hash)
-    call popup_settext(a:wid, ['No valid commit selected'])
+  var hash = GetGitHash(result)
+  if empty(hash)
+    popup_settext(wid, ['No valid commit selected'])
     return
   endif
 
-  let l:dir = get(a:opts, 'cwd', getcwd())
-  let l:preview_args = get(a:opts, 'git_preview_args', '')
-  let l:cmd = 'git -C ' . shellescape(l:dir) . ' show --color=never ' . l:preview_args . ' ' . shellescape(l:hash)
-  call fuzzbox#popup#SetTitle(a:wid, l:hash)
-  call popup_settext(a:wid, systemlist(l:cmd))
-  call win_execute(a:wid, 'setlocal syntax=diff')
-endfunction
+  var dir: string = get(opts, 'cwd', getcwd())
+  var preview_args: string = get(opts, 'git_preview_args', '')
+  var cmd = 'git -C ' .. shellescape(dir) .. ' show --color=never ' .. preview_args .. ' ' .. shellescape(hash)
+  fuzzbox#popup#SetTitle(wid, hash)
+  popup_settext(wid, systemlist(cmd))
+  win_execute(wid, 'setlocal syntax=diff')
+enddef
 
-function! s:git_noop(wid, result, opts) abort
-endfunction
+def GitNoop(wid: number, result: string, opts: dict<any>)
+enddef
 
-function! s:git_fixup(wid, result, opts) abort
-  let l:hash = s:git_hash(a:result)
-  if !empty(l:hash)
-    silent! call popup_close(a:wid)
-    let l:cmd = 'git commit --fixup=' . l:hash
-    execute 'silent !' . l:cmd
+def GitFixup(wid: number, result: string, opts: dict<any>)
+  var hash = GetGitHash(result)
+  if !empty(hash)
+    silent! popup_close(wid)
+    var cmd = 'git commit --fixup=' .. hash
+    execute 'silent !' .. cmd
     redraw!
-    call EchoHi(l:cmd)
+    g:EchoHi(cmd)
   endif
-endfunction
+enddef
 
-function! s:git_autosquash(wid, result, opts) abort
-  let l:hash = s:git_hash(a:result)
-  if !empty(l:hash)
-    silent! call popup_close(a:wid)
-    let l:cmd = 'zsh -i -c ''git rebase -i --autosquash --autostash ' . l:hash . ';exec zsh'''
-    execute 'silent !tmux splitw -v "' .  l:cmd . '"'
+def GitAutosquash(wid: number, result: string, opts: dict<any>)
+  var hash = GetGitHash(result)
+  if !empty(hash)
+    silent! popup_close(wid)
+    var cmd = 'zsh -i -c ''git rebase -i --autosquash --autostash ' .. hash .. ';exec zsh'''
+    execute 'silent !tmux splitw -v "' .. cmd .. '"'
   endif
-endfunction
+enddef
 
-function! s:git_actions() abort
+def GetGitActions(): dict<func>
   return {
-        \ "\<c-f>": function('s:git_fixup'),
-        \ "\<c-s>": function('s:git_autosquash'),
+        \ "\<c-f>": GitFixup,
+        \ "\<c-s>": GitAutosquash,
         \ }
-endfunction
+enddef
 
-function! SearchGit(...) abort
-  let l:params = get(a:000, 0, {})
-  let l:source = get(l:params, 'source', 'git log')
-  let l:dir = s:normalize_dir(get(l:params, 'dir', getcwd()))
+def SearchGit(params: dict<any> = {})
+  var source: string = get(params, 'source', 'git log')
+  var dir = NormalizeDir(get(params, 'dir', getcwd()))
 
-  let l:git_log_format = get(l:params, 'format', '%h %>(12,trunc)%cr %d %s %an')
-  let l:git_log_args = get(l:params, 'source_args', '--abbrev=7 --oneline --format=' . shellescape(l:git_log_format))
-  if l:source ==# 'git log'
-    let l:source = l:source . ' ' . l:git_log_args
+  var git_log_format: string = get(params, 'format', '%h %>(12,trunc)%cr %d %s %an')
+  var git_log_args: string = get(params, 'source_args', '--abbrev=7 --oneline --format=' .. shellescape(git_log_format))
+  if source ==# 'git log'
+    source = source .. ' ' .. git_log_args
   endif
 
-  let l:items = s:run_lines(l:source, l:dir)
-  call fuzzbox#Select(l:items, {
+  var items = RunLines(source, dir)
+  fuzzbox#Select(items, {
         \ 'title': 'Git',
-        \ 'cwd': l:dir,
+        \ 'cwd': dir,
         \ 'preview': 1,
         \ 'compact': 0,
         \ 'async': 1,
-        \ 'preview_cb': function('s:preview_git'),
-        \ 'select_cb': function('s:git_noop'),
-        \ 'actions': s:git_actions(),
-        \ 'git_preview_args': get(l:params, 'preview_args', ''),
+        \ 'preview_cb': PreviewGit,
+        \ 'select_cb': GitNoop,
+        \ 'actions': GetGitActions(),
+        \ 'git_preview_args': get(params, 'preview_args', ''),
         \ })
-endfunction
+enddef

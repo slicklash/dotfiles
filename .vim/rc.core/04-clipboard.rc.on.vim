@@ -1,3 +1,5 @@
+vim9script
+
 if has('clipboard') && !exists('$TMUX')
   set clipboard=unnamedplus
 endif

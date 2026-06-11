@@ -1,18 +1,20 @@
-augroup filetype_js_ts
-  autocmd!
-  autocmd FileType * call s:ft_js_ts()
-augroup END
+vim9script
 
-function! s:ft_js_ts() abort
+var know_imports = {
+      \ 'UI': 'editor-ui-lib',
+      \ 'UIx': ['{UI}', 'editor-ui-lib'],
+      \ }
+
+def FtJsTs()
   if &filetype !~? '\(javascript\|typescript\)'
     return
   endif
 
   setlocal sw=2 sts=2 ts=2 et
 
-  nnoremap <buffer> <silent><leader>i <cmd>call<SID>import()<cr>
+  nnoremap <buffer> <silent><leader>i <ScriptCmd>Import()<CR>
 
-  let b:keyword_lookup_url='https://developer.mozilla.org/en-US/search?q=%s&topic=js'
+  b:keyword_lookup_url = 'https://developer.mozilla.org/en-US/search?q=%s&topic=js'
 
   setlocal suffixesadd=.ts,.tsx,.js,.jsx
 
@@ -29,42 +31,41 @@ function! s:ft_js_ts() abort
     setlocal formatprg=prettier\ --parser\ typescript\ --single-quote\ --trailing-comma\ es5\ --tab-width\ 2
     syntax keyword typescriptSpecMethod describe it context test expect nextgroup=typescriptFuncCallArg
   endif
+enddef
 
-endfunction
+def Import()
+  var cw = expand('<cword>')
 
-let s:know_imports = {
-      \  'UI': 'editor-ui-lib',
-      \  'UIx': ['{UI}', 'editor-ui-lib']
-      \}
-
-function! s:import() abort
-
-  let cw = expand('<cword>')
-  let known = get(s:know_imports, cw, v:none)
-
-  if type(known) == v:t_none
-    JsFileImport
+  if !has_key(know_imports, cw)
+    execute 'JsFileImport'
     return
   endif
 
-  let last_view = winsaveview()
-  let last_search = getreg('/')
-  let l = line('.')
-  let c = col('.')
+  var known = know_imports[cw]
+
+  var last_view = winsaveview()
+  var last_search = getreg('/')
+  var l = line('.')
+  var c = col('.')
 
   normal gg}
 
+  var importline: string
   if type(known) == v:t_string
-    let import = printf("import %s from '%s';", cw, known)
+    importline = printf("import %s from '%s';", cw, known)
   else
-    let import = printf("import %s from '%s';'", known[0], known[1])
+    importline = printf("import %s from '%s';'", known[0], known[1])
   endif
 
-  call setline('.', import)
+  setline('.', importline)
   normal o
 
-  call winrestview(last_view)
-  call cursor(l + 1, c)
-  call setreg('/', last_search)
+  winrestview(last_view)
+  cursor(l + 1, c)
+  setreg('/', last_search)
+enddef
 
-endfunction
+augroup filetype_js_ts
+  autocmd!
+  autocmd FileType * FtJsTs()
+augroup END

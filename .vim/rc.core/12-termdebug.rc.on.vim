@@ -1,6 +1,8 @@
-" packadd termdebug
+vim9script
 
-let g:termdebug_wide=163
+# packadd termdebug
+
+g:termdebug_wide = 163
 
 noremap <leader>; <cmd>Continue<CR>
 noremap <leader>l <cmd>Step<CR>

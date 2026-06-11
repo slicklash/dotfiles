@@ -1,153 +1,157 @@
-call dein#add('tpope/vim-fugitive', { 'rev': '3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0' })
+vim9script
 
-function! s:setup() abort
+dein#add('tpope/vim-fugitive', {'rev': '3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0'})
+
+def Setup()
   nnoremap <silent> <leader>gg <cmd>Git<cr>
   nnoremap <silent> <leader>gb <cmd>Gblame<cr>
   nnoremap <silent> <leader>gm  <cmd>Gvdiffsplit main<cr>
-endfunction
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()
 
-function! FugitiveOpenFile() abort
-  let path = expand('<cfile>')
+def g:FugitiveOpenFile()
+  var path = expand('<cfile>')
   if empty(path)
     return
   endif
-  let cwd = split(getcwd(), '/')[-1]
-  let n = stridx(path, cwd)
-  let path = strpart(path, n + len(cwd) + 1)
+  var cwd = split(getcwd(), '/')[-1]
+  var n = stridx(path, cwd)
+  path = strpart(path, n + len(cwd) + 1)
   wincmd k
   execute printf('noswapfile vsplit %s', path)
-endfunction
+enddef
 
-function! FuView()
-  let cwd = split(getcwd(), '/')
-  let curline = strpart(getline('.'), 2)
-  for i in range(len(cwd) - 1)
-    let prefix = join(slice(cwd, i), '/')
+def g:FuView()
+  var cwd = split(getcwd(), '/')
+  var curline = strpart(getline('.'), 2)
+  var i = 0
+  for idx in range(len(cwd) - 1)
+    i = idx
+    var prefix = join(slice(cwd, idx), '/')
     if stridx(curline, prefix) == 0
       break
     endif
   endfor
-  let path = '/' . join(slice(cwd, 0, i), '/') . '/' . curline
+  var path = '/' .. join(slice(cwd, 0, i), '/') .. '/' .. curline
   echo path
-  execute 'silent !xdg-open ' . path . '> /dev/null 2>&1 &'
+  execute 'silent !xdg-open ' .. path .. '> /dev/null 2>&1 &'
   redraw!
-endfunction
+enddef
 
 autocmd User FugitiveIndex nnoremap <buffer> E <cmd>call FuView()<cr>
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
-function! s:FugitiveNormalizePath(path) abort
-  let l:path = a:path
-  if l:path =~# ' -> '
-    let l:path = substitute(l:path, '^.* -> ', '', '')
+def FugitiveNormalizePath(path: string): string
+  var p = path
+  if p =~# ' -> '
+    p = substitute(p, '^.* -> ', '', '')
   endif
-  return l:path
-endfunction
+  return p
+enddef
 
-function! s:FugitiveExtractPath(line) abort
-  let l:m = matchlist(a:line, '^\s*[MADRCU?!T]\+\s\+\(.*\)$')
-  if empty(l:m)
+def FugitiveExtractPath(line: string): string
+  var m = matchlist(line, '^\s*[MADRCU?!T]\+\s\+\(.*\)$')
+  if empty(m)
     return ''
   endif
-  return s:FugitiveNormalizePath(l:m[1])
-endfunction
+  return FugitiveNormalizePath(m[1])
+enddef
 
-function! s:ParentDirs(path) abort
-  let l:parts = split(a:path, '/')
-  if len(l:parts) <= 1
+def GetParentDirs(path: string): list<string>
+  var parts = split(path, '/')
+  if len(parts) <= 1
     return []
   endif
-  return l:parts[:-2]
-endfunction
+  return parts[: -2]
+enddef
 
-function! s:ParentKey(path, depth) abort
-  let l:dirs = s:ParentDirs(a:path)
-  if empty(l:dirs)
+def GetParentKey(path: string, depth: number): string
+  var dirs = GetParentDirs(path)
+  if empty(dirs)
     return ''
   endif
-  let l:end = min([len(l:dirs), a:depth]) - 1
-  return join(l:dirs[:l:end], '/')
-endfunction
+  var endd = min([len(dirs), depth]) - 1
+  return join(dirs[: endd], '/')
+enddef
 
-function! s:FamilyRoot(path) abort
-  let l:dirs = s:ParentDirs(a:path)
-  if empty(l:dirs)
+def GetFamilyRoot(path: string): string
+  var dirs = GetParentDirs(path)
+  if empty(dirs)
     return ''
   endif
-  if len(l:dirs) == 1
-    return l:dirs[0]
+  if len(dirs) == 1
+    return dirs[0]
   endif
-  return join(l:dirs[:1], '/')
-endfunction
+  return join(dirs[: 1], '/')
+enddef
 
-function! s:ChooseDepthByFamily(paths) abort
-  " Returns dict: family_root -> chosen depth (2 or 3)
-  let l:families = {}
+def ChooseDepthByFamily(paths: list<string>): dict<number>
+  # Returns dict: family_root -> chosen depth (2 or 3)
+  var families: dict<list<string>> = {}
 
-  for l:path in a:paths
-    let l:family = s:FamilyRoot(l:path)
-    if !has_key(l:families, l:family)
-      let l:families[l:family] = []
+  for path in paths
+    var family = GetFamilyRoot(path)
+    if !has_key(families, family)
+      families[family] = []
     endif
-    call add(l:families[l:family], l:path)
+    add(families[family], path)
   endfor
 
-  let l:result = {}
+  var result: dict<number> = {}
 
-  for l:family in keys(l:families)
-    let l:items = l:families[l:family]
+  for family in keys(families)
+    var items = families[family]
 
-    let l:k2 = {}
-    let l:k3 = {}
+    var k2: dict<number> = {}
+    var k3: dict<number> = {}
 
-    for l:path in l:items
-      let l:key2 = s:ParentKey(l:path, 2)
-      let l:key3 = s:ParentKey(l:path, 3)
-      let l:k2[l:key2] = 1
-      let l:k3[l:key3] = 1
+    for path in items
+      var key2 = GetParentKey(path, 2)
+      var key3 = GetParentKey(path, 3)
+      k2[key2] = 1
+      k3[key3] = 1
     endfor
 
-    let l:n2 = len(keys(l:k2))
-    let l:n3 = len(keys(l:k3))
+    var n2 = len(keys(k2))
+    var n3 = len(keys(k3))
 
-    " Heuristic:
-    " - use depth 2 if it already gives enough separation
-    " - use depth 3 only if it adds meaningful extra separation
-    "
-    " In practice:
-    "   packages/foo vs packages/bar => depth 2
-    "   apps/broker/x vs apps/broker/y => depth 3
-    if l:n2 >= 2
-      let l:result[l:family] = 2
-    elseif l:n3 > l:n2
-      let l:result[l:family] = 3
+    # Heuristic:
+    # - use depth 2 if it already gives enough separation
+    # - use depth 3 only if it adds meaningful extra separation
+    #
+    # In practice:
+    #   packages/foo vs packages/bar => depth 2
+    #   apps/broker/x vs apps/broker/y => depth 3
+    if n2 >= 2
+      result[family] = 2
+    elseif n3 > n2
+      result[family] = 3
     else
-      let l:result[l:family] = 2
+      result[family] = 2
     endif
   endfor
 
-  return l:result
-endfunction
+  return result
+enddef
 
-function! FugitiveClearPathMatches() abort
+def g:FugitiveClearPathMatches()
   if exists('b:fugitive_path_match_ids')
     for id in b:fugitive_path_match_ids
-      call matchdelete(id)
+      matchdelete(id)
     endfor
   endif
-  let b:fugitive_path_match_ids = []
-endfunction
+  b:fugitive_path_match_ids = []
+enddef
 
-function! FugitiveHighlightPathsSmart() abort
+def g:FugitiveHighlightPathsSmart()
   if &filetype !=# 'fugitive'
     return
   endif
 
-  call FugitiveClearPathMatches()
+  g:FugitiveClearPathMatches()
 
-  let l:groups = [
+  var groups = [
         \ 'FugitivePath1',
         \ 'FugitivePath2',
         \ 'FugitivePath3',
@@ -159,54 +163,54 @@ function! FugitiveHighlightPathsSmart() abort
         \ 'FugitivePath9',
         \ ]
 
-  " First pass: collect status lines and paths
-  let l:entries = []
-  let l:paths = []
+  # First pass: collect status lines and paths
+  var entries: list<dict<any>> = []
+  var paths: list<string> = []
 
   for lnum in range(1, line('$'))
-    let l:line = getline(lnum)
-    let l:path = s:FugitiveExtractPath(l:line)
-    if empty(l:path)
+    var line = getline(lnum)
+    var path = FugitiveExtractPath(line)
+    if empty(path)
       continue
     endif
-    call add(l:entries, {'lnum': lnum, 'path': l:path})
-    call add(l:paths, l:path)
+    add(entries, {'lnum': lnum, 'path': path})
+    add(paths, path)
   endfor
 
-  if empty(l:entries)
+  if empty(entries)
     return
   endif
 
-  let l:depth_by_family = s:ChooseDepthByFamily(l:paths)
+  var depth_by_family = ChooseDepthByFamily(paths)
 
-  let l:key_to_group = {}
-  let l:next_idx = 0
+  var key_to_group: dict<string> = {}
+  var next_idx = 0
 
-  " Second pass: assign colors using chosen family depth
-  for l:item in l:entries
-    let l:path = l:item.path
-    let l:family = s:FamilyRoot(l:path)
-    let l:depth = get(l:depth_by_family, l:family, 2)
-    let l:key = s:ParentKey(l:path, l:depth)
+  # Second pass: assign colors using chosen family depth
+  for item in entries
+    var path = item.path
+    var family = GetFamilyRoot(path)
+    var depth = get(depth_by_family, family, 2)
+    var key = GetParentKey(path, depth)
 
-    if empty(l:key)
-      let l:key = '[root]'
+    if empty(key)
+      key = '[root]'
     endif
 
-    if !has_key(l:key_to_group, l:key)
-      let l:key_to_group[l:key] = l:groups[l:next_idx % len(l:groups)]
-      let l:next_idx += 1
+    if !has_key(key_to_group, key)
+      key_to_group[key] = groups[next_idx % len(groups)]
+      next_idx += 1
     endif
 
-    let l:hl = l:key_to_group[l:key]
-    let l:pat = '\%' . l:item.lnum . 'l\s\+\zs\V' . escape(l:path, '\')
+    var hl = key_to_group[key]
+    var pat = '\%' .. item.lnum .. 'l\s\+\zs\V' .. escape(path, '\')
 
-    let l:id = matchadd(l:hl, l:pat)
-    call add(b:fugitive_path_match_ids, l:id)
+    var id = matchadd(hl, pat)
+    add(b:fugitive_path_match_ids, id)
   endfor
-endfunction
+enddef
 
 augroup FugitivePathColors
   autocmd!
-  autocmd BufEnter,WinEnter,CursorHold * if &filetype ==# 'fugitive' | call FugitiveHighlightPathsSmart() | endif
+  autocmd BufEnter,WinEnter,CursorHold * g:FugitiveHighlightPathsSmart()
 augroup END

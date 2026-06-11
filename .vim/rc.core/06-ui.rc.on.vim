@@ -1,18 +1,20 @@
+vim9script
+
 if !has('termguicolors')
   set t_Co=256
 else
-  " TODO: fix hex colors
-  " set termguicolors
+  # TODO: fix hex colors
+  # set termguicolors
 endif
 
 colorscheme aloneinthedark
 
-set noshowmode                              " don't show mode
-set showcmd                                 " in visual mode show size of selection
-set showmatch matchtime=2                   " show matching parentheses/brackets
-set laststatus=2                            " always show statusline
+set noshowmode                              # don't show mode
+set showcmd                                 # in visual mode show size of selection
+set showmatch matchtime=2                   # show matching parentheses/brackets
+set laststatus=2                            # always show statusline
 
-" set completeopt=menu,menuone,popup,noselect
+# set completeopt=menu,menuone,popup,noselect
 set completeopt=menu,menuone,noselect
 set completeitemalign=abbr,kind,menu
 set pumheight=12
@@ -36,51 +38,51 @@ if has('gui_running')
     set guifont=Consolas:h10
   endif
 
-  set guioptions-=T                        " no GUI tool bar
-  set guioptions-=m                        " no menu
-  set guioptions-=r                        " hide scrollbars
+  set guioptions-=T                        # no GUI tool bar
+  set guioptions-=m                        # no menu
+  set guioptions-=r                        # hide scrollbars
   set guioptions-=l
   set guioptions-=L
-  let &guioptions = substitute(&guioptions, "t", "", "g")
+  &guioptions = substitute(&guioptions, "t", "", "g")
   if has('vim_starting') && has('win32')
-    " start maximized
+    # start maximized
     autocmd GUIEnter * simalt ~X
   endif
 endif
 
-" custom Tabline
-function! Tabline()
-  let l:line = ''
-  let l:current = tabpagenr()
+# custom GetTabline
+def g:GetTabline(): string
+  var line = ''
+  var current = tabpagenr()
 
-  for l:i in range(tabpagenr('$'))
-    let l:tab = l:i + 1
-    let l:selected = l:tab == l:current
-    let l:winnr = tabpagewinnr(l:tab)
-    let l:buflist = tabpagebuflist(l:tab)
-    let l:bufnr = l:buflist[l:winnr - 1]
-    let l:name = bufname(l:bufnr)
+  for i in range(tabpagenr('$'))
+    var tab = i + 1
+    var selected = tab == current
+    var winnr = tabpagewinnr(tab)
+    var buflist = tabpagebuflist(tab)
+    var bufnr = buflist[winnr - 1]
+    var name = bufname(bufnr)
 
-    let l:line .= '%' . l:tab . 'T'
+    line ..= '%' .. tab .. 'T'
 
-    if !l:selected && l:tab > 1 && l:current + 1 != l:tab
-      let l:line .= '%#TabSeparator#|'
-    elseif l:tab > 1
-      let l:line .= ' '
+    if !selected && tab > 1 && current + 1 != tab
+      line ..= '%#TabSeparator#|'
+    elseif tab > 1
+      line ..= ' '
     endif
 
-    let l:line .= l:selected ? '%#TabLineSel#' : '%#TabLine#'
+    line ..= selected ? '%#TabLineSel#' : '%#TabLine#'
 
-    let l:label = l:tab . ': ' . (l:name !=# '' ? fnamemodify(l:name, ':t') : 'No Name')
-    if getbufvar(l:bufnr, '&modified')
-      let l:label .= '*'
+    var label = tab .. ': ' .. (name !=# '' ? fnamemodify(name, ':t') : 'No Name')
+    if getbufvar(bufnr, '&modified')
+      label ..= '*'
     endif
 
-    let l:line .= ' ' . l:label . ' '
+    line ..= ' ' .. label .. ' '
   endfor
 
-  let l:line .= '%#TabLineFill#'
-  return l:line
-endfunction
+  line ..= '%#TabLineFill#'
+  return line
+enddef
 
-set tabline=%!Tabline()
+set tabline=%!GetTabline()

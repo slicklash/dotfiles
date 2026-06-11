@@ -1,6 +1,8 @@
-call dein#add('zah/nim.vim', { 'rev': 'a15714fea392b0f06ff2b282921a68c7033e39a2' })
+vim9script
 
-function! s:setup() abort
+dein#add('zah/nim.vim', {'rev': 'a15714fea392b0f06ff2b282921a68c7033e39a2'})
+
+def Setup()
   syntax keyword nimTestSuite suite contained
   syntax keyword nimTestCase test contained
   syntax keyword nimTestCheck check contained
@@ -16,16 +18,16 @@ function! s:setup() abort
   hi! link nimTestCase Function
 
   hi! link nimTestCheck Keyword
-endfunction
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()
+
+def FtNim()
+  b:keyword_lookup_url = 'https://nim-lang.org/docs/theindex.html\#%s'
+  nnoremap <buffer> <silent><leader>i <cmd>call SortImports()<cr>
+enddef
 
 augroup filtype_nim
   autocmd!
-  autocmd FileType nim call s:ft_nim()
+  autocmd FileType nim FtNim()
 augroup END
-
-function! s:ft_nim() abort
-  let b:keyword_lookup_url='https://nim-lang.org/docs/theindex.html\#%s'
-  nnoremap <buffer> <silent><leader>i <cmd>call SortImports()<cr>
-endfunction

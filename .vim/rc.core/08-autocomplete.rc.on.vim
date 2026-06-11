@@ -1,4 +1,6 @@
-let g:neosnippet#enable_complete_done = 1
+vim9script
+
+g:neosnippet#enable_complete_done = 1
 
 set completeopt=menu,menuone,noselect
 set completeitemalign=abbr,kind,menu
@@ -9,195 +11,192 @@ set autocompletetimeout=250
 set complete=F,o,.,w,b,u
 set completefunc=NativeComplete
 
-function! s:native_complete_filter(items, base, default_menu) abort
-  let l:base = tolower(a:base)
-  let l:result = []
-  let l:seen = {}
+def NativeCompleteFilter(items: list<any>, base: string, default_menu: string): list<any>
+  var lbase = tolower(base)
+  var result: list<any> = []
+  var seen: dict<number> = {}
 
-  for l:item in a:items
-    if type(l:item) ==# v:t_string
-      let l:item = {'word': l:item}
-    else
-      let l:item = copy(l:item)
-    endif
+  for item in items
+    var entry: dict<any> = type(item) == v:t_string ? {'word': item} : copy(item)
 
-    let l:word = get(l:item, 'word', '')
-    if empty(l:word)
+    var word: string = get(entry, 'word', '')
+    if empty(word)
       continue
     endif
 
-    if !empty(l:base) && stridx(tolower(l:word), l:base) != 0
+    if !empty(lbase) && stridx(tolower(word), lbase) != 0
       continue
     endif
 
-    if empty(get(l:item, 'menu', ''))
-      let l:item.menu = a:default_menu
+    if empty(get(entry, 'menu', ''))
+      entry.menu = default_menu
     endif
-    let l:item.dup = 1
+    entry.dup = 1
 
-    let l:key = l:word . "\n" . get(l:item, 'menu', '')
-    if has_key(l:seen, l:key)
+    var key = word .. "\n" .. get(entry, 'menu', '')
+    if has_key(seen, key)
       continue
     endif
-    let l:seen[l:key] = 1
-    call add(l:result, l:item)
+    seen[key] = 1
+    add(result, entry)
   endfor
 
-  return l:result
-endfunction
+  return result
+enddef
 
-function! s:native_path_match(input) abort
-  let l:parts = split(a:input)
-  let l:token = empty(l:parts) ? '' : l:parts[-1]
-  if l:token =~# '[*?[]'
+def GetNativePathMatch(input: string): string
+  var parts = split(input)
+  var token = empty(parts) ? '' : parts[-1]
+  if token =~# '[*?[]'
     return ''
   endif
-  if stridx(l:token, '/') >= 0
-    return l:token
+  if stridx(token, '/') >= 0
+    return token
   endif
   return ''
-endfunction
+enddef
 
-function! s:native_path_start(input) abort
-  let l:path = s:native_path_match(a:input)
-  return empty(l:path) ? -1 : len(a:input) - len(l:path)
-endfunction
+def GetNativePathStart(input: string): number
+  var path = GetNativePathMatch(input)
+  return empty(path) ? -1 : len(input) - len(path)
+enddef
 
-function! s:native_path_candidates(input) abort
-  let l:path = s:native_path_match(a:input)
-  if empty(l:path)
+def GetNativePathCandidates(input: string): list<any>
+  var path = GetNativePathMatch(input)
+  if empty(path)
     return []
   endif
 
-  let l:slash = strridx(l:path, '/')
-  let l:raw_dir = l:slash >= 0 ? strpart(l:path, 0, l:slash + 1) : ''
-  let l:raw_tail = strpart(l:path, len(l:raw_dir))
-  if empty(l:raw_tail)
+  var slash = strridx(path, '/')
+  var raw_dir = slash >= 0 ? strpart(path, 0, slash + 1) : ''
+  var raw_tail = strpart(path, len(raw_dir))
+  if empty(raw_tail)
     return []
   endif
-  let l:hidden = strpart(l:raw_tail, 0, 1) ==# '.'
+  var hidden = strpart(raw_tail, 0, 1) ==# '.'
 
-  if strpart(l:raw_dir, 0, 2) ==# '~/'
-    let l:resolved_dir = expand(l:raw_dir)
-  elseif strpart(l:raw_dir, 0, 1) ==# '/'
-    let l:resolved_dir = l:raw_dir
+  var resolved_dir: string
+  if strpart(raw_dir, 0, 2) ==# '~/'
+    resolved_dir = expand(raw_dir)
+  elseif strpart(raw_dir, 0, 1) ==# '/'
+    resolved_dir = raw_dir
   else
-    let l:base_dir = expand('%:p:h')
-    if empty(l:base_dir)
-      let l:base_dir = getcwd()
+    var base_dir = expand('%:p:h')
+    if empty(base_dir)
+      base_dir = getcwd()
     endif
-    let l:resolved_dir = simplify(fnamemodify(l:base_dir . '/' . l:raw_dir, ':p'))
+    resolved_dir = simplify(fnamemodify(base_dir .. '/' .. raw_dir, ':p'))
   endif
 
-  if !isdirectory(l:resolved_dir)
+  if !isdirectory(resolved_dir)
     return []
   endif
 
-  let l:entries = []
-  for l:item in sort(glob(l:resolved_dir . '/' . l:raw_tail . '*', 0, 1))
-    let l:name = fnamemodify(l:item, ':t')
-    if empty(l:name) || (!l:hidden && strpart(l:name, 0, 1) ==# '.')
+  var entries: list<any> = []
+  for item in sort(glob(resolved_dir .. '/' .. raw_tail .. '*', 0, 1))
+    var name = fnamemodify(item, ':t')
+    if empty(name) || (!hidden && strpart(name, 0, 1) ==# '.')
       continue
     endif
-    call add(l:entries, {
-          \ 'word': l:raw_dir . l:name . (isdirectory(l:item) ? '/' : ''),
+    add(entries, {
+          \ 'word': raw_dir .. name .. (isdirectory(item) ? '/' : ''),
           \ 'menu': '[path]',
           \ })
   endfor
 
-  return l:entries
-endfunction
+  return entries
+enddef
 
-function! s:native_snippet_candidates(base) abort
+def GetNativeSnippetCandidates(base: string): list<any>
   if !exists('*neosnippet#helpers#get_completion_snippets')
     return []
   endif
-  call neosnippet#init#check()
-  return s:native_complete_filter(neosnippet#helpers#get_completion_snippets(), a:base, '[snip]')
-endfunction
+  neosnippet#init#check()
+  return NativeCompleteFilter(neosnippet#helpers#get_completion_snippets(), base, '[snip]')
+enddef
 
-function! s:native_syntax_candidates(base) abort
+def GetNativeSyntaxCandidates(base: string): list<any>
   if !exists('*necosyntax#gather_candidates')
     return []
   endif
-  return s:native_complete_filter(necosyntax#gather_candidates(), a:base, '[syn]')
-endfunction
+  return NativeCompleteFilter(necosyntax#gather_candidates(), base, '[syn]')
+enddef
 
-function! s:native_tmux_candidates(base) abort
+def GetNativeTmuxCandidates(base: string): list<any>
   if empty($TMUX)
     return []
   endif
   try
-    return s:native_complete_filter(tmuxcomplete#complete(0, a:base), a:base, '[tmux]')
+    return NativeCompleteFilter(tmuxcomplete#complete(0, base), base, '[tmux]')
   catch
     return []
   endtry
-endfunction
+enddef
 
-function! s:native_vim_candidates(input, base) abort
+def GetNativeVimCandidates(input: string, base: string): list<any>
   if &filetype !=# 'vim' || !exists('*necovim#gather_candidates')
     return []
   endif
-  return s:native_complete_filter(necovim#gather_candidates(a:input, a:base), a:base, '[vim]')
-endfunction
+  return NativeCompleteFilter(necovim#gather_candidates(input, base), base, '[vim]')
+enddef
 
-function! NativeComplete(findstart, base) abort
-  let l:input = getline('.')[: col('.') - 2]
-  let l:path_start = s:native_path_start(l:input)
+def g:NativeComplete(findstart: number, base: string): any
+  var input = getline('.')[ : col('.') - 2]
+  var path_start = GetNativePathStart(input)
 
-  if a:findstart
-    let l:starts = []
+  if findstart
+    var starts: list<number> = []
 
-    if l:input =~# '\k$'
-      call add(l:starts, match(l:input, '\k*$'))
+    if input =~# '\k$'
+      add(starts, match(input, '\k*$'))
     endif
 
-    if l:path_start >= 0
-      call add(l:starts, l:path_start)
+    if path_start >= 0
+      add(starts, path_start)
     endif
 
     if &filetype ==# 'vim' && exists('*necovim#get_complete_position')
-      let l:vim_start = necovim#get_complete_position(l:input)
-      if l:vim_start >= 0
-        call add(l:starts, l:vim_start)
+      var vim_start = necovim#get_complete_position(input)
+      if vim_start >= 0
+        add(starts, vim_start)
       endif
     endif
 
-    let l:starts = filter(l:starts, 'v:val >= 0')
-    return empty(l:starts) ? -3 : min(l:starts)
+    filter(starts, (_, v) => v >= 0)
+    return empty(starts) ? -3 : min(starts)
   endif
 
-  let l:candidates = []
-  let l:base_len = strlen(a:base)
+  var candidates: list<any> = []
+  var base_len = strlen(base)
 
-  if l:path_start >= 0
-    call extend(l:candidates, s:native_path_candidates(l:input))
+  if path_start >= 0
+    extend(candidates, GetNativePathCandidates(input))
   endif
 
-  if l:base_len >= 1
-    call extend(l:candidates, s:native_snippet_candidates(a:base))
+  if base_len >= 1
+    extend(candidates, GetNativeSnippetCandidates(base))
   endif
 
-  if l:base_len >= 2
-    call extend(l:candidates, s:native_syntax_candidates(a:base))
-    call extend(l:candidates, s:native_tmux_candidates(a:base))
+  if base_len >= 2
+    extend(candidates, GetNativeSyntaxCandidates(base))
+    extend(candidates, GetNativeTmuxCandidates(base))
   endif
 
-  if &filetype ==# 'vim' && l:base_len >= 1
-    call extend(l:candidates, s:native_vim_candidates(l:input, a:base))
+  if &filetype ==# 'vim' && base_len >= 1
+    extend(candidates, GetNativeVimCandidates(input, base))
   endif
 
-  return {'words': l:candidates, 'refresh': 'always'}
-endfunction
+  return {'words': candidates, 'refresh': 'always'}
+enddef
 
-function! s:tab_complete() abort
-  let l:line = getline('.')[: col('.') - 2]
+def TabComplete(): string
+  var line = getline('.')[ : col('.') - 2]
 
   if exists('*neosnippet#expandable_or_jumpable')
-    call neosnippet#init#check()
-    let l:trigger = neosnippet#helpers#get_cursor_snippet(neosnippet#helpers#get_snippets('i'), neosnippet#util#get_cur_text())
-    if !empty(l:trigger)
-      return neosnippet#expand(l:trigger)
+    neosnippet#init#check()
+    var trigger = neosnippet#helpers#get_cursor_snippet(neosnippet#helpers#get_snippets('i'), neosnippet#util#get_cur_text())
+    if !empty(trigger)
+      return neosnippet#expand(trigger)
     endif
     if neosnippet#expandable_or_jumpable()
       return neosnippet#mappings#expand_or_jump_impl()
@@ -208,17 +207,17 @@ function! s:tab_complete() abort
     return "\<C-n>"
   endif
 
-  if match(l:line, '\k$') >= 0
+  if match(line, '\k$') >= 0
     return "\<C-x>\<C-u>"
   endif
 
   return "\<Tab>"
-endfunction
+enddef
 
-function! s:setup() abort
+def Setup()
   inoremap <silent><expr> <CR> pumvisible() && complete_info(['selected']).selected != -1 ? "\<C-y>" : "\<CR>"
-  inoremap <silent><expr> <TAB> <SID>tab_complete()
+  inoremap <silent><expr> <TAB> <SID>TabComplete()
   inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-endfunction
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()

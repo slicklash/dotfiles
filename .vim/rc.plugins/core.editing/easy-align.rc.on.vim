@@ -1,13 +1,15 @@
-call dein#add('junegunn/vim-easy-align', { 'rev': '9815a55dbcd817784458df7a18acacc6f82b1241' })
+vim9script
 
-function! s:setup() abort
-  let g:easy_align_ignore_groups = []
+dein#add('junegunn/vim-easy-align', {'rev': '9815a55dbcd817784458df7a18acacc6f82b1241'})
 
-  " Start interactive EasyAlign in visual mode (e.g. vipga)
+def Setup()
+  g:easy_align_ignore_groups = []
+
+  # Start interactive EasyAlign in visual mode (e.g. vipga)
   xmap ga <Plug>(EasyAlign)
 
-  " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+  # Start interactive EasyAlign for a motion/text object (e.g. gaip)
   nmap ga <Plug>(EasyAlign)
-endfunction
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()

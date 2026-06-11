@@ -1,15 +1,17 @@
+vim9script
+
 syntax enable
 
-" change leader key
-let mapleader = ","
+# change leader key
+g:mapleader = ","
 nnoremap <C-E> ,
 
 set encoding=utf-8
 set fileencodings=utf-8,ucs-bom,latin1
 set fileformats=unix,dos,mac
 
-set number                                  " show line number
-set relativenumber                          " use relative numbers
+set number                                  # show line number
+set relativenumber                          # use relative numbers
 
 augroup numbertoggle
   autocmd!
@@ -19,61 +21,71 @@ augroup END
 
 set history=1000
 
-set timeoutlen=500 ttimeoutlen=30           " mapping and key code timeout
-set ttyfast                                 " assume fast terminal connection
+set timeoutlen=500 ttimeoutlen=30           # mapping and key code timeout
+set ttyfast                                 # assume fast terminal connection
 set updatetime=300
-set lazyredraw                              " don't update screen while executing macros
-set synmaxcol=200                           " faster
+set lazyredraw                              # don't update screen while executing macros
+set synmaxcol=200                           # faster
 
-set noerrorbells novisualbell t_vb=         " disable sounds"
-set shortmess+=atI                          " avoid some hit-enter prompts
+set noerrorbells novisualbell t_vb=         # disable sounds
+set shortmess+=atI                          # avoid some hit-enter prompts
 
 set hidden
 
-set mouse=a                                 " enable mouse in all modes
+set mouse=a                                 # enable mouse in all modes
 set mousemodel=extend
 
 set modelines=0
-set foldenable                              " enable folds by default
-set foldlevelstart=99                       " open all folds by default
+set foldenable                              # enable folds by default
+set foldlevelstart=99                       # open all folds by default
 set foldmethod=manual
 
 set scrolloff=3
 set sidescrolloff=5
 
-set splitbelow                              " put the new window below the current
-set splitright                              " put the new window on the right of the current
+set splitbelow                              # put the new window below the current
+set splitright                              # put the new window on the right of the current
 
-set diffopt+=algorithm:patience,inline:char " improved diff
+set diffopt+=algorithm:patience,inline:char # improved diff
 set diffopt+=indent-heuristic
 
-function! _ensure_path(path, ...)
-  let is_file = a:0 > 0 && a:1 == 1 ? 1 : 0
-  let path = resolve(expand(a:path))
-  let dir = is_file ? fnamemodify(path, ':h') : path
-  if !isdirectory(dir) | call mkdir(dir, 'p') | endif
-  return path
-endfunction
+def MakePath(path: string, ...rest: list<any>): string
+  var is_file = len(rest) > 0 && rest[0] == 1
+  var resolved = resolve(expand(path))
+  var dir = is_file ? fnamemodify(resolved, ':h') : resolved
+  if !isdirectory(dir)
+    mkdir(dir, 'p')
+  endif
+  return resolved
+enddef
 
-function! _cache_dir(path)
-  return _ensure_path(g:vim_cache_dir . a:path)
-endfunction
+def g:MakeCacheDir(path: string): string
+  return MakePath(g:vim_cache_dir .. path)
+enddef
 
-function! _cache_file(path)
-  return _ensure_path(g:vim_cache_dir . a:path, 1)
-endfunction
+def g:MakeCacheFile(path: string): string
+  return MakePath(g:vim_cache_dir .. path, 1)
+enddef
 
-let &directory = _cache_dir('/swap') . '//'
-let &backupdir = _cache_dir('/bak')  . '//'
-let &undodir   = _cache_dir('/undo') . '//'
-let $TMP=_ensure_path(g:vim_cache_dir . '/tmp')
+&directory = g:MakeCacheDir('/swap') .. '//'
+&backupdir = g:MakeCacheDir('/bak') .. '//'
+&undodir = g:MakeCacheDir('/undo') .. '//'
+$TMP = MakePath(g:vim_cache_dir .. '/tmp')
 
 set backupcopy=yes
 set nobackup nowritebackup
 set undofile
 
+def SetVimFolding()
+  if @% =~ '.vim/rc'
+    setlocal foldmethod=marker foldlevel=0
+  else
+    setlocal foldmethod=indent
+  endif
+enddef
+
 augroup filetype_vim
   autocmd!
   autocmd FileType vim setlocal keywordprg=:help sw=2
-  autocmd FileType vim if @% =~ '.vim/rc' | setlocal foldmethod=marker foldlevel=0 | else | setlocal foldmethod=indent | endif
+  autocmd FileType vim SetVimFolding()
 augroup END

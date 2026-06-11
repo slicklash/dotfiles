@@ -1,150 +1,147 @@
+vim9script
 scriptencoding utf-8
 
-call dein#add('lambdalisue/fern.vim', { 'rev': '3d580357c09e199b0fa7d560b2db1ad05de02b9c' })
+dein#add('lambdalisue/fern.vim', {'rev': '3d580357c09e199b0fa7d560b2db1ad05de02b9c'})
 
-let g:fern#default_hidden = 1
-let g:fern#drawer_side = 'right'
-let g:fern#drawer_keep = 1
-let g:fern#disable_drawer_auto_restore = 0
-let g:fern#disable_default_mappings = 1
-let g:fern#disable_viewer_spinner = 1
+g:fern#default_hidden = 1
+g:fern#drawer_side = 'right'
+g:fern#drawer_keep = 1
+g:fern#disable_drawer_auto_restore = 0
+g:fern#disable_default_mappings = 1
+g:fern#disable_viewer_spinner = 1
 
-let g:fern#renderer#default#root_symbol = '[in] '
-let g:fern#renderer#default#leading = ' '
-let g:fern#renderer#default#collapsed_symbol = '▸'
-let g:fern#renderer#default#expanded_symbol  = '▾'
-let g:fern#renderer#default#leaf_symbol = ''
-let g:fern#renderer#default#indent_markers = 0
+g:fern#renderer#default#root_symbol = '[in] '
+g:fern#renderer#default#leading = ' '
+g:fern#renderer#default#collapsed_symbol = '▸'
+g:fern#renderer#default#expanded_symbol = '▾'
+g:fern#renderer#default#leaf_symbol = ''
+g:fern#renderer#default#indent_markers = 0
 
-function! s:setup() abort
-  nnoremap <silent> <space>v :call FernToggle()<CR>
-endfunction
-
-autocmd User InitPost ++once call s:setup()
-
-function! s:fern_width() abort
+def GetFernWidth(): number
   return exists('$TERMUX_VERSION') ? 25 : 50
-endfunction
+enddef
 
-function! s:current_buffer_path() abort
-  let l:path = expand('%:p')
-  return empty(l:path) ? getcwd() : l:path
-endfunction
+def GetCurrentBufferPath(): string
+  var path = expand('%:p')
+  return empty(path) ? getcwd() : path
+enddef
 
-function! s:current_buffer_dir() abort
-  let l:path = s:current_buffer_path()
-  return isdirectory(l:path) ? l:path : fnamemodify(l:path, ':p:h')
-endfunction
+def GetCurrentBufferDir(): string
+  var path = GetCurrentBufferPath()
+  return isdirectory(path) ? path : fnamemodify(path, ':p:h')
+enddef
 
-function! s:resolve_fern_root(path) abort
-  return isdirectory(a:path) ? a:path : fnamemodify(a:path, ':p:h')
-endfunction
+def ResolveFernRoot(path: string): string
+  return isdirectory(path) ? path : fnamemodify(path, ':p:h')
+enddef
 
-function! s:fern_cd(path) abort
-  if empty(a:path)
+def FernCd(path: string)
+  if empty(path)
     echoerr 'Register is empty'
     return
   endif
+  var root = ResolveFernRoot(path)
+  execute 'Fern ' .. fnameescape(root)
+enddef
 
-  let l:root = s:resolve_fern_root(a:path)
-  execute 'Fern ' . fnameescape(l:root)
-endfunction
-
-function! FernToggle() abort
+def g:FernToggle()
   execute printf(
         \ 'Fern %s -drawer -right -reveal=%s -toggle -width=%d',
-        \ fnameescape(s:current_buffer_dir()),
-        \ fnameescape(s:current_buffer_path()),
-        \ s:fern_width())
-endfunction
+        \ fnameescape(GetCurrentBufferDir()),
+        \ fnameescape(GetCurrentBufferPath()),
+        \ GetFernWidth())
+enddef
 
-function! s:tmux_open_shell() abort
-  let l:path = s:get_node_path()
-  let l:cmd = isdirectory(l:path) ? l:path : fnamemodify(l:path, ':p:h')
-  execute 'silent !tmux splitw -c ' . shellescape(l:cmd)
-endfunction
+def GetNodePath(): string
+  var helper = fern#helper#new()
+  var node = helper.sync.get_cursor_node()
+  return node._path
+enddef
 
-function! s:tmux_open_code_agent(cli) abort
+def TmuxOpenShell()
+  var path = GetNodePath()
+  var cmd = isdirectory(path) ? path : fnamemodify(path, ':p:h')
+  execute 'silent !tmux splitw -c ' .. shellescape(cmd)
+enddef
+
+def TmuxOpenCodeAgent(cli: string)
   if empty($TMUX) || empty($TMUX_PANE)
     echoerr 'Not inside tmux (TMUX/TMUX_PANE not set)'
     return
   endif
 
-  let l:file = s:get_node_path()
+  var file = GetNodePath()
+  var newpane = trim(system('tmux split-window -h -P -F "#{pane_id}"'))
 
-  let l:newpane = system('tmux split-window -h -P -F "#{pane_id}"')
-  let l:newpane = trim(l:newpane)
-
-  if empty(l:newpane)
+  if empty(newpane)
     echoerr 'tmux split-window failed'
     return
   endif
 
-  call filter(getwininfo(), {i, v -> getbufvar(v.bufnr, '&filetype') ==# 'fern' ? execute(v.winnr . 'close') : 0})
-  call system('tmux send-keys -t ' . shellescape(l:newpane) . ' ' . a:cli .'\ "' . shellescape(l:file) . '" C-m')
-endfunction
+  for w in getwininfo()
+    if getbufvar(w.bufnr, '&filetype') ==# 'fern'
+      execute w.winnr .. 'close'
+    endif
+  endfor
+  system('tmux send-keys -t ' .. shellescape(newpane) .. ' ' .. cli .. '\ "' .. shellescape(file) .. '" C-m')
+enddef
 
-function! s:get_node_path() abort
-  let l:helper = fern#helper#new()
-  let l:node = l:helper.sync.get_cursor_node()
-  return l:node._path
-endfunction
-
-function! s:open_or_enter() abort
-  let l:path = s:get_node_path()
-  if isdirectory(l:path)
-    call feedkeys("\<Plug>(fern-action-enter)", 'm')
+def OpenOrEnter()
+  var path = GetNodePath()
+  if isdirectory(path)
+    feedkeys("\<Plug>(fern-action-enter)", 'm')
     return
   endif
 
-  call OpenPath('edit', l:path)
-endfunction
+  g:OpenPath('edit', path)
+enddef
 
-function! s:preview_cursor(step) abort
-  execute 'normal! ' . a:step
-  let l:path = s:get_node_path()
-  if isdirectory(l:path)
+def PreviewCursor(step: string)
+  execute 'normal! ' .. step
+  var path = GetNodePath()
+  if isdirectory(path)
     return
   endif
 
-  call OpenPath('edit_keep', l:path)
-endfunction
+  g:OpenPath('edit_keep', path)
+enddef
 
-function! s:search_target_dir() abort
-  return s:resolve_fern_root(s:get_node_path()) . '/'
-endfunction
+def GetSearchTargetDir(): string
+  return ResolveFernRoot(GetNodePath()) .. '/'
+enddef
 
-function! s:search_pattern() abort
-  call SearchIn(s:search_target_dir())
-endfunction
+def SearchPattern()
+  g:SearchIn(GetSearchTargetDir())
+enddef
 
-function! s:search_yank() abort
-  call SearchIn(s:search_target_dir(), @0)
-endfunction
+def SearchYank()
+  g:SearchIn(GetSearchTargetDir(), @0)
+enddef
 
-function! s:search_last() abort
-  let l:pattern = substitute(@/, '^\\v', '', '')
-  let l:pattern = substitute(l:pattern, '^\\<\(.\+\)\\>$', '\1', '')
-  call SearchIn(s:search_target_dir(), l:pattern)
-endfunction
+def SearchLast()
+  var pattern = substitute(@/, '^\\v', '', '')
+  pattern = substitute(pattern, '^\\<\(.\+\)\\>$', '\1', '')
+  g:SearchIn(GetSearchTargetDir(), pattern)
+enddef
 
-function! s:search_files() abort
-  call FuzzyFind({'dir': s:search_target_dir()})
-endfunction
+def SearchFiles()
+  g:FuzzyFind({'dir': GetSearchTargetDir()})
+enddef
 
-function! s:yank_to_register(reg) abort
-  let l:path = s:get_node_path()
-  if a:reg ==# '"'
-    let l:cl = 'String'
+def YankToRegister(reg: string)
+  var path = GetNodePath()
+  var cl: string
+  if reg ==# '"'
+    cl = 'String'
   else
-    let l:path = fnamemodify(l:path, ':p:h')
-    let l:cl = 'Directory'
+    path = fnamemodify(path, ':p:h')
+    cl = 'Directory'
   endif
-  call setreg(a:reg, l:path)
-  call EchoHi('Yanked: ' . l:path)
-endfunction
+  setreg(reg, path)
+  g:EchoHi('Yanked: ' .. path)
+enddef
 
-function! s:init_fern() abort
+def InitFern()
   setlocal nonumber
   setlocal norelativenumber
   setlocal signcolumn=yes
@@ -153,13 +150,13 @@ function! s:init_fern() abort
   nnoremap <buffer><expr> j (line('.') == line('$') ? 'gg' : 'j')
   nnoremap <buffer><expr> k (line('.') == 1 ? 'G' : 'k')
 
-  nnoremap <buffer><silent> y  :call <SID>yank_to_register('"')<CR>
-  nnoremap <buffer><silent> yy :call <SID>yank_to_register('g')<CR>
-  nnoremap <buffer><silent> yb :call <SID>yank_to_register('b')<CR>
+  nnoremap <buffer><silent> y  :call <SID>YankToRegister('"')<CR>
+  nnoremap <buffer><silent> yy :call <SID>YankToRegister('g')<CR>
+  nnoremap <buffer><silent> yb :call <SID>YankToRegister('b')<CR>
 
   nnoremap <buffer> gh :<C-u>Fern ~/<CR>
-  nnoremap <buffer><silent> gy :call <SID>fern_cd(getreg('g'))<CR>
-  nnoremap <buffer><silent> gb :call <SID>fern_cd(getreg('b'))<CR>
+  nnoremap <buffer><silent> gy :call <SID>FernCd(getreg('g'))<CR>
+  nnoremap <buffer><silent> gb :call <SID>FernCd(getreg('b'))<CR>
   nnoremap <buffer> gv :<C-u>Fern ~/.vim<CR>
   nnoremap <buffer> gc :<C-u>Fern ~/code<CR>
   nnoremap <buffer> gt :<C-u>Fern ~/tmp<CR>
@@ -168,12 +165,12 @@ function! s:init_fern() abort
   nnoremap <buffer> gs :<C-u>Fern ~/Sync<CR>
   nnoremap <buffer> gw :<C-u>Fern ~/SyncWork<CR>
 
-  nnoremap <buffer><silent> <CR> :call <SID>open_or_enter()<CR>
+  nnoremap <buffer><silent> <CR> :call <SID>OpenOrEnter()<CR>
 
   nnoremap <buffer> E    <Plug>(fern-action-open:vsplit)
   nnoremap <buffer> x    <Plug>(fern-action-open:system)
-  nnoremap <buffer><silent> J :call <SID>preview_cursor('j')<CR>
-  nnoremap <buffer><silent> K :call <SID>preview_cursor('k')<CR>
+  nnoremap <buffer><silent> J :call <SID>PreviewCursor('j')<CR>
+  nnoremap <buffer><silent> K :call <SID>PreviewCursor('k')<CR>
 
   nnoremap <buffer> c  <Plug>(fern-action-clipboard-copy)
   nnoremap <buffer> m  <Plug>(fern-action-clipboard-move)
@@ -189,8 +186,8 @@ function! s:init_fern() abort
   nnoremap <buffer> l <Plug>(fern-action-open-or-expand)
   nnoremap <buffer> L <Plug>(fern-action-expand-tree:stay)
 
-  nnoremap <buffer><silent> S :call <SID>tmux_open_shell()<Bar>redraw!<CR>
-  nnoremap <buffer><silent> C :call <SID>tmux_open_code_agent('claude')<Bar>redraw!<CR>
+  nnoremap <buffer><silent> S :call <SID>TmuxOpenShell()<Bar>redraw!<CR>
+  nnoremap <buffer><silent> C :call <SID>TmuxOpenCodeAgent('claude')<Bar>redraw!<CR>
 
   nnoremap <buffer> .    <Plug>(fern-action-hidden:toggle)
   nnoremap <buffer> <C-l> <Plug>(fern-action-reload)
@@ -199,17 +196,23 @@ function! s:init_fern() abort
   nnoremap <buffer> <Space> <Plug>(fern-action-mark:toggle)j
   nnoremap <buffer> *       <Plug>(fern-action-mark:toggle:all)
 
-  nnoremap <buffer><silent> s :call <SID>search_pattern()<CR>
-  nnoremap <buffer><silent> <C-y> :call <SID>search_yank()<CR>
+  nnoremap <buffer><silent> s :call <SID>SearchPattern()<CR>
+  nnoremap <buffer><silent> <C-y> :call <SID>SearchYank()<CR>
   if has('win32')
-    nnoremap <buffer><silent> <C-/> :call <SID>search_last()<CR>
+    nnoremap <buffer><silent> <C-/> :call <SID>SearchLast()<CR>
   else
-    nnoremap <buffer><silent> <C-_> :call <SID>search_last()<CR>
+    nnoremap <buffer><silent> <C-_> :call <SID>SearchLast()<CR>
   endif
-  nnoremap <buffer><silent> f :call <SID>search_files()<CR>
-endfunction
+  nnoremap <buffer><silent> f :call <SID>SearchFiles()<CR>
+enddef
+
+def Setup()
+  nnoremap <silent> <space>v :call FernToggle()<CR>
+enddef
+
+autocmd User InitPost ++once Setup()
 
 augroup fern-custom
   autocmd! *
-  autocmd FileType fern call s:init_fern()
+  autocmd FileType fern InitFern()
 augroup END

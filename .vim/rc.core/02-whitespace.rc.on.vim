@@ -1,39 +1,41 @@
-set list                                    " highlight whitespace
-set listchars=tab:│\ ,trail:~,extends:>,precedes:<,nbsp:+
-set backspace=indent,eol,start              " allow backspacing listed
+vim9script
 
-set autoindent                              " use the current indent for new lines
-set expandtab                               " insert spaces instead of tabs
-set tabstop=4                               " number of spaces per tab for display
-set softtabstop=4                           " number of spaces per tab in insert mode
-set shiftwidth=4                            " number of spaces when indenting
-set shiftround                              " round indent to sw
-set nowrap                                  " don't wrap long lines
+set list                                    # highlight whitespace
+set listchars=tab:│\ ,trail:~,extends:>,precedes:<,nbsp:+
+set backspace=indent,eol,start              # allow backspacing listed
+
+set autoindent                              # use the current indent for new lines
+set expandtab                               # insert spaces instead of tabs
+set tabstop=4                               # number of spaces per tab for display
+set softtabstop=4                           # number of spaces per tab in insert mode
+set shiftwidth=4                            # number of spaces when indenting
+set shiftround                              # round indent to sw
+set nowrap                                  # don't wrap long lines
 
 highlight default ExtraWhitespace ctermbg=red guibg=red
 
-function! s:clear_trailing_whitespace_match() abort
+def ClearTrailingWhitespaceMatch()
   if exists('w:extra_whitespace_match')
-    call matchdelete(w:extra_whitespace_match)
+    matchdelete(w:extra_whitespace_match)
     unlet w:extra_whitespace_match
   endif
-endfunction
+enddef
 
-function! s:highlight_trailing_whitespace() abort
+def HighlightTrailingWhitespace()
   if index(['diff', 'qf', 'gitcommit', 'fern', 'help'], &filetype) >= 0
-    call s:clear_trailing_whitespace_match()
+    ClearTrailingWhitespaceMatch()
     return
   endif
 
-  call s:clear_trailing_whitespace_match()
-  let w:extra_whitespace_match = matchadd('ExtraWhitespace', '\s\+$')
-endfunction
+  ClearTrailingWhitespaceMatch()
+  w:extra_whitespace_match = matchadd('ExtraWhitespace', '\s\+$')
+enddef
 
 augroup trailing_whitespace
   autocmd!
-  autocmd BufWinEnter,WinEnter,InsertLeave * call s:highlight_trailing_whitespace()
-  autocmd FileType * call s:highlight_trailing_whitespace()
-  autocmd WinLeave,BufWinLeave * call s:clear_trailing_whitespace_match()
+  autocmd BufWinEnter,WinEnter,InsertLeave * HighlightTrailingWhitespace()
+  autocmd FileType * HighlightTrailingWhitespace()
+  autocmd WinLeave,BufWinLeave * ClearTrailingWhitespaceMatch()
 augroup END
 
 augroup indent_settings

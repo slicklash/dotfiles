@@ -1,4 +1,6 @@
-" entire buffer
+vim9script
+
+# entire buffer
 xnoremap ie ggVG
 onoremap ie :<C-u>normal! ggVG<CR>
 

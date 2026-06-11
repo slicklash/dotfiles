@@ -26,3 +26,8 @@ alias yf='y format'
 alias yl='y lint'
 alias ya='y audit'
 alias ytu='y run test:unit'
+
+alias p='pnpm'
+alias pb='p build'
+alias pf='p format'
+alias pl='p lint'

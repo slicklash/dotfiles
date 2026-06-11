@@ -1,15 +1,15 @@
-call dein#add('preservim/tagbar', { 'rev': 'b37b05ff1925b0b3931f031ebf88690aa0974375' })
+vim9script
 
-let g:tagbar_type_zsh = {
-    \ 'ctagstype' : 'zsh_hyphen',
-    \ 'kinds'     : [
-        \ 'f:functions',
-    \ ]
-\ }
+dein#add('preservim/tagbar', {'rev': 'b37b05ff1925b0b3931f031ebf88690aa0974375'})
 
-function! s:setup() abort
-  let g:tagbar_compact = 1
+g:tagbar_type_zsh = {
+      \ 'ctagstype': 'zsh_hyphen',
+      \ 'kinds': ['f:functions'],
+      \ }
+
+def Setup()
+  g:tagbar_compact = 1
   nnoremap <leader>tt <Esc><cmd>TagbarToggle<CR><Esc>
-endfunction
+enddef
 
-autocmd User InitPost ++once call s:setup()
+autocmd User InitPost ++once Setup()

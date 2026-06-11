@@ -1,36 +1,38 @@
-let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'typescript']
+vim9script
 
-function! s:sed_inplace(cmd, file) abort
+g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'javascript', 'typescript']
+
+def SedInplace(cmd: string, file: string)
   if has('macunix')
-    execute 'silent !sed -i '''' ' . shellescape(a:cmd) . ' ' . shellescape(a:file)
+    execute 'silent !sed -i '''' ' .. shellescape(cmd) .. ' ' .. shellescape(file)
   else
-    execute 'silent !sed -i ' . shellescape(a:cmd) . ' ' . shellescape(a:file)
+    execute 'silent !sed -i ' .. shellescape(cmd) .. ' ' .. shellescape(file)
   endif
-endfunction
+enddef
 
-function! s:open_browser(path) abort
+def OpenBrowser(path: string)
   if has('macunix')
-    execute 'silent !open -a "Firefox" ' . shellescape(a:path) . ' >/dev/null 2>&1 &'
+    execute 'silent !open -a "Firefox" ' .. shellescape(path) .. ' >/dev/null 2>&1 &'
   else
-    execute 'silent !firefox ' . shellescape(a:path) . ' >/dev/null 2>&1 &'
+    execute 'silent !firefox ' .. shellescape(path) .. ' >/dev/null 2>&1 &'
   endif
-endfunction
+enddef
 
-function! PMarkdown() abort
-  execute 'silent !cp ' . shellescape($HOME . '/.config/gh.css') . ' /tmp/gh.css'
-  execute 'silent !pandoc ' . shellescape(expand('%:p')) . ' -s -c gh.css -o /tmp/_pmd.html'
+def g:PMarkdown()
+  execute 'silent !cp ' .. shellescape($HOME .. '/.config/gh.css') .. ' /tmp/gh.css'
+  execute 'silent !pandoc ' .. shellescape(expand('%:p')) .. ' -s -c gh.css -o /tmp/_pmd.html'
 
-  call s:sed_inplace('/<colgroup>/,/<\/colgroup>/d', '/tmp/_pmd.html')
-  call s:sed_inplace('s/<style>/<style>pre{background-color:#f6f8fa}/g', '/tmp/_pmd.html')
+  SedInplace('/<colgroup>/,/<\/colgroup>/d', '/tmp/_pmd.html')
+  SedInplace('s/<style>/<style>pre{background-color:#f6f8fa}/g', '/tmp/_pmd.html')
 
-  call s:open_browser('/tmp/_pmd.html')
+  OpenBrowser('/tmp/_pmd.html')
   redraw!
-endfunction
+enddef
 
-function! FPreview() abort
-  call s:open_browser(expand('%:p'))
+def g:FPreview()
+  OpenBrowser(expand('%:p'))
   redraw!
-endfunction
+enddef
 
 augroup filetype_pandoc
   autocmd!

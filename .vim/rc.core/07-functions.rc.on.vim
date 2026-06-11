@@ -1,22 +1,28 @@
-function! ProfileStart(...) abort
-  let l:file = a:0 ? a:1 : expand('~/.vim/profile.log')
+vim9script
+
+def g:ProfileStart(...rest: list<any>)
+  var profile_file = len(rest) > 0 ? rest[0] : expand('~/.vim/profile.log')
 
   if exists('g:profiling')
-    echohl WarningMsg | echom 'Profiling already active' | echohl None
+    echohl WarningMsg
+    echomsg 'Profiling already active'
+    echohl None
     return
   endif
 
-  let g:profiling = 1
-  execute 'profile start' fnameescape(l:file)
+  g:profiling = 1
+  execute 'profile start' fnameescape(profile_file)
   profile func *
   profile file *
 
-  echo 'Profiling started → ' . l:file
-endfunction
+  echo 'Profiling started → ' .. profile_file
+enddef
 
-function! ProfileStop() abort
+def g:ProfileStop()
   if !exists('g:profiling')
-    echohl WarningMsg | echom 'Profiling not active' | echohl None
+    echohl WarningMsg
+    echomsg 'Profiling not active'
+    echohl None
     return
   endif
 
@@ -24,36 +30,36 @@ function! ProfileStop() abort
   unlet g:profiling
 
   echo 'Profiling stopped'
-endfunction
+enddef
 
-function! Preserve(command) abort
-  let l:view   = winsaveview()
-  let l:search = @/
-  let l:regs   = {}
+def g:Preserve(command: string)
+  var view = winsaveview()
+  var search = @/
+  var regs: dict<string> = {}
 
-  " Save named registers
-  for l:r in split('abcdefghijklmnopqrstuvwxyz0123456789"', '\zs')
-    let l:regs[l:r] = getreg(l:r)
+  # Save named registers
+  for r in split('abcdefghijklmnopqrstuvwxyz0123456789"', '\zs')
+    regs[r] = getreg(r)
   endfor
 
   try
-    execute 'keepjumps keepmarks silent! ' . a:command
+    execute 'keepjumps keepmarks silent! ' .. command
   finally
-    call winrestview(l:view)
-    let @/ = l:search
-    for l:r in keys(l:regs)
-      call setreg(l:r, l:regs[l:r])
+    winrestview(view)
+    @/ = search
+    for r in keys(regs)
+      setreg(r, regs[r])
     endfor
   endtry
-endfunction
+enddef
 
-function! FindNearestFile(filename) abort
-  let buf_filename = fnameescape(fnamemodify(bufname('%'), ':p'))
-  let relative_path = findfile(a:filename, buf_filename . ';')
+def g:FindNearestFile(filename: string): string
+  var buf_filename = fnameescape(fnamemodify(bufname('%'), ':p'))
+  var relative_path = findfile(filename, buf_filename .. ';')
   return !empty(relative_path) ? fnamemodify(relative_path, ':p') : ''
-endfunction
+enddef
 
-function! Zoom() abort
+def g:Zoom()
   if get(t:, 'native_zoom_active', 0)
     tabclose
     return
@@ -64,273 +70,279 @@ function! Zoom() abort
   endif
 
   tab split
-  let t:native_zoom_active = 1
-endfunction
+  t:native_zoom_active = 1
+enddef
 
-function! s:is_ignore_special_windows(winnr) abort
-  return index(['diff', 'qf', 'gitcommit', 'fern', 'help'], getbufvar(winbufnr(a:winnr), '&filetype')) != -1
-endfunction
+def IsIgnoreSpecialWindows(nr: number): bool
+  return index(['diff', 'qf', 'gitcommit', 'fern', 'help'], getbufvar(winbufnr(nr), '&filetype')) != -1
+enddef
 
-function! OpenPath(cmd, path) abort
-  let l:curr_winid = win_getid()
-  let l:winnrs = filter(range(1, tabpagewinnr(tabpagenr(), '$')), '!s:is_ignore_special_windows(v:val)')
-  let l:wincmd = ''
+def g:OpenPath(cmd: string, path: string)
+  var curr_winid = win_getid()
+  var winnrs = filter(range(1, tabpagewinnr(tabpagenr(), '$')), (_, v) => !IsIgnoreSpecialWindows(v))
+  var wincmd = ''
 
-  if a:cmd =~# 'split'
-    let l:wincmd = 'wincmd h'
+  if cmd =~# 'split'
+    wincmd = 'wincmd h'
   else
-    if len(l:winnrs) > 0
-      let [_, l:winnr] = choosewin#start(l:winnrs, { 'auto_choose': 1, 'hook_enable': 0 })
-      if l:winnr > 0
-        let l:wincmd = printf('%dwincmd w', l:winnr)
+    if len(winnrs) > 0
+      var chosen = choosewin#start(winnrs, {'auto_choose': 1, 'hook_enable': 0})
+      var winnr = chosen[1]
+      if winnr > 0
+        wincmd = printf(':%dwincmd w', winnr)
       endif
     endif
   endif
 
-  if !empty(l:wincmd)
-    execute l:wincmd
+  if !empty(wincmd)
+    execute wincmd
   endif
 
-  if a:cmd ==# 'edit_keep'
-    execute printf('noswapfile %s %s', 'edit', a:path)
-    call win_gotoid(l:curr_winid)
+  if cmd ==# 'edit_keep'
+    execute printf('noswapfile %s %s', 'edit', path)
+    win_gotoid(curr_winid)
   else
-    execute printf('noswapfile %s %s', a:cmd, a:path)
+    execute printf('noswapfile %s %s', cmd, path)
   endif
-endfunction
+enddef
 
-function! SyntaxItem()
-  echo synIDattr(synID(line('.'),col('.'),1),'name')
-endfunction
+def g:SyntaxItem()
+  echo synIDattr(synID(line('.'), col('.'), 1), 'name')
+enddef
 
-function! s:matchstrpos_all(str, regex) abort
-  let [result, m] = [[], ['', 0, 0]]
+def MatchstrposAll(str: string, regex: string): list<any>
+  var result: list<any> = []
+  var m = ['', 0, 0]
   while m[1] != -1
-    let m = matchstrpos(a:str, a:regex, m[2])
+    m = matchstrpos(str, regex, m[2])
     if m[1] != -1
-      call add(result, m)
+      add(result, m)
     endif
   endwhile
   return result
-endfunction
+enddef
 
-function! EchoHi(msg, ...) abort
-  let hi = get(a:, 1, 'String')
-  execute 'echohl ' . hi
-  echo a:msg
+def g:EchoHi(msg: any, ...rest: list<any>)
+  var hi: string = get(rest, 0, 'String')
+  execute 'echohl ' .. hi
+  echo msg
   echohl None
-endfunction
+enddef
 
-function! LookupKeyword() abort
-  let url = get(b:, 'keyword_lookup_url')
+def g:LookupKeyword()
+  var url: string = get(b:, 'keyword_lookup_url', '')
   if empty(url)
-    call EchoHi('b:keyword_lookup_url is not defined', 'ErrorMsg')
+    g:EchoHi('b:keyword_lookup_url is not defined', 'ErrorMsg')
     return
   endif
-  call dist#vim9#Open(printf(url, expand('<cword>')))
-endfunction
+  dist#vim9#Open(printf(url, expand('<cword>')))
+enddef
 
-function! ExpandSnippet(file, snip, params) abort
-  let file = $HOME . '/.vim/snippets/' . a:file
+def g:ExpandSnippet(file: string, snip: string, params: list<any>): list<string>
+  var path = $HOME .. '/.vim/snippets/' .. file
 
-  if !filereadable(file)
-    echoerr file . ' not found'
-    return v:none
+  if !filereadable(path)
+    echoerr path .. ' not found'
+    return []
   endif
 
-  let lines = readfile(file)
-  let snip = []
-  let collect = v:false
+  var lines = readfile(path)
+  var collected: list<string> = []
+  var collect = false
 
   for line in lines
 
-    if line =~ 'snippet ' . a:snip . '$'
-      let collect = v:true
+    if line =~ 'snippet ' .. snip .. '$'
+      collect = true
       continue
     elseif collect && line =~ 'snippet'
       break
     endif
 
     if collect
-      if line =~ '\v^(abbr|options)' | continue | endif
-      let line = strpart(line, 2)
-      let snip = add(snip, line)
+      if line =~ '\v^(abbr|options)'
+        continue
+      endif
+      add(collected, strpart(line, 2))
     endif
 
   endfor
 
-  if !len(snip)
-    echoerr 'Snippet "' . a:snip . '" not found'
-    return v:none
+  if len(collected) == 0
+    echoerr 'Snippet "' .. snip .. '" not found'
+    return []
   endif
 
-  let snip = join(snip, "\n")
+  var body = join(collected, "\n")
 
-  let pp = insert(a:params, '')
-  let i = 0
+  var pp = insert(copy(params), '')
+  var i = 0
 
   while i < len(pp)
-    let snip = substitute(snip, '\v(\$\{'.i.'(:\h+)?\}|\$'.i.')', pp[i], 'g')
-    let i += 1
+    body = substitute(body, '\v(\$\{' .. i .. '(:\h+)?\}|\$' .. i .. ')', pp[i], 'g')
+    i += 1
   endwhile
 
-  let missing = matchstr(snip, '\v\$\{\d(:\h+)?\}')
+  var missing = matchstr(body, '\v\$\{\d(:\h+)?\}')
   if missing != ''
-    echoerr 'Missing required parameter: ' . missing
-    return v:none
+    echoerr 'Missing required parameter: ' .. missing
+    return []
   endif
 
-  return split(snip, '\n')
-endfunction
+  return split(body, '\n')
+enddef
 
-function! Turbo() abort
+def g:Turbo()
   if get(b:, 'turbo', 0)
     return
   endif
-  " Syntax performance
+  # Syntax performance
   if exists('&synmaxcol')
     setlocal synmaxcol=120
   endif
 
-  " Deoplete
+  # Deoplete
   if exists('*deoplete#disable')
-    call deoplete#disable()
+    deoplete#disable()
   endif
 
-  " Whitespace highlighting (command)
-  if exists(':DisableWhitespace')
-    silent! DisableWhitespace
+  # Whitespace highlighting (command)
+  if exists(':DisableWhitespace') > 0
+    silent! execute 'DisableWhitespace'
   endif
 
-  " LanguageClient
-  if exists(':LanguageClientStop')
-    silent! LanguageClientStop
+  # LanguageClient
+  if exists(':LanguageClientStop') > 0
+    silent! execute 'LanguageClientStop'
   endif
 
-  " ALE
-  if exists(':ALEDisableBuffer')
-    silent! ALEDisableBuffer
+  # ALE
+  if exists(':ALEDisableBuffer') > 0
+    silent! execute 'ALEDisableBuffer'
   endif
 
-  " MatchParen
-  if exists(':NoMatchParen')
-    silent! NoMatchParen
+  # MatchParen
+  if exists(':NoMatchParen') > 0
+    silent! execute 'NoMatchParen'
   elseif exists('g:loaded_matchparen')
-    let b:matchparen_enabled = 0
-    silent! NoMatchParen
+    b:matchparen_enabled = 0
+    silent! execute 'NoMatchParen'
   endif
 
-  let b:turbo = 1
-endfunction
+  b:turbo = 1
+enddef
 
-function! HardMode() abort
+def g:HardMode()
   nnoremap <buffer> h <nop>
   nnoremap <buffer> j <nop>
   nnoremap <buffer> k <nop>
   nnoremap <buffer> l <nop>
-endfunction
+enddef
 
-function! Eslint() abort
+def g:Eslint()
   setlocal makeprg=npx\ eslint\ -f\ unix\ src
   make
   copen
-endfunction
+enddef
 
-function! DeleteFile() abort
-  let curline = getline('.')
-  let choice = confirm('delete ' . curline . '?', "&Yes\n&No\n&Cancel")
+def g:DeleteFile()
+  var curline = getline('.')
+  var choice = confirm('delete ' .. curline .. '?', "&Yes\n&No\n&Cancel")
   if choice != 1
     return
   endif
-  call delete(curline)
+  delete(curline)
   normal dd
-endfunction
+enddef
 
-function! DeleteFiles() abort range
-  let start = line("'<")
-  let end = line("'>")
-  let lines = getbufline(bufnr('%'), start, end)
-  let choice = confirm('delete ' . len(lines) . ' files?', "&Yes\n&No\n&Cancel")
+def g:DeleteFiles()
+  var startln = line("'<")
+  var endln = line("'>")
+  var lines = getbufline(bufnr('%'), startln, endln)
+  var choice = confirm('delete ' .. len(lines) .. ' files?', "&Yes\n&No\n&Cancel")
   if choice != 1
     return
   endif
   for fl in lines
-    call delete(fl)
+    delete(fl)
   endfor
   normal gvd
-endfunction
+enddef
 
-function! SortImports() abort
-  let line = getline('.')
+def g:SortImports()
+  var line = getline('.')
   if line !~# 'import '
     echoerr 'no imports found'
     return
   endif
-  let line = 'import ' . join(sort(map(split(substitute(line, 'import ', '', ''), ','), {k, v -> trim(v)})), ', ')
-  call setline('.', line)
-endfunction
+  line = 'import ' .. join(sort(map(split(substitute(line, 'import ', '', ''), ','), (k, v) => trim(v))), ', ')
+  setline('.', line)
+enddef
 
-function! s:bufnumbers() abort
-  let [i, last] = [1, line('$')]
-  let result = []
+def GetBufferNumbers(): list<float>
+  var i = 1
+  var last = line('$')
+  var result: list<float> = []
   while i <= last
-    let [line, i] = [getline(i), i + 1]
-    let p = stridx(line, '#')
+    var line = getline(i)
+    i += 1
+    var p = stridx(line, '#')
     if p != -1
-      let line = strpart(line, 0, p)
+      line = strpart(line, 0, p)
     endif
-    let line = trim(line)
-    if match(line,'^\v-?\d+(\.\d+)?$') == 0
-      call add(result, str2float(line))
+    line = trim(line)
+    if match(line, '^\v-?\d+(\.\d+)?$') == 0
+      add(result, str2float(line))
     endif
   endwhile
   return result
-endfunction
+enddef
 
-function! s:apply(fn, ...) abort
-  let xs = s:bufnumbers()
-  let initial = get(a:000, 0, v:false) ? xs[0] : 0
-  return reduce(xs, a:fn, initial)
-endfunction
+def Apply(Fn: func, ...rest: list<any>): float
+  var xs = GetBufferNumbers()
+  var use_first = len(rest) > 0 && rest[0]
+  var initial = use_first ? xs[0] : 0.0
+  return reduce(xs, Fn, initial)
+enddef
 
-function! Sum() abort
-  call EchoHi(s:apply({ acc, x -> acc + x }), 'DiffAdd')
-endfunction
+def g:Sum()
+  g:EchoHi(Apply((acc, x) => acc + x), 'DiffAdd')
+enddef
 
-function! Avg() abort
-  let xs = s:bufnumbers()
-  call EchoHi(reduce(xs, { acc, x -> acc + x }) / len(xs), 'DiffAdd')
-endfunction
+def g:Avg()
+  var xs = GetBufferNumbers()
+  g:EchoHi(reduce(xs, (acc, x) => acc + x) / len(xs), 'DiffAdd')
+enddef
 
-function! Min(...) abort
-  let n = get(a:000, 0, 1)
-  call EchoHi(sort(s:bufnumbers(), 'f')[0:n-1], 'DiffAdd')
-endfunction
+def g:Min(...rest: list<any>)
+  var n: number = len(rest) > 0 ? rest[0] : 1
+  g:EchoHi(sort(GetBufferNumbers(), 'f')[0 : n - 1], 'DiffAdd')
+enddef
 
-function! Max(...) abort
-  let n = get(a:000, 0, 1)
-  call EchoHi(reverse(sort(s:bufnumbers(), 'f'))[0:n-1], 'DiffAdd')
-endfunction
+def g:Max(...rest: list<any>)
+  var n: number = len(rest) > 0 ? rest[0] : 1
+  g:EchoHi(reverse(sort(GetBufferNumbers(), 'f'))[0 : n - 1], 'DiffAdd')
+enddef
 
-function! JsBeautify()
+def g:JsBeautify()
   silent %!prettier --parser=babel-ts
-  echo ""
-endfunction
+  echo ''
+enddef
 
-function! JsonBeautify()
+def g:JsonBeautify()
   silent %!prettier --parser=json
-  echo ""
-endfunction
+  echo ''
+enddef
 
-function! HtmlBeautify()
+def g:HtmlBeautify()
   silent %!prettier --parser=html
-  echo ""
-endfunction
+  echo ''
+enddef
 
-function! CssBeautify()
+def g:CssBeautify()
   silent %!prettier --parser=css
-  echo ""
-endfunction
+  echo ''
+enddef
 
 command! JsBeautify call JsBeautify()
 command! JsonBeautify call JsonBeautify()
@@ -338,16 +350,16 @@ command! HtmlBeautify call HtmlBeautify()
 command! CssBeautify call CssBeautify()
 
 
-command! Tail call s:Tail()
+command! Tail call g:Tail()
 
-function! s:Tail()
+def g:Tail()
   setlocal autoread
   setlocal noswapfile
   setlocal nowrap
   normal! G
 
-  " Start timer to check file even when pane inactive
+  # Start timer to check file even when pane inactive
   if has('timers')
-    call timer_start(500, {-> execute('checktime')}, {'repeat': -1})
+    timer_start(500, (_) => execute('checktime'), {'repeat': -1})
   endif
-endfunction
+enddef

@@ -1,11 +1,7 @@
+vim9script
 scriptencoding utf-8
 
-augroup filtype_robo1
-  autocmd!
-  autocmd BufRead,BufNewFile *.robo1 call s:ft_robo1()
-augroup END
-
-function! s:ft_robo1() abort
+def FtRobo1()
   setfiletype robo1
   setlocal shiftwidth=2
   setlocal commentstring=#\ %s
@@ -14,7 +10,7 @@ function! s:ft_robo1() abort
     return
   endif
 
-  let b:current_syntax = 'robo1'
+  b:current_syntax = 'robo1'
 
   syntax match roboFunctionCall "[ąčęėįšųūžĄČĘĖĮŠŲŪŽA-Za-z]\k\+"
 
@@ -68,4 +64,9 @@ function! s:ft_robo1() abort
   hi def link roboFunctionName Function
   hi def link roboLambdaStart Function
   hi def link roboFunctionCall Function
-endfunction
+enddef
+
+augroup filtype_robo1
+  autocmd!
+  autocmd BufRead,BufNewFile *.robo1 FtRobo1()
+augroup END

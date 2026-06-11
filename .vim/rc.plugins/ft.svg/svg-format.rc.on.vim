@@ -1,14 +1,16 @@
+vim9script
+
 if !executable('xmllint')
   echo 'Error: missing libxml2-utils package'
   cquit
 endif
 
-augroup ft_svg
-  autocmd!
-  autocmd FileType svg call s:ft_svg()
-augroup END
-
-function! s:ft_svg() abort
+def FtSvg()
   setlocal noautoindent
   setlocal formatprg=xmllint\ --format\ -
-endfunction
+enddef
+
+augroup ft_svg
+  autocmd!
+  autocmd FileType svg FtSvg()
+augroup END

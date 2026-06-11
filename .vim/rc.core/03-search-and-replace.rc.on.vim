@@ -1,27 +1,29 @@
-set hlsearch                                " highlight search items
-set incsearch                               " find as you type
-set ignorecase                              " case insensitive search
-set smartcase                               " case sensitive search if uppercase letters are used
-set matchpairs+=<:>                         " match <> pairs
+vim9script
 
-" use very magic regexp be default
+set hlsearch                                # highlight search items
+set incsearch                               # find as you type
+set ignorecase                              # case insensitive search
+set smartcase                               # case sensitive search if uppercase letters are used
+set matchpairs+=<:>                         # match <> pairs
+
+# use very magic regexp be default
 nnoremap / /\v
 nnoremap s /\v
 vnoremap / /\v
 nnoremap ? ?\v
 vnoremap ? ?\v
 
-" stop highlighting search results
+# stop highlighting search results
 nnoremap <silent> <leader>, :nohlsearch<CR>
 
-" replace selection
+# replace selection
 vnoremap <C-r> "hy:%s#\V<C-r>=escape(@h,'#\')<CR>##gc<left><left><left>
 
-" replace last yanked
+# replace last yanked
 nnoremap <C-y> :%s#\V<C-r>=escape(@0,'#\')<CR>##gc<left><left><left>
 vnoremap <C-y> :s#\V<C-r>=escape(@0,'#\')<CR>##gc<left><left><left>
 
-" replace last searched
+# replace last searched
 if has('win32')
   nnoremap <C-/> :%s#<C-r>/##gc<left><left><left>
   vnoremap <C-/> :s#<C-r>/##gc<left><left><left>
@@ -30,29 +32,30 @@ else
   vnoremap <C-_> :s#<C-r>/##gc<left><left><left>
 endif
 
-" use rg
+# use rg
 if executable('rg')
   set grepprg=rg\ --vimgrep\ --smart-case
   set grepformat=%f:%l:%c:%m
-  " set grepformat=%f:%l:%c:%m,%f:%l:%m
+  # set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 
-" grep to quickfix
-function! Grep(pattern, ...) abort
-  let l:dir = a:0 > 0 ? shellescape(a:1) : ''
-  let l:pat = shellescape(a:pattern)
-  let @/ = a:pattern
-  execute 'silent grep! ' . l:pat . ' ' . l:dir
+# grep to quickfix
+def g:Grep(pattern: string, ...rest: list<any>)
+  var dir = len(rest) > 0 ? shellescape(rest[0]) : ''
+  var pat = shellescape(pattern)
+  @/ = pattern
+  execute 'silent grep! ' .. pat .. ' ' .. dir
   copen | redraw!
-endfunction
+enddef
 
-function! GrepInProject(...) abort
-  let dir = GetProjectDir()
+def g:GrepInProject(...rest: list<any>)
+  var dir = g:GetProjectDir()
   if empty(dir)
-    return EchoHi('project_dir is not defined', 'ErrorMsg')
+    g:EchoHi('project_dir is not defined', 'ErrorMsg')
+    return
   endif
-  call Grep(a:0 > 0 ? a:1 : '', dir)
-endfunction
+  g:Grep(len(rest) > 0 ? rest[0] : '', dir)
+enddef
 
 nnoremap <silent> <leader>fw <cmd>call Grep(expand('<cword>'))<CR>
 vnoremap <silent> <C-f> "hy:call Grep(@h)<CR>
@@ -62,10 +65,10 @@ vnoremap <silent> <leader>fp "hy:call GrepInProject(@h)<CR>
 command! -nargs=+ GR call Grep(<q-args>)
 command! -nargs=+ GP call GrepInProject(<q-args>)
 
-" replace in quickfix files
-function! Rep(search, target) abort
-  execute 'cfdo %s#' . a:search . '#' . a:target . '#gec | update'
-endfunction
+# replace in quickfix files
+def g:Rep(search: string, target: string)
+  execute 'cfdo %s#' .. search .. '#' .. target .. '#gec | update'
+enddef
 
 vnoremap <C-t> "hy:cfdo %s#<C-r>h##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
 nnoremap <leader>rf :cfdo %s#<C-r>/##gec \| update<left><left><left><left><left><left><left><left><left><left><left><left><left>
