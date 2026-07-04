@@ -37,6 +37,7 @@ export PATH
 export GRAALVM_HOME=$HOME/bin/graalvm-ce-java
 export BAT_THEME="aloneinthedark"
 export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_ENV_HINTS=1
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 

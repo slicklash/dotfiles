@@ -1,26 +1,27 @@
 set preview true
 set previewer ~/.config/lf/lf-preview
-set cleaner ~/.config/lf/lf-cleaner
+set cleaner ~/.config/lf/lf-preview
 set drawbox
+# parent : current : preview. a wider preview (raise the last value) = bigger image.
 set ratios 1:5:4
 
 cmd bulk-rename ${{
-    # Create temporary files to store the original and modified list
+    # create temporary files to store the original and modified list
     index=$(mktemp /tmp/lf-bulk-rename-index.XXXXXXXXXX)
     index_edit=$(mktemp /tmp/lf-bulk-rename.XXXXXXXXXX)
 
-    # Populate original list with marked files or all files in directory
+    # populate original list with marked files or all files in directory
     if [ -n "$fs" ]; then
         echo "$fs" > "$index"
     else
         echo "$(ls "$(dirname "$f")" | tr ' ' "\n")" > "$index"
     fi
 
-    # Copy to the list that you will edit
+    # copy to the list that you will edit
     cat "$index" > "$index_edit"
     $EDITOR "$index_edit"
 
-    # Execute renaming if line count matches
+    # execute renaming if line count matches
     if [ $(cat "$index" | wc -l) -eq $(cat "$index_edit" | wc -l) ]; then
         max=$(($(cat "$index" | wc -l)+1))
         counter=1
@@ -37,7 +38,7 @@ cmd bulk-rename ${{
         echo "Error: Number of lines must stay the same."
     fi
 
-    # Clean up temporary storage
+    # clean up temporary storage
     rm "$index" "$index_edit"
 }}
 

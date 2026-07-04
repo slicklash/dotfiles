@@ -1,6 +1,6 @@
 vim9script
 
-dein#add('yegappan/lsp', {'rev': '21c24f83a5a8b3d88c19ea23b49565abe2ddb3d5'})
+dein#add('yegappan/lsp', {'rev': '989016ae2ae4cbf304a9ca29478f47fec794493f'})
 
 # \ 'c': ['ccls', '--log-file=/tmp/ccls.log', '--init={"cacheDirectory":"/home/slicklash/.cache/ccls", "completion": {"filterAndSort": false}}'],
 # \ 'rust': ['rustup', 'run', 'stable', 'rls'],

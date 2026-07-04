@@ -1,13 +1,13 @@
 vim9script
 
-var missing = g:Missing('rg')
+var missing = g:Missing('rg', 'fd')
 if !empty(missing)
   echo 'Error while processing ' .. resolve(expand('<sfile>:p'))
   echo 'Error: missing ' .. missing
   cquit
 endif
 
-dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': '7f77fc1b813fa7555c05775bf7fd0f12d4499880'})
+dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': '7e9c7211abf7c9f8717eb58b7846e8bfcfb7fa01'})
 
 g:fuzzbox_mappings = 0
 g:fuzzbox_dropdown = 1
@@ -46,6 +46,7 @@ def Setup()
 
   nnoremap <Space>d <ScriptCmd>g:FuzzyFind({'dir': expand('%:p:h')})<CR>
   nnoremap <Space>h <ScriptCmd>FuzzyHelpTags()<CR>
+  nnoremap <Space>t <ScriptCmd>FuzzyBufferTags()<CR>
   nnoremap <Space>r <ScriptCmd>FuzzyRecent()<CR>
   nnoremap <Space>; <ScriptCmd>FuzzyCommandHistory()<CR>
 
@@ -63,7 +64,9 @@ autocmd User InitPost ++once Setup()
 
 def GetDefaultIgnores(): list<string>
   return [
+        \ '.codex/.tmp',
         \ '.git',
+        \ '.git-dotfiles',
         \ '__pycache__',
         \ '.venv',
         \ '.turbo',
@@ -89,6 +92,7 @@ def GetDefaultIgnores(): list<string>
         \ '.rustup',
         \ '.choosenim',
         \ '.nimble',
+        \ '.zsh_sessions',
         \ 'go/pkg',
         \ ]
 enddef
@@ -525,6 +529,92 @@ def FuzzyRecent(params: dict<any> = {})
   SelectPaths(GetRecentItems(get(params, 'dir', '')), {
         \ 'title': 'Recent Files',
         \ 'cwd': '',
+        \ })
+enddef
+
+var buftags_file = ''
+
+def BufferTagLnum(result: string): number
+  return str2nr(matchstr(result, '\d\+\s*$'))
+enddef
+
+def GetBufferTagLines(file: string): list<string>
+  var cmd = 'ctags -f - --excmd=number --sort=no --fields=+nKs ' .. shellescape(file)
+  var raw = systemlist(cmd)
+  if v:shell_error != 0
+    g:EchoHi(join(raw, "\n"), 'ErrorMsg')
+    return []
+  endif
+
+  var rows: list<dict<any>> = []
+  var namew = 0
+  var kindw = 0
+  for line in raw
+    if empty(line) || line[0] ==# '!'
+      continue
+    endif
+    var parts = split(line, "\t")
+    if len(parts) < 3
+      continue
+    endif
+    var lnum = str2nr(matchstr(parts[2], '^\d\+'))
+    if lnum <= 0
+      continue
+    endif
+    var name = parts[0]
+    var kind = get(parts, 3, '')
+    var scope = ''
+    for field in parts[4 : ]
+      if field !~# '^\(line\|typeref\):' && field =~# ':'
+        scope = substitute(field, '^[^:]*:', '', '')
+        break
+      endif
+    endfor
+    namew = max([namew, len(name)])
+    kindw = max([kindw, len(kind)])
+    add(rows, {name: name, kind: kind, scope: scope, lnum: lnum})
+  endfor
+
+  var fmt = '%-' .. (namew + 2) .. 's%-' .. (kindw + 2) .. 's%-28s%6d'
+  return mapnew(rows, (_, r) => printf(fmt, r.name, r.kind, r.scope, r.lnum))
+enddef
+
+def SelectBufferTag(wid: number, result: string, opts: dict<any>)
+  if empty(result)
+    return
+  endif
+  var lnum = BufferTagLnum(result)
+  if lnum > 0
+    JumpTo(lnum, 0)
+  endif
+enddef
+
+def PreviewBufferTag(wid: number, result: string, opts: dict<any>)
+  if wid == -1 || empty(result)
+    return
+  endif
+  PreviewFile(wid, buftags_file, BufferTagLnum(result))
+enddef
+
+def FuzzyBufferTags()
+  var file = expand('%:p')
+  if empty(file) || !filereadable(file)
+    g:EchoHi('No file on disk to read tags from', 'WarningMsg')
+    return
+  endif
+  buftags_file = file
+  var lines = GetBufferTagLines(file)
+  if empty(lines)
+    echo 'No tags in ' .. fnamemodify(file, ':t')
+    return
+  endif
+  fuzzbox#Select(lines, {
+        \ 'title': fnamemodify(file, ':t') .. ' tags',
+        \ 'preview': 1,
+        \ 'compact': 0,
+        \ 'async': 1,
+        \ 'select_cb': SelectBufferTag,
+        \ 'preview_cb': PreviewBufferTag,
         \ })
 enddef
 

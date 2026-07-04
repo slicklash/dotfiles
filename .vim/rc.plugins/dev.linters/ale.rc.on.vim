@@ -1,7 +1,7 @@
 vim9script
 scriptencoding utf-8
 
-dein#add('dense-analysis/ale', {'rev': '178fe113564d31cba304263765aeb21e7ed23a7e'})
+dein#add('dense-analysis/ale', {'rev': 'd0ea94323207abcdee717d76bb57b38d46055664'})
 
 g:ale_sign_error = '✖'
 g:ale_sign_warning = '⚠'
@@ -78,7 +78,7 @@ def g:MyALEFix()
 
     if counts.error == 0
       silent! undojoin
-      execute 'silent keepjumps %!prettier --stdin-filepath ' .. shellescape(expand('%:p'))
+      execute 'silent keepjumps :%!prettier --no-color --stdin-filepath ' .. shellescape(expand('%:p'))
     endif
     winrestview(view)
   endif

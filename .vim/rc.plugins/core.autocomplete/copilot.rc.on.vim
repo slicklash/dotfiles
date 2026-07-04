@@ -11,9 +11,9 @@ let g:copilot_filetypes = {
 \ 'javascript': v:false,
 \ 'make': v:false,
 \ 'nim': v:false,
-\ 'python': v:true,
+\ 'python': v:false,
 \ 'robo1': v:false,
 \ 'shell': v:false,
 \ 'typescript': v:true,
-\ 'vim': v:true,
+\ 'vim': v:false,
 \}

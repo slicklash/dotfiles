@@ -7,45 +7,85 @@ x="$4"
 y="$5"
 mode="$6"
 
-mime_type=$(file -Lb --mime-type -- "$file" 2>/dev/null)
+# Reserve the pane's top row for lf's "loading" text so clearing it can't clip
+# the image. Shift the drawable area down one row.
+[ "$h" -gt 1 ] 2>/dev/null && { y=$((y + 1)); h=$((h - 1)); }
 
-clear_images() {
+# Cached derived previews (video/pdf thumbnails, cropped images) can hold sensitive
+# content, so keep them private and bounded: umask 077 -> 0600 files; TMPDIR is
+# per-user and cleared on reboot (and excluded from Time Machine on macOS), unlike
+# ~/.cache; prune_cache keeps only the newest entries so they don't accumulate.
+umask 077
+CACHE_DIR="${TMPDIR:-/tmp}/lf-preview-cache"
+prune_cache() { ls -t "$CACHE_DIR" 2>/dev/null | tail -n +201 | while read -r f; do rm -f "$CACHE_DIR/$f"; done; }
+
+# Serialise tty writes across the previewers lf spawns during fast navigation
+# (mkdir = atomic mutex; macOS has no flock). Steal a lock held >1s in case lf
+# SIGKILLed the holder before it released.
+LOCK="${TMPDIR:-/tmp}/lf-tty-${TMUX_PANE:-shared}.lock"
+lock() {
+    i=0
+    while ! mkdir "$LOCK" 2>/dev/null; do
+        i=$((i + 1)); [ "$i" -ge 100 ] && { rm -rf "$LOCK"; i=0; }
+        sleep 0.01
+    done
+    trap 'unlock' EXIT INT TERM HUP
+}
+unlock() { rmdir "$LOCK" 2>/dev/null; trap - EXIT INT TERM HUP; }
+
+# Remove the kitty image: free it by id and erase its Unicode-placeholder cells
+# (lf never repaints them). One printf so the batch can't be split; CUP is 1-based
+# vs lf's 0-based x/y, hence +1.
+emit_clear() {
+    lock
     if [ -n "$TMUX" ]; then
-        # Inside tmux, kitten icat draws via Unicode-placeholder placements: the
-        # image is shown through placeholder characters written as plain text into
-        # the pane cells. The kitty "delete placements" escape (a=d,d=a) cannot
-        # remove virtual placements, so we (1) free the image data by id, then
-        # (2) erase the placeholder characters by clearing the pane's cells --
-        # lf doesn't know they are there, so it never overwrites them itself.
-        printf '\033Ptmux;\033\033_Ga=d,d=I,i=1\033\033\134\033\134' >/dev/tty
-        if [ -n "$x" ] && [ -n "$y" ] && [ -n "$h" ]; then
-            row="$y"
-            end=$((y + h))
-            while [ "$row" -lt "$end" ]; do
-                # Move to the pane's left column on this row, erase to line end
-                # (the preview pane runs to the right edge of the screen).
-                printf '\033[%d;%dH\033[K' "$row" "$x" >/dev/tty
-                row=$((row + 1))
-            done
-        fi
+        seq='\033Ptmux;\033\033_Ga=d,d=I,i=1\033\033\134\033\134'
+        r=$((y + 1)); end=$((y + h + 1)); c=$((x + 1))
+        while [ "$r" -lt "$end" ]; do seq="$seq\033[${r};${c}H\033[K"; r=$((r + 1)); done
+        printf "$seq" >/dev/tty
     else
-        # Outside tmux kitten uses classic placements, removed by the standard
-        # delete-all escape (d=A also frees the image data).
         printf '\033_Ga=d,d=A\033\134' >/dev/tty
     fi
+    unlock
 }
 
+# This script is set as BOTH the previewer and the cleaner. lf gives the cleaner
+# the *next* filename as $6 (vs "preview"/"preload" for the previewer); in that
+# mode just clear the image being left and exit. The cleaner is what removes the
+# image when you move to a cached text preview or a directory -- there lf renders
+# without calling the previewer, so the previewer clearing itself wouldn't run.
+case "$mode" in
+    preview|preload) ;;
+    *) emit_clear; exit 0 ;;
+esac
+
+mime_type=$(file -Lb --mime-type -- "$file" 2>/dev/null)
+
+# Only the file you land on should draw: each previewer records its target and
+# draw() bails (after taking the lock) if a newer one has superseded it.
+WANT="${LOCK}.want"
+stale() { [ "$(cat "$WANT" 2>/dev/null)" != "$file" ]; }
+
+# kitten flags: -n (no trailing newline, else it scrolls a row), --scale-up
+# (enlarge small images to fill the pane), --image-id 1 (reuse one id). In tmux
+# add --unicode-placeholder (cells the cleaner can erase) and --use-window-size,
+# because tmux hides the cell pixel size and kitten would under-scale -- feed it
+# the pane geometry. Cell px is a one-time measurement of this Ghostty font
+# (284 cols=5112px, 65 rows=2628px); re-measure (`kitten icat --print-window-size`
+# + tput cols/lines) if the font size changes.
 draw() {
-    # Don't draw to the terminal while lf is preloading previews in the background.
     [ "$mode" = "preload" ] && exit 1
-    # kitten icat places the image at an explicit cell rectangle (it does NOT
-    # rely on the cursor position, and it handles tmux passthrough itself), so
-    # the image lands in the preview pane in both tmux and plain Ghostty.
-    kitten icat --stdin no --transfer-mode memory --image-id 1 \
+    up=""
+    if [ -n "$TMUX" ]; then
+        eval "$(tmux display -p -t "$TMUX_PANE" 'PW=#{pane_width};PH=#{pane_height}')"
+        up="--unicode-placeholder --use-window-size $PW,$PH,$((PW*5112/284)),$((PH*2628/65))"
+    fi
+    lock
+    stale && { unlock; exit 1; }
+    kitten icat --stdin no --transfer-mode memory --image-id 1 -n --scale-up $up \
         --place "${w}x${h}@${x}x${y}" "$1" </dev/null >/dev/tty
-    # exit 1 disables lf's preview cache for this file. That is also what makes
-    # lf invoke the cleaner (which removes the image) when we move to another file.
-    exit 1
+    unlock
+    exit 1  # no cache, so reselecting re-draws
 }
 
 hash() {
@@ -67,39 +107,53 @@ hash() {
         hashed_name=$(printf "%s" "$stat_str" | shasum -a 256 | awk '{print $1}')
     fi
 
-    cache="$HOME/.cache/lf/${hashed_name}.jpg"
+    cache="$CACHE_DIR/${hashed_name}.jpg"
 }
 
 cache_preview() {
     if [ ! -f "$cache" ]; then
-        mkdir -p "$(dirname "$cache")"
+        mkdir -p "$(dirname "$cache")"; prune_cache
         "$@"
     fi
-    # Only draw if the thumbnail was actually produced; otherwise fall through
-    # to the file-metadata line below.
-    [ -s "$cache" ] && draw "$cache"
+    [ -s "$cache" ] && draw_fit_width "$cache"
 }
 
+# Seek to 10% to skip black intro frames; ffmpeg decodes directly (no player).
 ffmpeg_thumb() {
-    # $1 = video file, $2 = output jpg. Seek to 10% of the duration (skips black
-    # intro frames) and grab a single frame. ffmpeg decodes the frame directly
-    # via its libraries -- it never launches QuickTime or any player.
     dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$1" 2>/dev/null)
     ss=$(awk -v d="$dur" 'BEGIN { s = (d > 0) ? d * 0.1 : 0; printf "%.2f", s }')
     ffmpeg -y -ss "$ss" -i "$1" -frames:v 1 -q:v 3 "$2" >/dev/null 2>&1
 }
 
-# Clear the previous image before rendering this preview, but not while lf is
-# preloading in the background (that would wipe the preview currently on screen).
-[ "$mode" != "preload" ] && clear_images
+# Fill the pane WIDTH: kitten only fits-within, so crop a too-tall image to the
+# pane aspect (keeping the top) so it fills the width instead of sitting narrow.
+# Cached per pane size; wide images and the no-magick case fall through to draw.
+draw_fit_width() {
+    src="$1"
+    pw=$((w * 5112 / 284)); ph=$((h * 2628 / 65))   # pane px (cells x cell px)
+    eval "$(sips -g pixelWidth -g pixelHeight "$src" 2>/dev/null \
+        | awk '/pixelWidth/{print "iW="$2} /pixelHeight/{print "iH="$2}')"
+    if [ -n "$iW" ] && [ -n "$iH" ] && [ "$((iW * ph))" -lt "$((iH * pw))" ]; then
+        croph=$((iW * ph / pw))
+        hash "$src"; cache="${cache%.jpg}-${w}x${h}.jpg"
+        if [ ! -s "$cache" ] && command -v magick >/dev/null 2>&1; then
+            mkdir -p "$(dirname "$cache")"; prune_cache
+            magick "$src" -gravity North -crop "${iW}x${croph}+0+0" +repage "$cache" 2>/dev/null
+        fi
+        [ -s "$cache" ] && { draw "$cache"; return; }
+    fi
+    draw "$src"
+}
+
+# Record the latest request (for stale()). Clearing the previous image is handled
+# by the cleaner above when you leave it, so the previewer only draws.
+[ "$mode" != "preload" ] && { printf '%s\n' "$file" > "$WANT.$$" && mv -f "$WANT.$$" "$WANT"; } 2>/dev/null
 
 case "$mime_type" in
     image/*)
-        draw "$file"
+        draw_fit_width "$file"
         ;;
     video/*)
-        # Extract a thumbnail frame with ffmpeg (never launches a player) and
-        # draw it. Falls through to file metadata if ffmpeg is unavailable.
         if command -v ffmpeg >/dev/null 2>&1; then
             hash "$file"
             cache_preview ffmpeg_thumb "$file" "$cache"

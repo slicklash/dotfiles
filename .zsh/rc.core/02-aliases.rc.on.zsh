@@ -46,6 +46,7 @@ case "$OSTYPE" in
     alias pbpaste='termux-clipboard-get'
     alias pv='pkg update && apt list --upgradable'
     alias pu='pkg upgrade'
+    alias fd='fdfind'
     ;;
   linux*)
     alias pbcopy='xclip -selection clipboard'
@@ -53,6 +54,7 @@ case "$OSTYPE" in
     alias open='xdg-open'
     alias pv='apt list --upgradable'
     alias pu='apt upgrade'
+    alias fd='fdfind'
     ;;
   darwin*)
     alias pv='brew update && brew outdated'

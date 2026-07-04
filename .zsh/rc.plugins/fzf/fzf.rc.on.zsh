@@ -1,4 +1,4 @@
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git --exclude .git-dotfiles'
 alias fbo="fzf --bind='ctrl-u:execute(open-url {})' --bind='ctrl-i:execute(ignore-bookmark {})'"
 alias fvi='vim $(fzf)'
 

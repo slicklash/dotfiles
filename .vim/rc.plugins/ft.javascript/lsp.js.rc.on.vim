@@ -12,7 +12,10 @@ def FtJsTs()
 
   setlocal sw=2 sts=2 ts=2 et
 
+  setlocal tagfunc=lsp#lsp#TagFunc
+
   nnoremap <buffer> <silent><leader>i <ScriptCmd>Import()<CR>
+  nnoremap <buffer> <silent><leader>tt <cmd>LspOutline toggle<CR>
 
   b:keyword_lookup_url = 'https://developer.mozilla.org/en-US/search?q=%s&topic=js'
 

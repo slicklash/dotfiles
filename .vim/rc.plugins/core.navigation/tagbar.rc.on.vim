@@ -1,9 +1,9 @@
 vim9script
 
-dein#add('preservim/tagbar', {'rev': 'b37b05ff1925b0b3931f031ebf88690aa0974375'})
+dein#add('preservim/tagbar', {'rev': '07cb8247487208124978daff8e13624667635457'})
 
 g:tagbar_type_zsh = {
-      \ 'ctagstype': 'zsh_hyphen',
+      \ 'ctagstype': 'zshhyphen',
       \ 'kinds': ['f:functions'],
       \ }
 

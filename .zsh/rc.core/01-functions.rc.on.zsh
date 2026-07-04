@@ -13,6 +13,26 @@ function _wait4port() {
   echo "Port is up!"
 }
 
+function _freePort() {
+  if [ -z "$1" ]; then
+    echo "Kill whatever is listening on a port"
+    echo "Usage: _freePort <port>"
+    return 1
+  fi
+
+  local port="$1"
+  local pids
+  pids=$(lsof -ti tcp:"$port" -sTCP:LISTEN 2>/dev/null)
+  [[ -z "$pids" ]] && return 0
+
+  echo "Freeing port ${port} (${pids//$'\n'/ })..."
+  kill $=pids 2>/dev/null
+  sleep 1
+  pids=$(lsof -ti tcp:"$port" -sTCP:LISTEN 2>/dev/null)
+  [[ -n "$pids" ]] && kill -9 $=pids 2>/dev/null
+  return 0
+}
+
 function v_set_thumb() {
   if [ -z "$2" ]; then
     echo "Usage: $0 <time> <input>"
@@ -303,8 +323,10 @@ function tmux-run-all-in() {
 
   local win_target="$1"; shift
   local win
-  win="$(tmux display-message -p -t "$win_target" '#{window_id}' 2>/dev/null)" \
-    || { print -u2 "error: unknown window target: $win_target"; return 2; }
+  # display-message returns exit 0 with empty output for a non-existent window,
+  # so check the result explicitly rather than relying on its exit status.
+  win="$(tmux display-message -p -t "$win_target" '#{window_id}' 2>/dev/null)"
+  [[ -n "$win" ]] || { print -u2 "error: unknown window target: $win_target"; return 2; }
 
   _tmux-run-all-in-win "$win" "$@"
 }
@@ -378,8 +400,10 @@ function tmux-run-clean-in() {
 
   local win_target="$1"
   local win
-  win="$(tmux display-message -p -t "$win_target" '#{window_id}' 2>/dev/null)" \
-    || { print -u2 "error: unknown window target: $win_target"; return 2; }
+  # display-message returns exit 0 with empty output for a non-existent window,
+  # so check the result explicitly rather than relying on its exit status.
+  win="$(tmux display-message -p -t "$win_target" '#{window_id}' 2>/dev/null)"
+  [[ -n "$win" ]] || { print -u2 "error: unknown window target: $win_target"; return 2; }
 
   _tmux-run-clean-in-win "$win"
 }

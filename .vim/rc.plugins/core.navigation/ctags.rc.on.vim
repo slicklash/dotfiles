@@ -1,8 +1,13 @@
+if !executable('ctags') || system('ctags --version') !~# 'Universal Ctags'
+  echo 'Error: missing Universal Ctags'
+  cquit
+endif
+
 call dein#add('ludovicchabant/vim-gutentags', { 'rev': 'aa47c5e29c37c52176c44e61c780032dfacef3dd' })
 
 function! s:setup() abort
   let g:gutentags_cache_dir = MakeCacheDir('gutentags')
-  let g:gutentags_file_list_command = 'rg --files'
+  let g:gutentags_file_list_command = 'fd --type f --hidden --follow --exclude .git'
   let g:gutentags_generate_on_new = 0
   let g:gutentags_project_root_finder = 'GutenTagsProjectRootFinder'
   let g:gutentags_define_advanced_commands = 1
