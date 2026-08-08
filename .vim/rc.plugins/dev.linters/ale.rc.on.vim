@@ -1,7 +1,7 @@
 vim9script
 scriptencoding utf-8
 
-dein#add('dense-analysis/ale', {'rev': 'd0ea94323207abcdee717d76bb57b38d46055664'})
+dein#add('dense-analysis/ale', {'rev': '9e2efaa4d348b1f93200b24e5540c670eb6fdd3f'})
 
 g:ale_sign_error = '✖'
 g:ale_sign_warning = '⚠'

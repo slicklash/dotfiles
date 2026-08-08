@@ -7,7 +7,7 @@ if !empty(missing)
   cquit
 endif
 
-dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': '7e9c7211abf7c9f8717eb58b7846e8bfcfb7fa01'})
+dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': '6fedd86750842db84f9931b9f25c3c5997976c0c'})
 
 g:fuzzbox_mappings = 0
 g:fuzzbox_dropdown = 1
@@ -671,10 +671,42 @@ def GitAutosquash(wid: number, result: string, opts: dict<any>)
   endif
 enddef
 
+def GitFilesToQuickfix(wid: number, result: string, opts: dict<any>)
+  var hash = GetGitHash(result)
+  if empty(hash)
+    return
+  endif
+
+  var dir: string = get(opts, 'cwd', getcwd())
+  # qf entries need absolute paths; diff-tree emits paths relative to the toplevel.
+  var root = trim(system('git -C ' .. shellescape(dir) .. ' rev-parse --show-toplevel'))
+  if v:shell_error != 0 || empty(root)
+    root = dir
+  endif
+
+  # --root lets the initial commit report its files as a creation event.
+  var cmd = 'git -C ' .. shellescape(dir) .. ' diff-tree --no-commit-id --name-only -r --root ' .. shellescape(hash)
+  var files = filter(systemlist(cmd), (_, v) => !empty(v))
+  if v:shell_error != 0
+    g:EchoHi(join(files, "\n"), 'ErrorMsg')
+    return
+  endif
+  if empty(files)
+    g:EchoHi('No files in ' .. hash, 'WarningMsg')
+    return
+  endif
+
+  BuildQuickfix(files, root)
+  setqflist([], 'a', {'title': 'Commit ' .. hash})
+  silent! popup_close(wid)
+  copen
+enddef
+
 def GetGitActions(): dict<func>
   return {
         \ "\<c-f>": GitFixup,
         \ "\<c-s>": GitAutosquash,
+        \ "\<c-q>": GitFilesToQuickfix,
         \ }
 enddef
 
