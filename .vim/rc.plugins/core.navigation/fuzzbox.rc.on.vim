@@ -7,7 +7,7 @@ if !empty(missing)
   cquit
 endif
 
-dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': '6fedd86750842db84f9931b9f25c3c5997976c0c'})
+dein#add('vim-fuzzbox/fuzzbox.vim', {'rev': 'a35836c333678151eea9e1a9c3e5807d9adebae3'})
 
 g:fuzzbox_mappings = 0
 g:fuzzbox_dropdown = 1
