@@ -34,18 +34,37 @@ function _freePort() {
 }
 
 function v_set_thumb() {
-  if [ -z "$2" ]; then
-    echo "Usage: $0 <time> <input>"
-  else
-    ffmpeg -ss $1 -i "$2" -frames:v 1 -q:v 5 out.png
-    if [[ -f "$2.bak" ]]; then
-      rm "$2"
-    else
-      mv "$2" "$2.bak"
-    fi
-    ffmpeg -i "$2.bak" -i out.png -map 0 -map 1 -c copy -c:v:1 png -disposition:v:1 attached_pic "$2"
-    rm out.png
+  if [[ -z "$1" || -z "$2" ]]; then
+    echo "Usage: v_set_thumb <time> <input>"
+    return 1
   fi
+
+  local time="$1"
+  local input="$2"
+  local backup="$input.bak"
+
+  ffmpeg -ss "$time" -i "$input" \
+    -frames:v 1 -q:v 5 -y out.jpg || return 1
+
+  if [[ -f "$backup" ]]; then
+    rm -f "$input"
+  else
+    mv "$input" "$backup" || return 1
+  fi
+
+  ffmpeg -i "$backup" -i out.jpg \
+    -map 0 -map 1:v:0 \
+    -c copy -c:v:1 mjpeg \
+    -disposition:v:1 attached_pic \
+    -metadata:s:v:1 title=Cover \
+    -y "$input" || {
+      rm -f "$input"
+      mv "$backup" "$input"
+      rm -f out.jpg
+      return 1
+    }
+
+  rm -f out.jpg
 }
 
 function v_trim_start() {
@@ -99,6 +118,115 @@ function v_encode() {
            -movflags +faststart "$output"
   fi
            # -c:a aac -b:a 256k -movflags +faststart "$output"
+}
+
+function v_encode_max() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage: v_encode_max <input> <output> [quality_qp]"
+    else
+        local input="$1"
+        local output="$2"
+        local quality="${3:-24}"
+
+    ffmpeg -y \
+        -init_hw_device vaapi=va:/dev/dri/renderD128 \
+        -filter_hw_device va \
+        -i "$input" \
+        -filter_complex '[0:v:0]scale=-2:720,format=nv12,hwupload=extra_hw_frames=64[vmain]' \
+        -map '[vmain]' \
+        -map '0:v:1?' \
+        -map '0:a:0?' \
+        -c:v:0 hevc_vaapi \
+        -rc_mode CQP \
+        -qp "$quality" \
+        -bf 4 \
+        -profile:v:0 main \
+        -c:v:1 copy \
+        -af 'loudnorm=I=-16:LRA=11:TP=-1.5' \
+        -c:a aac -b:a 128k \
+        -movflags +faststart \
+        "$output"
+    fi
+}
+
+function v_encode_max_all() {
+    local quality="${1:-24}"
+
+    for f in *.mp4; do
+        [[ -f "$f" ]] || continue
+        local out="${f%.mp4}_v2.mp4"
+        [[ -e "$out" ]] && continue
+
+        v_encode_max "$f" "$out" "$quality"
+    done
+}
+
+v_fps_detect() {
+    if [[ -z "$1" ]]; then
+        echo "Usage: fpsdetect <video>"
+        return 1
+    fi
+
+    local f="$1"
+
+    echo "=== Video information ==="
+    ffprobe -v error -select_streams v:0 \
+        -show_entries stream=width,height,r_frame_rate,avg_frame_rate \
+        -of default=noprint_wrappers=1 "$f"
+
+    echo
+    echo "=== Duplicate-frame analysis ==="
+
+    local total
+    total=$(ffprobe -v error -select_streams v:0 \
+        -count_frames \
+        -show_entries stream=nb_read_frames \
+        -of csv=p=0 "$f")
+
+    local unique
+    unique=$(ffmpeg -hide_banner -loglevel info \
+        -i "$f" \
+        -vf "mpdecimate" \
+        -an -f null - 2>&1 |
+        grep -oE 'frame=[[:space:]]*[0-9]+' |
+        tail -1 |
+        grep -oE '[0-9]+' )
+
+    echo "Captured frames : $total"
+    echo "Non-duplicate   : $unique"
+
+    if [[ -n "$total" && -n "$unique" && "$total" -gt 0 ]]; then
+        awk -v t="$total" -v u="$unique" '
+        BEGIN {
+            printf "Unique ratio    : %.2f%%\n", (u/t)*100
+
+            r=u/t
+
+            if (r > 0.93)
+                print "Likely source   : 60 FPS"
+            else if (r > 0.78)
+                print "Likely source   : 50 FPS"
+            else if (r > 0.48)
+                print "Likely source   : 30 FPS"
+            else if (r > 0.38)
+                print "Likely source   : 24/25 FPS"
+            else
+                print "Likely source   : mixed/VFR or needs deeper analysis"
+        }'
+    fi
+}
+
+function v_record() {
+    local output="${1:-output.mp4}"
+
+    ffmpeg -vaapi_device /dev/dri/renderD128 \
+    -f x11grab -video_size 1920x1080 -framerate 60 -i :0.0 \
+    -f pulse -i default.monitor \
+    -vf "format=nv12,hwupload" \
+    -c:v hevc_vaapi -rc_mode CQP -qp 25 -profile:v main \
+    -bsf:v hevc_metadata=crop_bottom=8 \
+    -fps_mode vfr \
+    -c:a aac -b:a 192k "$output"
 }
 
 function v_encode_all() {

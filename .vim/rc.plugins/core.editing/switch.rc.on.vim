@@ -1,4 +1,4 @@
-call dein#add('AndrewRadev/switch.vim', { 'rev': '297346b630943ebd4ea58598dfd30bae5debc739' })
+call dein#add('AndrewRadev/switch.vim', { 'rev': '70ad8c66c694c60e9d13342493f51d5b7dddc42d' })
 
 function! s:setup() abort
   noremap <silent> <leader><space> :Switch<CR>

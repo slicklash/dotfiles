@@ -16,25 +16,32 @@ highlight default ExtraWhitespace ctermbg=red guibg=red
 
 def ClearTrailingWhitespaceMatch()
   if exists('w:extra_whitespace_match')
-    matchdelete(w:extra_whitespace_match)
+    silent! matchdelete(w:extra_whitespace_match)
     unlet w:extra_whitespace_match
   endif
 enddef
 
-def HighlightTrailingWhitespace()
-  if index(['diff', 'qf', 'gitcommit', 'fern', 'help'], &filetype) >= 0
-    ClearTrailingWhitespaceMatch()
+def HighlightTrailingWhitespace(pattern = '\s\+$')
+  ClearTrailingWhitespaceMatch()
+  if &buftype != '' || index(['diff', 'qf', 'gitcommit', 'fern', 'help'], &filetype) >= 0
     return
   endif
-
-  ClearTrailingWhitespaceMatch()
-  w:extra_whitespace_match = matchadd('ExtraWhitespace', '\s\+$')
+  w:extra_whitespace_match = matchadd('ExtraWhitespace', pattern)
 enddef
+
+def StripTrailingWhitespace()
+  const view = winsaveview()
+  keeppatterns :%s/\s\+$//e
+  winrestview(view)
+enddef
+
+nnoremap <silent> <Leader>` <ScriptCmd>StripTrailingWhitespace()<CR>
 
 augroup trailing_whitespace
   autocmd!
-  autocmd BufWinEnter,WinEnter,InsertLeave * HighlightTrailingWhitespace()
-  autocmd FileType * HighlightTrailingWhitespace()
+  autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+  autocmd BufWinEnter,WinEnter,InsertLeave,FileType * HighlightTrailingWhitespace()
+  autocmd InsertEnter * HighlightTrailingWhitespace('\s\+\%#\@<!$')
   autocmd WinLeave,BufWinLeave * ClearTrailingWhitespaceMatch()
 augroup END
 

@@ -11,6 +11,8 @@ set autocompletetimeout=250
 set complete=F,o,.,w,b,u
 set completefunc=NativeComplete
 
+var manual_complete = false
+
 def NativeCompleteFilter(items: list<any>, base: string, default_menu: string): list<any>
   var lbase = tolower(base)
   var result: list<any> = []
@@ -115,22 +117,11 @@ def GetNativeSnippetCandidates(base: string): list<any>
   return NativeCompleteFilter(neosnippet#helpers#get_completion_snippets(), base, '[snip]')
 enddef
 
-def GetNativeSyntaxCandidates(base: string): list<any>
-  if !exists('*necosyntax#gather_candidates')
-    return []
-  endif
-  return NativeCompleteFilter(necosyntax#gather_candidates(), base, '[syn]')
-enddef
-
 def GetNativeTmuxCandidates(base: string): list<any>
-  if empty($TMUX)
+  if !manual_complete || !exists('*g:TmuxWords')
     return []
   endif
-  try
-    return NativeCompleteFilter(tmuxcomplete#complete(0, base), base, '[tmux]')
-  catch
-    return []
-  endtry
+  return NativeCompleteFilter(g:TmuxWords(), base, '[tmux]')
 enddef
 
 def GetNativeVimCandidates(input: string, base: string): list<any>
@@ -178,7 +169,6 @@ def g:NativeComplete(findstart: number, base: string): any
   endif
 
   if base_len >= 2
-    extend(candidates, GetNativeSyntaxCandidates(base))
     extend(candidates, GetNativeTmuxCandidates(base))
   endif
 
@@ -191,6 +181,13 @@ enddef
 
 def TabComplete(): string
   var line = getline('.')[ : col('.') - 2]
+
+  if pumvisible()
+    var info = complete_info(['selected', 'items'])
+    if info.selected != -1 && get(info.items[info.selected], 'menu', '') ==# '[snip]'
+      return "\<C-y>"
+    endif
+  endif
 
   if exists('*neosnippet#expandable_or_jumpable')
     neosnippet#init#check()
@@ -208,16 +205,35 @@ def TabComplete(): string
   endif
 
   if match(line, '\k$') >= 0
+    manual_complete = true
     return "\<C-x>\<C-u>"
   endif
 
   return "\<Tab>"
 enddef
 
+def TmuxComplete()
+  if empty($TMUX) || !exists('*g:TmuxWords')
+    echo 'not in tmux'
+    return
+  endif
+  var line = getline('.')[ : col('.') - 2]
+  var start = match(line, '\k*$')
+  var base = strpart(line, start)
+  var items = NativeCompleteFilter(g:TmuxWords(), base, '[tmux]')
+  if empty(items)
+    echo 'no tmux matches'
+    return
+  endif
+  complete(start + 1, items)
+enddef
+
 def Setup()
+  inoremap <silent> <C-x><C-x> <ScriptCmd>TmuxComplete()<CR>
   inoremap <silent><expr> <CR> pumvisible() && complete_info(['selected']).selected != -1 ? "\<C-y>" : "\<CR>"
   inoremap <silent><expr> <TAB> <SID>TabComplete()
   inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 enddef
 
 autocmd User InitPost ++once Setup()
+autocmd CompleteDone,InsertLeave * manual_complete = false

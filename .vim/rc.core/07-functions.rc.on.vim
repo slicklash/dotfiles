@@ -86,8 +86,7 @@ def g:OpenPath(cmd: string, path: string)
     wincmd = 'wincmd h'
   else
     if len(winnrs) > 0
-      var chosen = choosewin#start(winnrs, {'auto_choose': 1, 'hook_enable': 0})
-      var winnr = chosen[1]
+      var winnr = g:ChooseWin(winnrs, true)
       if winnr > 0
         wincmd = printf(':%dwincmd w', winnr)
       endif
@@ -325,22 +324,22 @@ def g:Max(...rest: list<any>)
 enddef
 
 def g:JsBeautify()
-  silent %!prettier --parser=babel-ts
+  silent :%!prettier --parser=babel-ts
   echo ''
 enddef
 
 def g:JsonBeautify()
-  silent %!prettier --parser=json
+  silent :%!prettier --parser=json
   echo ''
 enddef
 
 def g:HtmlBeautify()
-  silent %!prettier --parser=html
+  silent :%!prettier --parser=html
   echo ''
 enddef
 
 def g:CssBeautify()
-  silent %!prettier --parser=css
+  silent :%!prettier --parser=css
   echo ''
 enddef
 
@@ -362,4 +361,48 @@ def g:Tail()
   if has('timers')
     timer_start(500, (_) => execute('checktime'), {'repeat': -1})
   endif
+enddef
+
+def g:CountUniqueLines()
+    var counts: dict<number> = {}
+    var lines = getline(1, '$')
+
+    for line in lines
+        counts[line] = get(counts, line, 0) + 1
+    endfor
+
+    var result: list<string> = []
+
+    for line in keys(counts)
+        add(result, counts[line] > 1
+            ? printf('%s (%dx)', line, counts[line])
+            : line)
+    endfor
+
+    # Sort by count descending, then line alphabetically (case-insensitive)
+    sort(result, (a, b) => {
+        var countA = get(counts, substitute(a, ' (\d\+x)$', '', ''), 1)
+        var countB = get(counts, substitute(b, ' (\d\+x)$', '', ''), 1)
+
+        if countA != countB
+            return countB - countA
+        endif
+
+        var lineA = substitute(a, ' (\d\+x)$', '', '')
+        var lineB = substitute(b, ' (\d\+x)$', '', '')
+        return tolower(lineA) ==# tolower(lineB)
+            ? (lineA ==# lineB ? 0 : (lineA ># lineB ? 1 : -1))
+            : (tolower(lineA) ># tolower(lineB) ? 1 : -1)
+    })
+
+    botright new
+    setlocal buftype=nofile
+    setlocal bufhidden=wipe
+    setlocal noswapfile
+    setlocal nobuflisted
+
+    setline(1, result)
+    setlocal nomodifiable
+    setlocal filetype=text
+    setlocal nomodified
 enddef

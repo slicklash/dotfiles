@@ -86,8 +86,55 @@ def GetFamilyRoot(path: string): string
   return join(dirs[: 1], '/')
 enddef
 
+var pkg_root_cache: dict<string> = {}
+
+def GetWorkTree(): string
+  # g: prefix keeps the lookup at runtime; an unqualified call would be
+  # resolved when this def is compiled, before fugitive is loaded.
+  if exists('*g:FugitiveWorkTree')
+    var tree = g:FugitiveWorkTree()
+    if !empty(tree)
+      return tree
+    endif
+  endif
+  return getcwd()
+enddef
+
+def FindPackageRoot(worktree: string, path: string): string
+  # Nearest ancestor dir holding a package.json, worktree-relative.
+  # The worktree root itself never matches, so repo-root files (docs/,
+  # .vscode/, ...) fall through to the depth heuristic instead of
+  # collapsing into a single color.
+  var dirs = GetParentDirs(path)
+  var pending: list<string> = []
+  var found = ''
+
+  while !empty(dirs)
+    var rel = join(dirs, '/')
+    var abs = worktree .. '/' .. rel
+    if has_key(pkg_root_cache, abs)
+      found = pkg_root_cache[abs]
+      break
+    endif
+    if filereadable(abs .. '/package.json')
+      found = rel
+      pkg_root_cache[abs] = rel
+      break
+    endif
+    add(pending, abs)
+    remove(dirs, -1)
+  endwhile
+
+  for dir_abs in pending
+    pkg_root_cache[dir_abs] = found
+  endfor
+
+  return found
+enddef
+
 def ChooseDepthByFamily(paths: list<string>): dict<number>
-  # Returns dict: family_root -> chosen depth (2 or 3)
+  # Fallback grouping for paths outside any package.
+  # Returns dict: family_root -> chosen depth
   var families: dict<list<string>> = {}
 
   for path in paths
@@ -103,33 +150,35 @@ def ChooseDepthByFamily(paths: list<string>): dict<number>
   for family in keys(families)
     var items = families[family]
 
-    var k2: dict<number> = {}
-    var k3: dict<number> = {}
-
+    var maxdepth = 1
     for path in items
-      var key2 = GetParentKey(path, 2)
-      var key3 = GetParentKey(path, 3)
-      k2[key2] = 1
-      k3[key3] = 1
+      maxdepth = max([maxdepth, len(GetParentDirs(path))])
     endfor
 
-    var n2 = len(keys(k2))
-    var n3 = len(keys(k3))
-
-    # Heuristic:
-    # - use depth 2 if it already gives enough separation
-    # - use depth 3 only if it adds meaningful extra separation
+    # Heuristic: use the shallowest depth that actually separates the
+    # family, i.e. the depth at which its paths first diverge.
     #
     # In practice:
-    #   packages/foo vs packages/bar => depth 2
-    #   apps/broker/x vs apps/broker/y => depth 3
-    if n2 >= 2
-      result[family] = 2
-    elseif n3 > n2
-      result[family] = 3
-    else
-      result[family] = 2
-    endif
+    #   packages/foo vs packages/bar               => depth 2
+    #   apps/broker/x vs apps/broker/y             => depth 3
+    #   apps/broker/system/{private,public}        => depth 4
+    #   .../src/app/{issuers,parties}              => depth 7
+    #
+    # Families that never diverge (single subtree) stay at depth 2 and
+    # share one color.
+    var depth = 2
+    for d in range(2, maxdepth)
+      var seen: dict<number> = {}
+      for path in items
+        seen[GetParentKey(path, d)] = 1
+      endfor
+      if len(keys(seen)) >= 2
+        depth = d
+        break
+      endif
+    endfor
+
+    result[family] = depth
   endfor
 
   return result
@@ -181,17 +230,34 @@ def g:FugitiveHighlightPathsSmart()
     return
   endif
 
-  var depth_by_family = ChooseDepthByFamily(paths)
+  # Second pass: one color per package root, so everything inside a
+  # single app/package shares a color no matter how deep it sits.
+  var worktree = GetWorkTree()
+  var roots: dict<string> = {}
+  var unpackaged: list<string> = []
+
+  for path in paths
+    var root = FindPackageRoot(worktree, path)
+    roots[path] = root
+    if empty(root)
+      add(unpackaged, path)
+    endif
+  endfor
+
+  var depth_by_family = ChooseDepthByFamily(unpackaged)
 
   var key_to_group: dict<string> = {}
   var next_idx = 0
 
-  # Second pass: assign colors using chosen family depth
   for item in entries
     var path = item.path
-    var family = GetFamilyRoot(path)
-    var depth = get(depth_by_family, family, 2)
-    var key = GetParentKey(path, depth)
+    var key = roots[path]
+
+    if empty(key)
+      var family = GetFamilyRoot(path)
+      var depth = get(depth_by_family, family, 2)
+      key = GetParentKey(path, depth)
+    endif
 
     if empty(key)
       key = '[root]'

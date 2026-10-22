@@ -1,4 +1,5 @@
-if !executable('ctags') || system('ctags --version') !~# 'Universal Ctags'
+" Universal Ctags required
+if !executable('ctags')
   echo 'Error: missing Universal Ctags'
   cquit
 endif

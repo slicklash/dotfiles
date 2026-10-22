@@ -81,9 +81,6 @@ def ToggleList()
   set list?
 enddef
 
-# remove trailing whitespaces
-nnoremap <silent> <leader>` <cmd>call Preserve("%s/\\s\\+$//e")<CR>
-
 # surround with quotes
 nnoremap <leader>' ciw'<C-r>"'<Esc>
 vnoremap <leader>' c'<C-r>"'<Esc>
